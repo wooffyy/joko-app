@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">JoKo</string>
+    <string name="tagline">Temukan tim &amp; event-mu</string>
+    <string name="label_home">Home</string>
+    <string name="label_event">Event</string>
+    <string name="label_team">Tim</string>
+    <string name="label_profile">Profil</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg_base">#0D0F14</color>
+    <color name="bg_surface">#161A23</color>
+    <color name="bg_elevated">#1E2330</color>
+    <color name="accent_primary">#5B8FF9</color>
+    <color name="accent_success">#4ADE80</color>
+    <color name="accent_warning">#FACC15</color>
+    <color name="accent_danger">#F87171</color>
+    <color name="text_primary">#F0F4FF</color>
+    <color name="text_secondary">#8B95A9</color>
+    <color name="text_disabled">#3D4557</color>
+    <color name="outline_variant">#424753</color>
+</resources>
