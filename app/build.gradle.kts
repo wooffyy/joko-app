@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.joko.app"
+    namespace = "com.example.joko"
     compileSdk = 35
 
     defaultConfig {

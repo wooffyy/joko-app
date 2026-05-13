@@ -1,8 +1,18 @@
 <resources>
     <string name="app_name">JoKo</string>
-    <string name="tagline">Temukan tim &amp; event-mu</string>
+    <string name="tagline">Temukan tim &amp; event-mu hari ini</string>
     <string name="label_home">Home</string>
     <string name="label_event">Event</string>
     <string name="label_team">Tim</string>
     <string name="label_profile">Profil</string>
+
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="email_hint">name@university.ac.id</string>
+    <string name="password_hint">••••••••</string>
+    <string name="btn_masuk">Masuk</string>
+    <string name="no_account_register">Belum punya akun? Daftar</string>
+    <string name="privacy">Privasi</string>
+    <string name="terms">Ketentuan</string>
+    <string name="help">Bantuan</string>
 </resources>
