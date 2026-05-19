@@ -10,7 +10,7 @@ import com.example.joko.R
 
 class LoginActivity : AppCompatActivity() {
     private var isPasswordVisible = false
-
+//testo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
