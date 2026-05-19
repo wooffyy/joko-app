@@ -1,231 +1,245 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_base"
-    android:fillViewport="true">
+    android:background="@color/bg_base">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- Fixed Background Overlay -->
+    <ImageView
+        android:id="@+id/ivBackgroundOverlay"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="24dp">
-<!--        testoo  -->
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="48dp"
-            android:src="@mipmap/logojoko"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        android:alpha="0.75"
+        android:scaleType="centerCrop"
+        android:src="@drawable/login_screen_overlay" />
 
-        <TextView
-            android:id="@+id/tvAppName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="@string/app_name"
-            android:textColor="@color/white"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/logo" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/tvTagline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Temukan tim &amp; event-mu hari ini"
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvAppName" />
-
-        <LinearLayout
-            android:id="@+id/loginCard"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:background="@drawable/bg_login_card"
-            android:orientation="vertical"
-            android:padding="20dp"
-            app:layout_constraintTop_toBottomOf="@id/tvTagline">
+            android:padding="24dp">
+
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="48dp"
+                android:src="@drawable/ic_logo_joko"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/tvAppName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Email Address"
+                android:layout_marginTop="12dp"
+                android:text="@string/app_name"
+                android:textColor="@color/white"
+                android:textSize="28sp"
+                style="@style/TextAppearance.App.TitleLarge"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/logo" />
+
+            <TextView
+                android:id="@+id/tvTagline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Temukan tim &amp; event-mu hari ini"
                 android:textColor="@color/text_secondary"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvAppName" />
 
             <LinearLayout
+                android:id="@+id/loginCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_input_field"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="12dp">
+                android:layout_marginTop="32dp"
+                android:background="@drawable/bg_login_card"
+                android:orientation="vertical"
+                android:padding="20dp"
+                app:layout_constraintTop_toBottomOf="@id/tvTagline">
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@android:drawable/ic_dialog_email"
-                    app:tint="@color/text_secondary" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email Address"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
 
-                <EditText
-                    android:id="@+id/etEmail"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:background="@null"
-                    android:hint="name@university.ac.id"
-                    android:inputType="textEmailAddress"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/text_disabled"
-                    android:textSize="16sp" />
-            </LinearLayout>
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_input_field"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Password"
-                android:textColor="@color/text_secondary"
-                android:textSize="14sp" />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@android:drawable/ic_dialog_email"
+                        app:tint="@color/text_secondary" />
+
+                    <EditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:background="@null"
+                        android:hint="name@university.ac.id"
+                        android:inputType="textEmailAddress"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/text_disabled"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Password"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_input_field"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@android:drawable/ic_lock_idle_lock"
+                        app:tint="@color/text_secondary" />
+
+                    <EditText
+                        android:id="@+id/etPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:hint="••••••••"
+                        android:inputType="textPassword"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/text_disabled"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/ivShowPassword"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:padding="2dp"
+                        android:src="@android:drawable/ic_menu_view"
+                        android:contentDescription="Show Password"
+                        app:tint="@color/text_secondary" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnMasuk"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="24dp"
+                    android:backgroundTint="@color/primary"
+                    android:text="Masuk"
+                    android:textAllCaps="false"
+                    android:textColor="@color/bg_base"
+                    android:textSize="16sp"
+                    style="@style/TextAppearance.App.HeadlineMedium"
+                    android:textStyle="bold"
+                    app:cornerRadius="8dp" />
+
+            </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/layoutRegister"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_input_field"
-                android:gravity="center_vertical"
+                android:layout_marginTop="32dp"
                 android:orientation="horizontal"
-                android:padding="12dp">
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/loginCard">
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@android:drawable/ic_lock_idle_lock"
-                    app:tint="@color/text_secondary" />
-
-                <EditText
-                    android:id="@+id/etPassword"
-                    android:layout_width="0dp"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:hint="••••••••"
-                    android:inputType="textPassword"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/text_disabled"
-                    android:textSize="16sp" />
+                    android:text="Belum punya akun? "
+                    android:textColor="@color/text_secondary" />
 
-                <ImageView
-                    android:id="@+id/ivShowPassword"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:padding="2dp"
-                    android:src="@android:drawable/ic_menu_view"
-                    android:contentDescription="Show Password"
-                    app:tint="@color/text_secondary" />
+                <TextView
+                    android:id="@+id/tvRegister"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Daftar"
+                    android:textColor="@color/primary"
+                    android:textStyle="bold" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/btnMasuk"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:backgroundTint="@color/primary"
-                android:text="Masuk"
-                android:textAllCaps="false"
-                android:textColor="@color/bg_base"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:cornerRadius="8dp" />
+                android:layout_marginBottom="24dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutRegister"
+                app:layout_constraintVertical_bias="1.0">
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Privasi"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
 
-        <LinearLayout
-            android:id="@+id/layoutRegister"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/loginCard">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:text="•"
+                    android:textColor="@color/text_secondary" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Belum punya akun? "
-                android:textColor="@color/text_secondary" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ketentuan"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
 
-            <TextView
-                android:id="@+id/tvRegister"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Daftar"
-                android:textColor="@color/primary"
-                android:textStyle="bold" />
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:text="•"
+                    android:textColor="@color/text_secondary" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layoutRegister"
-            app:layout_constraintVertical_bias="1.0">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bantuan"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+            </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Privasi"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                android:text="•"
-                android:textColor="@color/text_secondary" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ketentuan"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                android:text="•"
-                android:textColor="@color/text_secondary" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bantuan"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
-
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</FrameLayout>

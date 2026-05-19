@@ -4,7 +4,42 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="android:statusBarColor">@color/bg_base</item>
         <item name="android:windowBackground">@color/bg_base</item>
+
+        <!-- Default Font (Body) -->
+        <item name="fontFamily">@font/font_body</item>
+
+        <!-- Headline Fonts -->
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.App.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.App.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.App.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.App.TitleLarge</item>
+    </style>
+
+    <!-- Headline Styles using Sora -->
+    <style name="TextAppearance.App.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="fontFamily">@font/font_headlines</item>
+        <item name="android:fontFamily">@font/font_headlines</item>
+    </style>
+
+    <style name="TextAppearance.App.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="fontFamily">@font/font_headlines</item>
+        <item name="android:fontFamily">@font/font_headlines</item>
+    </style>
+
+    <style name="TextAppearance.App.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="fontFamily">@font/font_headlines</item>
+        <item name="android:fontFamily">@font/font_headlines</item>
+    </style>
+
+    <style name="TextAppearance.App.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">@font/font_headlines</item>
+        <item name="android:fontFamily">@font/font_headlines</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="Theme.Joko" parent="Base.Theme.Joko" />
+
+    <style name="Theme.Joko.Splash" parent="Theme.Joko">
+        <item name="android:windowDisablePreview">true</item>
+    </style>
 </resources>

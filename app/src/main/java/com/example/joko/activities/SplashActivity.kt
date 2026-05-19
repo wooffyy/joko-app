@@ -11,12 +11,11 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-
-        // Splash screen delay 4 seconds
+        // Splash screen delay 5 seconds
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
-        }, 4000)
+        }, 5000)
     }
 }
