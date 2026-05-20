@@ -1,48 +1,57 @@
 package com.example.joko.activities
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.joko.R
 
-class LoginActivity : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity() {
+
     private var isPasswordVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_register)
 
+        val btnBack = findViewById<ImageView>(R.id.btnBack)
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val ivShowPassword = findViewById<ImageView>(R.id.ivShowPassword)
-        val tvRegister = findViewById<TextView>(R.id.tvRegister)
+        val btnDaftar = findViewById<Button>(R.id.btnDaftar)
+        val tvMasuk = findViewById<TextView>(R.id.tvMasuk)
+
+        // Tombol Back
+        btnBack.setOnClickListener {
+            onBackPressed()
+        }
 
         // Fitur Show/Hide Password
         ivShowPassword.setOnClickListener {
             if (isPasswordVisible) {
-                // Sembunyikan Password
                 etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
                 isPasswordVisible = false
-                ivShowPassword.setImageResource(android.R.drawable.ic_menu_view)
             } else {
-                // Tampilkan Password
                 etPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
                 isPasswordVisible = true
-                // Anda bisa mengganti ikon di sini jika ada ikon mata tertutup
             }
-            
-            // Pindahkan kursor ke posisi paling akhir teks
             etPassword.setSelection(etPassword.text.length)
         }
 
-        // Pindah ke Halaman Register
-        tvRegister.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+        // Tombol Daftar Sekarang
+        btnDaftar.setOnClickListener {
+            // Logika pendaftaran bisa ditambahkan di sini
+            Toast.makeText(this, "Pendaftaran Berhasil!", Toast.LENGTH_SHORT).show()
+            finish() // Kembali ke LoginActivity
+        }
+
+        // Klik "Masuk" jika sudah punya akun
+        tvMasuk.setOnClickListener {
+            finish() // Kembali ke LoginActivity
         }
     }
 }
