@@ -67,6 +67,9 @@ dependencies {
     // Coroutines
     implementation(libs.coroutines.android)
 
+    // Logging Interceptor
+    implementation(libs.okhttp.logging)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
