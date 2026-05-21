@@ -1,0 +1,8 @@
+buat Constants.kt seperti ini:
+
+package com.example.joko.utils
+
+object Constants {
+    const val SUPABASE_URL = "YOUR_SUPABASE_URL"
+    const val SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY"
+}
