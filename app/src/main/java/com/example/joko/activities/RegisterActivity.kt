@@ -13,6 +13,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.joko.R
 import com.example.joko.utils.ViewModelFactory
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -29,6 +31,10 @@ class RegisterActivity : AppCompatActivity() {
         val btnBack = findViewById<ImageView>(R.id.btnBack)
         val etEmail = findViewById<EditText>(R.id.etEmail)
         val etPassword = findViewById<EditText>(R.id.etPassword)
+        val etName = findViewById<EditText>(R.id.etNama)
+        val etUniversity = findViewById<EditText>(R.id.etPilihUniv)
+        val etPortfolio = findViewById<EditText>(R.id.etPortfolio)
+        val cgInterest = findViewById<ChipGroup>(R.id.cgInterest)
         val ivShowPassword = findViewById<ImageView>(R.id.ivShowPassword)
         val btnDaftar = findViewById<Button>(R.id.btnDaftar)
         val tvMasuk = findViewById<TextView>(R.id.tvMasuk)
@@ -54,15 +60,30 @@ class RegisterActivity : AppCompatActivity() {
         btnDaftar.setOnClickListener {
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
+            val name = etName.text.toString().trim()
+            val university = etUniversity.text.toString().trim().ifEmpty { null }
+            val portfolio = etPortfolio.text.toString().trim().ifEmpty { null }
 
-            if (email.isNotEmpty() && password.isNotEmpty()) {
+            // Mengambil list interest yang dipilih
+            val selectedInterests = cgInterest.checkedChipIds.map { id ->
+                findViewById<Chip>(id).text.toString()
+            }
+
+            if (email.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty()) {
                 if (password.length >= 6) {
-                    viewModel.register(email, password)
+                    viewModel.register(
+                        email = email,
+                        password = password,
+                        name = name,
+                        university = university,
+                        interests = selectedInterests,
+                        portfolioLink = portfolio
+                    )
                 } else {
                     Toast.makeText(this, "Password minimal 6 karakter", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(this, "Email dan password tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Nama, Email dan password tidak boleh kosong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -87,8 +108,12 @@ class RegisterActivity : AppCompatActivity() {
 
         viewModel.authSuccess.observe(this) { success ->
             if (success) {
-                Toast.makeText(this, "Pendaftaran Berhasil! Silakan login.", Toast.LENGTH_SHORT).show()
-                finish() // Kembali ke LoginActivity
+                val email = findViewById<EditText>(R.id.etEmail).text.toString().trim()
+                val intent = Intent(this, VerifPendingActivity::class.java).apply {
+                    putExtra("USER_EMAIL", email)
+                }
+                startActivity(intent)
+                finish()
             }
         }
     }

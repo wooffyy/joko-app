@@ -33,12 +33,19 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
         }
     }
 
-    fun register(email: String, password: String) {
+    fun register(
+        email: String,
+        password: String,
+        name: String?,
+        university: String?,
+        interests: List<String>?,
+        portfolioLink: String?
+    ) {
         _isLoading.value = true
         _errorMessage.value = null
         viewModelScope.launch {
             try {
-                repository.signUp(email, password)
+                repository.signUp(email, password, name, university, interests, portfolioLink)
                 _authSuccess.value = true
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "Registrasi gagal, silakan coba lagi"

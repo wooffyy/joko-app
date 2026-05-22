@@ -400,7 +400,7 @@
             android:layout_height="56dp"
             android:layout_marginTop="32dp"
             android:backgroundTint="@color/primary"
-            android:text="Daftar Sekarang 🚀"
+            android:text="Daftar Sekarang"
             android:textAllCaps="false"
             android:textColor="@color/bg_base"
             android:textSize="16sp"
