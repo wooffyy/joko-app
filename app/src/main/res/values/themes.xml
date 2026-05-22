@@ -5,17 +5,20 @@
         <item name="android:statusBarColor">@color/bg_base</item>
         <item name="android:windowBackground">@color/bg_base</item>
 
-        <!-- Default Font (Body) -->
+        <!-- Default Font -->
         <item name="fontFamily">@font/font_body</item>
 
-        <!-- Headline Fonts -->
         <item name="textAppearanceHeadlineLarge">@style/TextAppearance.App.HeadlineLarge</item>
         <item name="textAppearanceHeadlineMedium">@style/TextAppearance.App.HeadlineMedium</item>
         <item name="textAppearanceHeadlineSmall">@style/TextAppearance.App.HeadlineSmall</item>
         <item name="textAppearanceTitleLarge">@style/TextAppearance.App.TitleLarge</item>
     </style>
 
-    <!-- Headline Styles using Sora -->
+    <!-- Style untuk gambar profil bulat -->
+    <style name="CircleImage">
+        <item name="cornerSize">50%</item>
+    </style>
+
     <style name="TextAppearance.App.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
         <item name="fontFamily">@font/font_headlines</item>
         <item name="android:fontFamily">@font/font_headlines</item>
