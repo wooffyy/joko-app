@@ -15,4 +15,9 @@
     <string name="privacy">Privasi</string>
     <string name="terms">Ketentuan</string>
     <string name="help">Bantuan</string>
+
+    <string name="banner_title">Siap Lomba Hari Ini?</string>
+    <string name="banner_desc">Temukan tim terbaik untuk kompetisi impianmu.</string>
+    <string name="btn_explore_event">Explore Event</string>
+    <string name="btn_buat_tim">+ Buat Tim</string>
 </resources>
