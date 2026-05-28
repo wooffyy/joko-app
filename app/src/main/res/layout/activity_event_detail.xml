@@ -75,12 +75,14 @@
                     android:layout_height="match_parent">
 
                     <ImageView
+                        android:id="@+id/ivEventThumbnail"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@color/bg_elevated"
                         android:scaleType="centerCrop" />
 
                     <TextView
+                        android:id="@+id/tvEventCategory"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="16dp"
@@ -97,6 +99,7 @@
 
             <!-- Title -->
             <TextView
+                android:id="@+id/tvEventTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -113,34 +116,23 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="@color/primary"
-                    app:shapeAppearanceOverlay="@style/CircleImage" />
-
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="Penyelenggara:"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp" />
-
-                <TextView
+                    android:id="@+id/tvOrganizerName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:text="Google Developer Group"
                     android:textColor="@color/primary"
-                    android:textSize="13sp" />
+                    android:textSize="16sp" />
 
                 <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
+                    android:id="@+id/icVerifiedOrganizer"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginStart="4dp"
-                    android:src="@android:drawable/checkbox_on_background"
-                    app:tint="@color/secondary" />
+                    android:src="@drawable/ic_verified"
+                    />
             </LinearLayout>
 
             <!-- Info Row -->
@@ -185,6 +177,7 @@
                         </LinearLayout>
 
                         <TextView
+                            android:id="@+id/tvEventLocation"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
@@ -217,7 +210,7 @@
                             <ImageView
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
-                                android:src="@android:drawable/ic_menu_today"
+                                android:src="@drawable/ic_deadline"
                                 app:tint="#FACC15" />
                             <TextView
                                 android:layout_width="wrap_content"
@@ -229,6 +222,7 @@
                         </LinearLayout>
 
                         <TextView
+                            android:id="@+id/tvEventDeadline"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
@@ -271,6 +265,7 @@
                             android:background="#4ADE80"
                             app:shapeAppearanceOverlay="@style/CircleImage" />
                         <TextView
+                            android:id="@+id/tvRegisteredCount"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_marginStart="-8dp"
@@ -287,11 +282,12 @@
                         android:layout_centerVertical="true"
                         android:layout_marginStart="12dp"
                         android:layout_toEndOf="@id/userAvatars"
-                        android:text="Telah mendaftar"
+                        android:text="Tertarik"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 
                     <TextView
+                        android:id="@+id/tvEventTrustScore"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -305,6 +301,7 @@
 
             <!-- Description -->
             <TextView
+                android:id="@+id/tvEventDescTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
@@ -314,12 +311,13 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvEventDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:alpha="0.7"
                 android:lineSpacingExtra="4dp"
-                android:text="Bergabunglah dalam kompetisi coding paling bergengsi tahun ini! National Hackathon 2025 mengundang para inovator, developer, dan desainer untuk membangun solusi teknologi masa depan dalam waktu 48 jam.\n\nTahun ini kami fokus pada tema \&quot;AI for Sustainable Living\&quot;. Peserta akan mendapatkan akses ke berbagai workshop eksklusif, mentoring dari engineer kelas dunia, dan kesempatan untuk memenangkan total hadiah senilai Rp100.000.000."
+                android:text="Bergabunglah dalam kompetisi coding paling bergengsi tahun ini! National Hackathon 2025 mengundang para inovator, developer, dan desainer untuk membangun solusi teknologi masa depan dalam waktu 48 jam.\n\nTahun ini kami fokus pada tema AI for Sustainable Living. Peserta akan mendapatkan akses ke berbagai workshop eksklusif, mentoring dari engineer kelas dunia, dan kesempatan untuk memenangkan total hadiah senilai Rp100.000.000."
                 android:textColor="@color/white"
                 android:textSize="14sp" />
 
@@ -339,6 +337,7 @@
                     android:padding="20dp">
 
                     <TextView
+                        android:id="@+id/tvEventReqTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Persyaratan Utama:"
@@ -347,128 +346,35 @@
                         android:textStyle="bold" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:gravity="top"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:layout_marginTop="2dp"
-                            android:src="@android:drawable/checkbox_on_background"
-                            app:tint="@color/secondary" />
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:alpha="0.8"
-                            android:text="Mahasiswa aktif atau Fresh Graduate (Max 2 tahun)."
-                            android:textColor="@color/white"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
+                        android:id="@+id/layoutRequirements"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:gravity="top"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:layout_marginTop="2dp"
-                            android:src="@android:drawable/checkbox_on_background"
-                            app:tint="@color/secondary" />
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:alpha="0.8"
-                            android:text="Tim terdiri dari 3-5 orang."
-                            android:textColor="@color/white"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:gravity="top"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:layout_marginTop="2dp"
-                            android:src="@android:drawable/checkbox_on_background"
-                            app:tint="@color/secondary" />
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:alpha="0.8"
-                            android:text="Membawa laptop dan peralatan coding masing-masing."
-                            android:textColor="@color/white"
-                            android:textSize="14sp" />
+                        android:orientation="vertical">
+                        <!-- Isi pake item_requirements ya -->
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Tech Keywords -->
+            <!-- Tech Keywords diganti Tags biar lebih universal ajh -->
             <TextView
+                android:id="@+id/tvEventTagTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="TECH KEYWORDS"
+                android:text="TAGS"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
             <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cgEventTags"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 app:chipSpacingHorizontal="8dp">
 
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Action"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Kotlin"
-                    android:textColor="@color/white"
-                    app:chipBackgroundColor="@color/bg_surface"
-                    app:chipStrokeColor="@color/outline_variant"
-                    app:chipStrokeWidth="1dp" />
-
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Action"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Firebase"
-                    android:textColor="@color/white"
-                    app:chipBackgroundColor="@color/bg_surface"
-                    app:chipStrokeColor="@color/outline_variant"
-                    app:chipStrokeWidth="1dp" />
-
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Action"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TensorFlow"
-                    android:textColor="@color/white"
-                    app:chipBackgroundColor="@color/bg_surface"
-                    app:chipStrokeColor="@color/outline_variant"
-                    app:chipStrokeWidth="1dp" />
-
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Action"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Clean Architecture"
-                    android:textColor="@color/white"
-                    app:chipBackgroundColor="@color/bg_surface"
-                    app:chipStrokeColor="@color/outline_variant"
-                    app:chipStrokeWidth="1dp" />
+                <!-- Isi pake item_event_tag ya -->
             </com.google.android.material.chip.ChipGroup>
 
         </LinearLayout>
@@ -496,7 +402,6 @@
             android:textColor="@color/bg_base"
             android:textStyle="bold"
             app:cornerRadius="12dp"
-            app:icon="@android:drawable/checkbox_on_background"
             app:iconGravity="textStart"
             app:iconTint="@color/bg_base" />
 
