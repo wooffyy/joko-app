@@ -8,6 +8,7 @@
     <color name="bg_base">#0D0F14</color>
     <color name="bg_surface">#161A23</color>
     <color name="bg_elevated">#1E2330</color>
+    <color name="bg_banner">#1A2235</color>
 
     <color name="text_primary">#F0F4FF</color>
     <color name="text_secondary">#8B95A9</color>

@@ -11,18 +11,18 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var bottomNavigation: BottomNavigationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigation = findViewById(R.id.bottom_navigation)
 
-        // Set Home sebagai layar pertama yang muncul
         if (savedInstanceState == null) {
             loadFragment(HomeFragment())
         }
 
-        // Logika klik menu navigasi
         bottomNavigation.setOnItemSelectedListener { item ->
             val fragment: Fragment = when (item.itemId) {
                 R.id.nav_home -> HomeFragment()
@@ -34,6 +34,11 @@ class MainActivity : AppCompatActivity() {
             loadFragment(fragment)
             true
         }
+    }
+
+    // Fungsi untuk berpindah tab dari Fragment lain
+    fun navigateToTab(itemId: Int) {
+        bottomNavigation.selectedItemId = itemId
     }
 
     private fun loadFragment(fragment: Fragment) {

@@ -78,19 +78,32 @@
                 </LinearLayout>
             </RelativeLayout>
 
-            <!-- Banner Card -->
+            <!-- Banner Card (FIXED DESIGN) -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                app:cardBackgroundColor="#1E293B"
-                app:cardCornerRadius="20dp"
+                app:cardBackgroundColor="@color/bg_banner"
+                app:cardCornerRadius="24dp"
                 app:cardElevation="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="24dp">
+                    android:padding="28dp">
+
+                    <ImageView
+                        android:id="@+id/ivRocket"
+                        android:layout_width="140dp"
+                        android:layout_height="140dp"
+                        android:layout_marginEnd="-30dp"
+                        android:layout_marginBottom="-30dp"
+                        android:alpha="0.12"
+                        android:rotation="-10"
+                        android:src="@android:drawable/ic_menu_send"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:tint="@color/primary" />
 
                     <TextView
                         android:id="@+id/tvBannerTitle"
@@ -98,9 +111,9 @@
                         android:layout_height="wrap_content"
                         android:text="Siap Lomba Hari Ini?"
                         android:textColor="@color/primary"
-                        android:textSize="22sp"
+                        android:textSize="28sp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@+id/ivRocket"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -108,38 +121,31 @@
                         android:id="@+id/tvBannerDesc"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="12dp"
+                        android:alpha="0.8"
                         android:text="Temukan tim terbaik untuk kompetisi impianmu."
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp"
-                        app:layout_constraintEnd_toStartOf="@+id/ivRocket"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvBannerTitle" />
 
                     <Button
-                        android:id="@+id/btnExplore"
+                        android:id="@+id/btnExploreBanner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="28dp"
                         android:backgroundTint="@color/primary"
+                        android:paddingHorizontal="24dp"
+                        android:paddingVertical="12dp"
                         android:text="Explore Event"
                         android:textAllCaps="false"
-                        android:textColor="@color/bg_base"
+                        android:textColor="#0D0F14"
                         android:textStyle="bold"
-                        app:cornerRadius="12dp"
+                        app:cornerRadius="14dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvBannerDesc" />
 
-                    <ImageView
-                        android:id="@+id/ivRocket"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:alpha="0.2"
-                        android:src="@android:drawable/ic_menu_send"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/white" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
@@ -150,7 +156,6 @@
                 android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
-                <!-- Match Rate Card -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -181,7 +186,6 @@
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- Applied Team Card -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -226,10 +230,13 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
                 <TextView
+                    android:id="@+id/btnLihatSemuaEvents"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:text="Lihat Semua"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:textColor="@color/primary"
                     android:textSize="12sp" />
             </RelativeLayout>
@@ -385,10 +392,13 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
                 <TextView
+                    android:id="@+id/btnLihatTim"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="Cari Tim"
+                    android:text="Lihat Tim"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:textColor="@color/primary"
                     android:textSize="12sp" />
             </RelativeLayout>
@@ -431,12 +441,14 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="12dp"
                                     android:orientation="vertical">
+
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="Alpha Team"
                                         android:textColor="@color/white"
                                         android:textStyle="bold" />
+
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
@@ -445,6 +457,7 @@
                                         android:textSize="10sp" />
                                 </LinearLayout>
                             </LinearLayout>
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -452,11 +465,13 @@
                                 android:text="Mencari Role:"
                                 android:textColor="@color/text_secondary"
                                 android:textSize="12sp" />
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 android:orientation="horizontal">
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -466,6 +481,7 @@
                                     android:text="Backend"
                                     android:textColor="@color/primary"
                                     android:textSize="10sp" />
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -477,16 +493,19 @@
                                     android:textColor="@color/text_secondary"
                                     android:textSize="10sp" />
                             </LinearLayout>
+
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="20dp">
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Progress Tim"
                                     android:textColor="@color/text_secondary"
                                     android:textSize="11sp" />
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -495,6 +514,7 @@
                                     android:textColor="@color/primary"
                                     android:textSize="11sp" />
                             </RelativeLayout>
+
                             <ProgressBar
                                 style="?android:attr/progressBarStyleHorizontal"
                                 android:layout_width="match_parent"
@@ -511,15 +531,18 @@
                         app:cardBackgroundColor="@color/bg_surface"
                         app:cardCornerRadius="16dp"
                         app:cardElevation="0dp">
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="20dp"
                             android:orientation="vertical">
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal">
+
                                 <com.google.android.material.imageview.ShapeableImageView
                                     android:layout_width="40dp"
                                     android:layout_height="40dp"
@@ -528,17 +551,20 @@
                                     android:src="@android:drawable/ic_menu_edit"
                                     app:tint="@color/secondary"
                                     app:shapeAppearanceOverlay="@style/CircleImage" />
+
                                 <LinearLayout
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="12dp"
                                     android:orientation="vertical">
+
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="Creative UI"
                                         android:textColor="@color/white"
                                         android:textStyle="bold" />
+
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
@@ -547,6 +573,7 @@
                                         android:textSize="10sp" />
                                 </LinearLayout>
                             </LinearLayout>
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -554,11 +581,13 @@
                                 android:text="Mencari Role:"
                                 android:textColor="@color/text_secondary"
                                 android:textSize="12sp" />
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 android:orientation="horizontal">
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -569,16 +598,19 @@
                                     android:textColor="@color/primary"
                                     android:textSize="10sp" />
                             </LinearLayout>
+
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="20dp">
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Progress Tim"
                                     android:textColor="@color/text_secondary"
                                     android:textSize="11sp" />
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -587,6 +619,7 @@
                                     android:textColor="@color/primary"
                                     android:textSize="11sp" />
                             </RelativeLayout>
+
                             <ProgressBar
                                 style="?android:attr/progressBarStyleHorizontal"
                                 android:layout_width="match_parent"
@@ -608,17 +641,20 @@
                 app:cardBackgroundColor="@color/bg_surface"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="0dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="24dp">
+
                     <ImageView
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:src="@android:drawable/ic_menu_preferences"
                         app:tint="@color/text_disabled" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -627,6 +663,7 @@
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -635,6 +672,7 @@
                         android:text="Bantu kami merekomendasikan tim yang paling pas buat kamu."
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
+
                     <Button
                         android:id="@+id/btnAturMinat"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
