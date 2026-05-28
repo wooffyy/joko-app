@@ -39,7 +39,6 @@
             app:tint="@color/primary" />
     </RelativeLayout>
 
-    <!-- Scrollable Content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -97,7 +96,7 @@
                     app:tint="@color/white" />
             </LinearLayout>
 
-            <!-- Kategori Tabs (Multi-Select & White Text) -->
+            <!-- Kategori -->
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -108,7 +107,7 @@
                     android:id="@+id/cgCategories"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:chipSpacingHorizontal="12dp"
+                    app:chipSpacingHorizontal="8dp"
                     app:singleSelection="false">
 
                     <com.google.android.material.chip.Chip
@@ -120,7 +119,6 @@
                         android:checked="true"
                         android:text="Semua"
                         android:textColor="@color/chip_text_selector"
-                        android:textSize="14sp"
                         app:checkedIconVisible="false"
                         app:chipBackgroundColor="@color/chip_bg_selector"
                         app:chipStrokeColor="@color/chip_stroke_selector"
@@ -135,7 +133,6 @@
                         android:checkable="true"
                         android:text="Hackathon"
                         android:textColor="@color/chip_text_selector"
-                        android:textSize="14sp"
                         app:checkedIconVisible="false"
                         app:chipBackgroundColor="@color/chip_bg_selector"
                         app:chipStrokeColor="@color/chip_stroke_selector"
@@ -150,7 +147,6 @@
                         android:checkable="true"
                         android:text="Lomba"
                         android:textColor="@color/chip_text_selector"
-                        android:textSize="14sp"
                         app:checkedIconVisible="false"
                         app:chipBackgroundColor="@color/chip_bg_selector"
                         app:chipStrokeColor="@color/chip_stroke_selector"
@@ -165,7 +161,6 @@
                         android:checkable="true"
                         android:text="Seminar"
                         android:textColor="@color/chip_text_selector"
-                        android:textSize="14sp"
                         app:checkedIconVisible="false"
                         app:chipBackgroundColor="@color/chip_bg_selector"
                         app:chipStrokeColor="@color/chip_stroke_selector"
@@ -175,11 +170,15 @@
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
 
-            <!-- KARTU UTAMA: IMPACT NATIONAL HACKATHON 2025 -->
+            <!-- KARTU UTAMA: IMPACT NATIONAL HACKATHON -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cvImpactHackathon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
                 app:cardBackgroundColor="@color/bg_surface"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="0dp">
@@ -187,7 +186,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:duplicateParentState="true">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -199,7 +199,6 @@
                             android:background="@color/bg_elevated"
                             android:scaleType="centerCrop" />
 
-                        <!-- Badge: 3 DAYS LEFT -->
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -238,7 +237,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
-                            <!-- Labels: Google & Verified -->
+                            <!-- Labels -->
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -267,7 +266,6 @@
                                     android:textStyle="bold" />
                             </LinearLayout>
 
-                            <!-- Icons Area -->
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -373,60 +371,6 @@
                         android:layout_marginTop="8dp"
                         android:alpha="0.7"
                         android:text="Challenge your creativity in our annual design sprint organized by UI/UX Indo."
-                        android:textColor="@color/white"
-                        android:textSize="13sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Kartu AI Ethics -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardBackgroundColor="@color/bg_surface"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="0dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="SEMINAR"
-                            android:textColor="@color/secondary"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:text="Tomorrow"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="11sp" />
-                    </RelativeLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="AI Ethics in 2025"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:alpha="0.7"
-                        android:text="Deep dive into the legal and ethical implications of generative AI models."
                         android:textColor="@color/white"
                         android:textSize="13sp" />
                 </LinearLayout>
