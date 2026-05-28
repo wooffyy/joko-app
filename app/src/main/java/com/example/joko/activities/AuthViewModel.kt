@@ -56,4 +56,19 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
     }
 
     fun isLoggedIn(): Boolean = repository.isLoggedIn()
+
+    private val _isSessionValid = MutableLiveData<Boolean>()
+    val isSessionValid: LiveData<Boolean> = _isSessionValid
+
+    fun checkSession() {
+        if (!repository.isLoggedIn()) {
+            _isSessionValid.value = false
+            return
+        }
+
+        viewModelScope.launch {
+            val isValid = repository.validateSession()
+            _isSessionValid.value = isValid
+        }
+    }
 }

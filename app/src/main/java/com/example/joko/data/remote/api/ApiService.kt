@@ -4,6 +4,7 @@ import com.example.joko.data.remote.request.AuthRequest
 import com.example.joko.data.remote.request.CreateUserRequest
 import com.example.joko.data.remote.response.AuthResponse
 import com.example.joko.data.remote.response.EventResponse
+import com.example.joko.data.remote.response.UserResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -26,4 +27,7 @@ interface ApiService {
 
     @POST("auth/v1/token?grant_type=password")
     suspend fun signIn(@Body request: AuthRequest): AuthResponse
+
+    @GET("auth/v1/user")
+    suspend fun getCurrentUser(): UserResponse
 }

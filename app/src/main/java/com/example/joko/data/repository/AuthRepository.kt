@@ -102,4 +102,15 @@ class AuthRepository(
     fun isLoggedIn(): Boolean {
         return sessionManager.isLoggedIn()
     }
+
+    suspend fun validateSession(): Boolean {
+        return try {
+            apiService.getCurrentUser()
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "Session validation failed: ${e.message}")
+            logout()
+            false
+        }
+    }
 }

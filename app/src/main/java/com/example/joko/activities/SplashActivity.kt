@@ -3,8 +3,6 @@ package com.example.joko.activities
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.joko.MainActivity
@@ -22,17 +20,18 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            checkSession()
-        }, 2000)
+        observeViewModel()
+        viewModel.checkSession()
     }
 
-    private fun checkSession() {
-        if (viewModel.isLoggedIn()) {
-            startActivity(Intent(this, MainActivity::class.java))
-        } else {
-            startActivity(Intent(this, LoginActivity::class.java))
+    private fun observeViewModel() {
+        viewModel.isSessionValid.observe(this) { isValid ->
+            if (isValid) {
+                startActivity(Intent(this, MainActivity::class.java))
+            } else {
+                startActivity(Intent(this, LoginActivity::class.java))
+            }
+            finish()
         }
-        finish()
     }
 }
