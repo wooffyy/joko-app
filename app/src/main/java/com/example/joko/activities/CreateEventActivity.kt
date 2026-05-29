@@ -6,12 +6,16 @@ import android.view.LayoutInflater
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.joko.R
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -25,14 +29,18 @@ class CreateEventActivity : AppCompatActivity() {
     private lateinit var tvEndDate: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.createEventRoot)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+        val btnBack = findViewById<ImageView>(R.id.btnBack)
+        btnBack.setOnClickListener { finish() }
 
         chipGroupTags = findViewById(R.id.chipGroupTags)
         btnAddTag = findViewById(R.id.btnAddTag)
@@ -55,6 +63,23 @@ class CreateEventActivity : AppCompatActivity() {
         // Setup Date Pickers
         tvStartDate.setOnClickListener { showDatePicker { date -> tvStartDate.text = date } }
         tvEndDate.setOnClickListener { showDatePicker { date -> tvEndDate.text = date } }
+
+        // Setup Date Pickers
+        tvStartDate.setOnClickListener {
+            showDatePicker { date ->
+                tvStartDate.text = date
+                // Ganti warna ke putih setelah tanggal masuk
+                tvStartDate.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+            }
+        }
+
+        tvEndDate.setOnClickListener {
+            showDatePicker { date ->
+                tvEndDate.text = date
+                // Ganti warna ke putih setelah tanggal masuk
+                tvEndDate.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+            }
+        }
 
         // Setup Tag Addition
         btnAddTag.setOnClickListener {

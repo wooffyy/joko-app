@@ -1,30 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/createEventRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_base">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <!-- Sticky Header -->
+    <LinearLayout
+        android:id="@+id/CreateEventHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/bg_base">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@android:drawable/ic_menu_revert"
-            app:navigationIconTint="@color/white"
-            app:title="@string/title_buat_event"
-            app:titleTextColor="@color/white" />
-    </com.google.android.material.appbar.AppBarLayout>
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_input_field"
+            android:padding="8dp"
+            android:src="@drawable/abc_ic_ab_back_material"
+            app:tint="@color/white" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Buat Event-mu!"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Scrollable Content -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/CreateEventHeader">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -98,7 +119,8 @@
                 android:hint="Contoh: JOKO Hackathon 2024"
                 android:padding="16dp"
                 android:textColor="@color/white"
-                android:textColorHint="@color/text_disabled" />
+                android:textColorHint="@color/text_disabled"
+                android:textSize="14sp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -125,8 +147,7 @@
                         android:layout_height="56dp"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/bg_input_field"
-                        android:overlapAnchor="false"
-                        android:padding="8dp" />
+                        android:overlapAnchor="false" />
                 </LinearLayout>
 
                 <View
@@ -207,45 +228,65 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:layout_marginTop="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvStartDate"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_input_field"
-                    android:drawableStart="@android:drawable/ic_menu_my_calendar"
-                    android:drawablePadding="8dp"
-                    android:drawableTint="@color/text_secondary"
-                    android:padding="16dp"
-                    android:text="mm/dd/yyyy"
-                    android:textColor="@color/white"
-                    android:textSize="14sp" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:background="@drawable/bg_input_field">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_calendar"
+                        app:tint="@color/text_secondary"/>
+
+                    <TextView
+                        android:id="@+id/tvEndDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="mm/dd/yyyy"/>
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="12dp"
                     android:text="sampai"
-                    android:textColor="@color/text_secondary" />
+                    android:textColor="@color/white" />
 
-                <TextView
-                    android:id="@+id/tvEndDate"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_input_field"
-                    android:drawableStart="@android:drawable/ic_menu_my_calendar"
-                    android:drawablePadding="8dp"
-                    android:drawableTint="@color/text_secondary"
-                    android:padding="16dp"
-                    android:text="mm/dd/yyyy"
-                    android:textColor="@color/white"
-                    android:textSize="14sp" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:background="@drawable/bg_input_field">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_calendar"
+                        app:tint="@color/text_secondary"/>
+
+                    <TextView
+                        android:id="@+id/tvStartDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="mm/dd/yyyy"/>
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Link Pendaftaran -->
@@ -260,14 +301,6 @@
                     android:text="@string/label_link_pendaftaran"
                     android:textColor="@color/primary"
                     android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="Opsional"
-                    android:textColor="@color/text_disabled"
-                    android:textSize="12sp" />
             </RelativeLayout>
 
             <LinearLayout
@@ -307,6 +340,14 @@
                 android:textColor="@color/primary"
                 android:textSize="14sp" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Gunakan tag yang relevan agar mudah ditemukan oleh calon peserta."
+                android:textColor="@color/text_disabled"
+                android:textSize="12sp" />
+
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupTags"
                 android:layout_width="match_parent"
@@ -326,15 +367,7 @@
 
             </com.google.android.material.chip.ChipGroup>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_input_field"
-                android:padding="16dp"
-                android:text="Gunakan tag yang relevan agar mudah ditemukan oleh calon peserta."
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+
 
             <!-- Submit Button -->
             <Button
@@ -354,4 +387,4 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
