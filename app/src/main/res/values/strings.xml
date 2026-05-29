@@ -19,5 +19,17 @@
     <string name="banner_title">Siap Lomba Hari Ini?</string>
     <string name="banner_desc">Temukan tim terbaik untuk kompetisi impianmu.</string>
     <string name="btn_explore_event">Explore Event</string>
-    <string name="btn_buat_tim">+ Buat Tim</string>
+    <string name="btn_buat_event">+ Buat Event</string>
+
+    <string name="title_buat_event">Buat Event Baru</string>
+    <string name="label_banner_event">Banner Event</string>
+    <string name="label_judul_event">Judul Event</string>
+    <string name="label_kategori">Kategori</string>
+    <string name="label_penyelenggara">Penyelenggara</string>
+    <string name="label_lokasi">Lokasi</string>
+    <string name="label_jadwal_event">Jadwal Event</string>
+    <string name="label_link_pendaftaran">Link Pendaftaran</string>
+    <string name="label_kata_kunci">Kata Kunci / Tag</string>
+    <string name="btn_publikasikan">Publikasikan Event</string>
+    <string name="event_published">Event berhasil dipublikasikan!</string>
 </resources>

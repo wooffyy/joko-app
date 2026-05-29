@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Joko">
         <activity
+            android:name=".activities.CreateEventActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.EventDetailActivity"
             android:exported="false" />
         <activity

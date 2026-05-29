@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.joko.MainActivity
 import com.example.joko.R
+import com.example.joko.activities.CreateEventActivity
 import com.example.joko.activities.LoginActivity
 import com.example.joko.utils.SessionManager
 
@@ -27,6 +28,7 @@ class HomeFragment : Fragment() {
         val btnLihatTim = view.findViewById<TextView>(R.id.btnLihatTim)
         val btnAturMinat = view.findViewById<Button>(R.id.btnAturMinat)
         val btnExploreBanner = view.findViewById<Button>(R.id.btnExploreBanner)
+        val btnCreateEvent = view.findViewById<Button>(R.id.btnCreateEvent)
 
         // Fungsi Logout
         btnLogout.setOnClickListener {
@@ -35,6 +37,12 @@ class HomeFragment : Fragment() {
             
             val intent = Intent(requireContext(), LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+
+        // Navigasi ke Create Event Activity
+        btnCreateEvent.setOnClickListener {
+            val intent = Intent(requireContext(), CreateEventActivity::class.java)
             startActivity(intent)
         }
 
