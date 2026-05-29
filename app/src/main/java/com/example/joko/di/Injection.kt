@@ -10,12 +10,12 @@ import com.example.joko.utils.SessionManager
 object Injection {
     fun provideRepository(context: Context): EventRepository {
         val database = AppDatabase.getInstance(context)
-        val apiService = RetrofitClient.instance
+        val apiService = RetrofitClient.getApiService(context)
         return EventRepository(apiService, database.eventDao())
     }
 
     fun provideAuthRepository(context: Context): AuthRepository {
-        val apiService = RetrofitClient.instance
+        val apiService = RetrofitClient.getApiService(context)
         val sessionManager = SessionManager(context)
         return AuthRepository(apiService, sessionManager)
     }
