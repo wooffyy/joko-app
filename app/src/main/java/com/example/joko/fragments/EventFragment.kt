@@ -5,28 +5,81 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.cardview.widget.CardView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.joko.R
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.joko.activities.EventDetailActivity
+import com.example.joko.activities.EventViewModel
+import com.example.joko.adapters.EventAdapter
+import com.example.joko.databinding.FragmentEventBinding
+import com.example.joko.utils.ViewModelFactory
 
 class EventFragment : Fragment() {
+
+    private var _binding: FragmentEventBinding? = null
+    private val binding get() = _binding!!
+
+    private val viewModel: EventViewModel by viewModels {
+        ViewModelFactory(requireContext())
+    }
+
+    private lateinit var adapter: EventAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_event, container, false)
+    ): View {
+        _binding = FragmentEventBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        // Hubungkan CardView Impact Hackathon
-        val cvImpactHackathon = view.findViewById<CardView>(R.id.cvImpactHackathon)
-        
-        // Klik untuk pindah ke halaman detail
-        cvImpactHackathon.setOnClickListener {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupRecyclerView()
+        setupSwipeRefresh()
+        observeViewModel()
+
+        // Pemicu sinkronisasi data saat halaman dibuka
+        viewModel.fetchEvents()
+    }
+
+    private fun setupRecyclerView() {
+        adapter = EventAdapter { event ->
             val intent = Intent(requireContext(), EventDetailActivity::class.java)
+            intent.putExtra("EVENT_ID", event.id)
             startActivity(intent)
         }
+        binding.rvEvents.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvEvents.adapter = adapter
+    }
 
-        return view
+    private fun setupSwipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.fetchEvents()
+        }
+    }
+
+    private fun observeViewModel() {
+        viewModel.allEvents.observe(viewLifecycleOwner) { events ->
+            adapter.submitList(events)
+            binding.tvEmptyState.visibility = if (events.isEmpty()) View.VISIBLE else View.GONE
+        }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.swipeRefresh.isRefreshing = isLoading
+        }
+
+        viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
+            message?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

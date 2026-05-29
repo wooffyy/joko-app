@@ -1,6 +1,7 @@
 package com.example.joko.data.remote.api
 
 import com.example.joko.data.remote.request.AuthRequest
+import com.example.joko.data.remote.request.CreateEventRequest
 import com.example.joko.data.remote.request.CreateUserRequest
 import com.example.joko.data.remote.response.AuthResponse
 import com.example.joko.data.remote.response.EventResponse
@@ -10,10 +11,13 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface ApiService {
     @GET("rest/v1/events?select=*")
-    suspend fun getEvents(): List<EventResponse>
+    suspend fun getEvents(
+        @Query("order") order: String = "start_date.desc"
+    ): List<EventResponse>
 
     @POST("auth/v1/signup")
     suspend fun signUp(@Body request: AuthRequest): AuthResponse
@@ -30,4 +34,10 @@ interface ApiService {
 
     @GET("auth/v1/user")
     suspend fun getCurrentUser(): UserResponse
+
+    @POST("rest/v1/events")
+    suspend fun createEvent(
+        @Header("Prefer") prefer: String = "return=minimal",
+        @Body request: CreateEventRequest
+    ): Response<Unit>
 }

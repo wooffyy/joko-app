@@ -23,8 +23,6 @@ class AuthRepository(
         portfolioLink: String?
     ): AuthResponse {
         try {
-            // Kita bungkus data profil ke dalam metadata agar tersimpan di auth.users
-            // Metadata ini akan dibaca oleh Database Trigger di Supabase
             val metadata = mapOf(
                 "full_name" to name,
                 "university" to university,
@@ -38,14 +36,9 @@ class AuthRepository(
                 data = metadata
             )
             
-            val authResponse = apiService.signUp(authRequest)
-            
-            Log.d(TAG, "Registration request sent successfully. Check email for confirmation.")
-            return authResponse
-
+            return apiService.signUp(authRequest)
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
-            Log.e(TAG, "HTTP ${e.code()} Error: $errorBody")
             val errorMessage = try {
                 val json = JSONObject(errorBody ?: "")
                 json.optString("error_description", json.optString("msg", "Registration failed"))
@@ -54,7 +47,6 @@ class AuthRepository(
             }
             throw Exception(errorMessage)
         } catch (e: Exception){
-            Log.e(TAG, "Unexpected Error: ${e.message}")
             throw e
         }
     }
@@ -62,17 +54,17 @@ class AuthRepository(
     suspend fun signIn(email: String, password: String): AuthResponse {
         try {
             val request = AuthRequest(email, password)
-            Log.d(TAG, "Attempting login for: $email")
-            
             val response = apiService.signIn(request)
             
             val accessToken = response.accessToken
             val refreshToken = response.refreshToken
+            val userId = response.userId
 
-            if (accessToken != null && refreshToken != null) {
+            if (accessToken != null && refreshToken != null && userId != null) {
                 sessionManager.saveAuthToken(accessToken)
                 sessionManager.saveRefreshToken(refreshToken)
-                Log.d(TAG, "Login successful for: $email")
+                sessionManager.saveUserId(userId)
+                Log.d(TAG, "Login successful: UserID $userId saved")
             } else {
                 throw Exception("Login failed: Session data missing")
             }
@@ -80,8 +72,6 @@ class AuthRepository(
             return response
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
-            Log.e(TAG, "HTTP ${e.code()} Error: $errorBody")
-            
             val errorMessage = try {
                 val json = JSONObject(errorBody ?: "")
                 json.optString("error_description", json.optString("msg", "Login gagal"))
@@ -90,7 +80,6 @@ class AuthRepository(
             }
             throw Exception(errorMessage)
         } catch (e: Exception) {
-            Log.e(TAG, "Unexpected Error: ${e.message}")
             throw e
         }
     }
@@ -99,9 +88,9 @@ class AuthRepository(
         sessionManager.clearSession()
     }
 
-    fun isLoggedIn(): Boolean {
-        return sessionManager.isLoggedIn()
-    }
+    fun isLoggedIn(): Boolean = sessionManager.isLoggedIn()
+    
+    fun getUserId(): String? = sessionManager.getUserId()
 
     suspend fun validateSession(): Boolean {
         return try {
@@ -109,7 +98,6 @@ class AuthRepository(
             true
         } catch (e: Exception) {
             Log.e(TAG, "Session validation failed: ${e.message}")
-            logout()
             false
         }
     }

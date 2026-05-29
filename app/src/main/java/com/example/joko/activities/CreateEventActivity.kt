@@ -2,7 +2,7 @@ package com.example.joko.activities
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -11,12 +11,14 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.joko.R
+import com.example.joko.utils.ViewModelFactory
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import java.util.Calendar
@@ -27,6 +29,16 @@ class CreateEventActivity : AppCompatActivity() {
     private lateinit var btnAddTag: Chip
     private lateinit var tvStartDate: TextView
     private lateinit var tvEndDate: TextView
+    private lateinit var etJudulEvent: EditText
+    private lateinit var etPenyelenggara: EditText
+    private lateinit var etLokasi: EditText
+    private lateinit var etLinkPendaftaran: EditText
+    private lateinit var spinnerKategori: Spinner
+    private lateinit var btnPublish: Button
+
+    private val viewModel: EventViewModel by viewModels {
+        ViewModelFactory(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -39,6 +51,12 @@ class CreateEventActivity : AppCompatActivity() {
             insets
         }
 
+        initViews()
+        setupListeners()
+        observeViewModel()
+    }
+
+    private fun initViews() {
         val btnBack = findViewById<ImageView>(R.id.btnBack)
         btnBack.setOnClickListener { finish() }
 
@@ -46,29 +64,23 @@ class CreateEventActivity : AppCompatActivity() {
         btnAddTag = findViewById(R.id.btnAddTag)
         tvStartDate = findViewById(R.id.tvStartDate)
         tvEndDate = findViewById(R.id.tvEndDate)
-        val spinnerKategori = findViewById<Spinner>(R.id.spinnerKategori)
-        val btnPublish = findViewById<Button>(R.id.btnPublish)
+        etJudulEvent = findViewById(R.id.etJudulEvent)
+        etPenyelenggara = findViewById(R.id.etPenyelenggara)
+        etLokasi = findViewById(R.id.etLokasi)
+        etLinkPendaftaran = findViewById(R.id.etLinkPendaftaran)
+        spinnerKategori = findViewById(R.id.spinnerKategori)
+        btnPublish = findViewById(R.id.btnPublish)
 
-        // Setup Spinner Kategori
         val categories = arrayOf("Hackathon", "Competition", "Seminar", "Workshop")
-        
-        // item_spinner.xml (warna font putih) untuk tampilan saat dipilih (di form)
         val adapter = ArrayAdapter(this, R.layout.item_spinner, categories)
-        
-        // item_spinner_dropdown.xml (warna font hitam) untuk tampilan list pilihan dropdown agar kontras
         adapter.setDropDownViewResource(R.layout.item_spinner_dropdown)
-
         spinnerKategori.adapter = adapter
+    }
 
-        // Setup Date Pickers
-        tvStartDate.setOnClickListener { showDatePicker { date -> tvStartDate.text = date } }
-        tvEndDate.setOnClickListener { showDatePicker { date -> tvEndDate.text = date } }
-
-        // Setup Date Pickers
+    private fun setupListeners() {
         tvStartDate.setOnClickListener {
             showDatePicker { date ->
                 tvStartDate.text = date
-                // Ganti warna ke putih setelah tanggal masuk
                 tvStartDate.setTextColor(ContextCompat.getColor(this, android.R.color.white))
             }
         }
@@ -76,51 +88,95 @@ class CreateEventActivity : AppCompatActivity() {
         tvEndDate.setOnClickListener {
             showDatePicker { date ->
                 tvEndDate.text = date
-                // Ganti warna ke putih setelah tanggal masuk
                 tvEndDate.setTextColor(ContextCompat.getColor(this, android.R.color.white))
             }
         }
 
-        // Setup Tag Addition
-        btnAddTag.setOnClickListener {
-            showAddTagDialog()
+        btnAddTag.setOnClickListener { showAddTagDialog() }
+
+        btnPublish.setOnClickListener {
+            validateAndPublish()
+        }
+    }
+
+    private fun validateAndPublish() {
+        val title = etJudulEvent.text.toString().trim()
+        val organizer = etPenyelenggara.text.toString().trim()
+        val location = etLokasi.text.toString().trim()
+        val category = spinnerKategori.selectedItem.toString()
+        val startDate = tvStartDate.text.toString()
+        val endDate = tvEndDate.text.toString()
+        val regUrl = etLinkPendaftaran.text.toString().trim()
+        
+        val tagsList = mutableListOf<String>()
+        for (i in 0 until chipGroupTags.childCount) {
+            val view = chipGroupTags.getChildAt(i)
+            if (view is Chip && view != btnAddTag) {
+                tagsList.add(view.text.toString().replace("#", ""))
+            }
         }
 
-        // Setup Publish Button
-        btnPublish.setOnClickListener {
-            Toast.makeText(this, getString(R.string.event_published), Toast.LENGTH_LONG).show()
-            finish()
+        if (title.isEmpty() || organizer.isEmpty() || location.isEmpty() || 
+            startDate == "mm/dd/yyyy" || endDate == "mm/dd/yyyy") {
+            Toast.makeText(this, "Mohon lengkapi data wajib", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        viewModel.publishEvent(
+            title = title,
+            category = category,
+            location = location,
+            startDate = startDate,
+            endDate = endDate,
+            description = "No description provided",
+            organizer = organizer,
+            imageUrl = "https://via.placeholder.com/180",
+            registrationUrl = if (regUrl.isEmpty()) null else regUrl,
+            requirements = listOf("Mahasiswa Umum"),
+            tags = if (tagsList.isEmpty()) null else tagsList
+        )
+    }
+
+    private fun observeViewModel() {
+        viewModel.isLoading.observe(this) { isLoading ->
+            btnPublish.isEnabled = !isLoading
+            btnPublish.text = if (isLoading) "Memproses..." else "Publikasikan"
+        }
+
+        viewModel.errorMessage.observe(this) { message ->
+            message?.let {
+                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+            }
+        }
+
+        viewModel.publishSuccess.observe(this) { success ->
+            if (success) {
+                Toast.makeText(this, "Event berhasil dipublikasikan!", Toast.LENGTH_LONG).show()
+                finish()
+            }
         }
     }
 
     private fun showDatePicker(onDateSelected: (String) -> Unit) {
         val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
         DatePickerDialog(this, { _, y, m, d ->
-            val formattedDate = String.format("%02d/%02d/%04d", m + 1, d, y)
+            val formattedDate = String.format("%04d-%02d-%02d", y, m + 1, d)
             onDateSelected(formattedDate)
-        }, year, month, day).show()
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
     }
 
     private fun showAddTagDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Tambah Tag")
-        
         val input = EditText(this)
-        input.setPadding(32, 32, 32, 32)
-        builder.setView(input)
-
-        builder.setPositiveButton("Tambah") { _, _ ->
-            val tagText = input.text.toString().trim()
-            if (tagText.isNotEmpty()) {
-                addTagToGroup(tagText)
+        input.setHint("Nama Tag (misal: Teknologi)")
+        AlertDialog.Builder(this)
+            .setTitle("Tambah Tag")
+            .setView(input)
+            .setPositiveButton("Tambah") { _, _ ->
+                val tagText = input.text.toString().trim()
+                if (tagText.isNotEmpty()) addTagToGroup(tagText)
             }
-        }
-        builder.setNegativeButton("Batal") { dialog, _ -> dialog.cancel() }
-        builder.show()
+            .setNegativeButton("Batal", null)
+            .show()
     }
 
     private fun addTagToGroup(tagText: String) {
@@ -128,15 +184,8 @@ class CreateEventActivity : AppCompatActivity() {
         chip.text = "#$tagText"
         chip.isCloseIconVisible = true
         chip.setChipBackgroundColorResource(R.color.primary)
-        chip.setTextColor(resources.getColor(R.color.bg_base, null))
-        chip.setCloseIconTintResource(R.color.bg_base)
-        
-        chip.setOnCloseIconClickListener {
-            chipGroupTags.removeView(chip)
-        }
-
-        // Add before the "Add Tag" button
-        val index = chipGroupTags.indexOfChild(btnAddTag)
-        chipGroupTags.addView(chip, index)
+        chip.setTextColor(ContextCompat.getColor(this, R.color.bg_base))
+        chip.setOnCloseIconClickListener { chipGroupTags.removeView(chip) }
+        chipGroupTags.addView(chip, chipGroupTags.indexOfChild(btnAddTag))
     }
 }

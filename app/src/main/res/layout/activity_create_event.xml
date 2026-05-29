@@ -251,7 +251,7 @@
                         app:tint="@color/text_secondary"/>
 
                     <TextView
-                        android:id="@+id/tvEndDate"
+                        android:id="@+id/tvStartDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="mm/dd/yyyy"/>
@@ -282,7 +282,7 @@
                         app:tint="@color/text_secondary"/>
 
                     <TextView
-                        android:id="@+id/tvStartDate"
+                        android:id="@+id/tvEndDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="mm/dd/yyyy"/>
