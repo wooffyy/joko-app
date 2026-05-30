@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Buat Event-mu!"
+            android:text="Buat Event Baru"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -121,6 +121,29 @@
                 android:textColor="@color/white"
                 android:textColorHint="@color/text_disabled"
                 android:textSize="14sp"/>
+
+            <!-- Deskripsi Event -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/label_deskripsi_event"
+                android:textColor="@color/primary"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/etDeskripsiEvent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_input_field"
+                android:gravity="top"
+                android:hint="Tulis deskripsi event secara lengkap..."
+                android:minHeight="120dp"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/text_disabled"
+                android:textSize="14sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -234,9 +257,9 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:paddingStart="16dp"
@@ -247,14 +270,15 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_marginEnd="8dp"
-                        android:src="@drawable/ic_calendar"
+                        android:src="@android:drawable/ic_menu_my_calendar"
                         app:tint="@color/text_secondary"/>
 
                     <TextView
-                        android:id="@+id/tvEndDate"
+                        android:id="@+id/tvStartDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="mm/dd/yyyy"/>
+                        android:text="mm/dd/yyyy"
+                        android:textColor="@color/white"/>
                 </LinearLayout>
 
                 <TextView
@@ -265,9 +289,9 @@
                     android:textColor="@color/white" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:paddingStart="16dp"
@@ -278,14 +302,15 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_marginEnd="8dp"
-                        android:src="@drawable/ic_calendar"
+                        android:src="@android:drawable/ic_menu_my_calendar"
                         app:tint="@color/text_secondary"/>
 
                     <TextView
-                        android:id="@+id/tvStartDate"
+                        android:id="@+id/tvEndDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="mm/dd/yyyy"/>
+                        android:text="mm/dd/yyyy"
+                        android:textColor="@color/white"/>
                 </LinearLayout>
             </LinearLayout>
 

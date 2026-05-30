@@ -24,6 +24,8 @@
     <string name="title_buat_event">Buat Event Baru</string>
     <string name="label_banner_event">Banner Event</string>
     <string name="label_judul_event">Judul Event</string>
+    <string name="label_deskripsi_event">Deskripsi Event</string>
+    <string name="hint_deskripsi_event">Tulis deskripsi event secara lengkap...</string>
     <string name="label_kategori">Kategori</string>
     <string name="label_penyelenggara">Penyelenggara</string>
     <string name="label_lokasi">Lokasi</string>
