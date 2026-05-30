@@ -14,6 +14,7 @@ import com.example.joko.activities.EventViewModel
 import com.example.joko.adapters.EventAdapter
 import com.example.joko.databinding.FragmentEventBinding
 import com.example.joko.utils.ViewModelFactory
+import com.google.android.material.chip.Chip
 
 class EventFragment : Fragment() {
 
@@ -39,6 +40,7 @@ class EventFragment : Fragment() {
 
         setupRecyclerView()
         setupSwipeRefresh()
+        setupListeners() // PENTING: Restore listener agar filter bekerja
         observeViewModel()
 
         // Pemicu sinkronisasi data saat halaman dibuka
@@ -61,7 +63,23 @@ class EventFragment : Fragment() {
         }
     }
 
+    private fun setupListeners() {
+        // Menangani perubahan filter kategori
+        binding.cgCategories.setOnCheckedStateChangeListener { group, checkedIds ->
+            if (checkedIds.isNotEmpty()) {
+                val chip = group.findViewById<Chip>(checkedIds[0])
+                val category = chip.text.toString()
+                viewModel.setFilter(category)
+            } else {
+                // Jika tidak ada yang dipilih, paksa kembali ke "Semua"
+                binding.chipSemua.isChecked = true
+                viewModel.setFilter("Semua")
+            }
+        }
+    }
+
     private fun observeViewModel() {
+        // Observe allEvents yang sudah menangani logic filtering secara reaktif
         viewModel.allEvents.observe(viewLifecycleOwner) { events ->
             adapter.submitList(events)
             binding.tvEmptyState.visibility = if (events.isEmpty()) View.VISIBLE else View.GONE

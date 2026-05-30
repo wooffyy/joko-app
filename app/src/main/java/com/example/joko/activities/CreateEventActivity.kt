@@ -33,6 +33,7 @@ class CreateEventActivity : AppCompatActivity() {
     private lateinit var etPenyelenggara: EditText
     private lateinit var etLokasi: EditText
     private lateinit var etLinkPendaftaran: EditText
+    private lateinit var etDeskripsiEvent: EditText
     private lateinit var spinnerKategori: Spinner
     private lateinit var btnPublish: Button
 
@@ -68,6 +69,7 @@ class CreateEventActivity : AppCompatActivity() {
         etPenyelenggara = findViewById(R.id.etPenyelenggara)
         etLokasi = findViewById(R.id.etLokasi)
         etLinkPendaftaran = findViewById(R.id.etLinkPendaftaran)
+        etDeskripsiEvent = findViewById(R.id.etDeskripsiEvent)
         spinnerKategori = findViewById(R.id.spinnerKategori)
         btnPublish = findViewById(R.id.btnPublish)
 
@@ -104,6 +106,7 @@ class CreateEventActivity : AppCompatActivity() {
         val organizer = etPenyelenggara.text.toString().trim()
         val location = etLokasi.text.toString().trim()
         val category = spinnerKategori.selectedItem.toString()
+        val description = etDeskripsiEvent.text.toString().trim()
         val startDate = tvStartDate.text.toString()
         val endDate = tvEndDate.text.toString()
         val regUrl = etLinkPendaftaran.text.toString().trim()
@@ -117,7 +120,7 @@ class CreateEventActivity : AppCompatActivity() {
         }
 
         if (title.isEmpty() || organizer.isEmpty() || location.isEmpty() || 
-            startDate == "mm/dd/yyyy" || endDate == "mm/dd/yyyy") {
+            description.isEmpty() || startDate == "mm/dd/yyyy" || endDate == "mm/dd/yyyy") {
             Toast.makeText(this, "Mohon lengkapi data wajib", Toast.LENGTH_SHORT).show()
             return
         }
@@ -128,7 +131,7 @@ class CreateEventActivity : AppCompatActivity() {
             location = location,
             startDate = startDate,
             endDate = endDate,
-            description = "No description provided",
+            description = description,
             organizer = organizer,
             imageUrl = "https://via.placeholder.com/180",
             registrationUrl = if (regUrl.isEmpty()) null else regUrl,

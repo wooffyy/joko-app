@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.switchMap
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.joko.data.local.entity.EventEntity
 import com.example.joko.data.remote.request.CreateEventRequest
@@ -18,17 +18,23 @@ class EventViewModel(
 ) : ViewModel() {
 
     private val _filterCategory = MutableLiveData<String>("Semua")
-    
-    // Observasi data dengan filtering di level LiveData/UI logic agar responsif
-    val allEvents: LiveData<List<EventEntity>> = _filterCategory.switchMap { category ->
-        eventRepository.allEvents.asLiveData().switchMap { list ->
-            val filteredList = MutableLiveData<List<EventEntity>>()
-            if (category == "Semua") {
-                filteredList.value = list
-            } else {
-                filteredList.value = list.filter { it.category.equals(category, ignoreCase = true) }
-            }
-            filteredList
+    private val _allEventsFromDb = eventRepository.allEvents.asLiveData()
+
+    // MediatorLiveData menggabungkan data DB dan Filter secara reaktif
+    val allEvents = MediatorLiveData<List<EventEntity>>().apply {
+        addSource(_allEventsFromDb) { list ->
+            value = filterList(list, _filterCategory.value ?: "Semua")
+        }
+        addSource(_filterCategory) { category ->
+            value = filterList(_allEventsFromDb.value ?: emptyList(), category)
+        }
+    }
+
+    private fun filterList(list: List<EventEntity>, category: String): List<EventEntity> {
+        return if (category == "Semua") {
+            list
+        } else {
+            list.filter { it.category.trim().equals(category.trim(), ignoreCase = true) }
         }
     }
 
