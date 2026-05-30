@@ -88,6 +88,17 @@ class EventDetailActivity : AppCompatActivity() {
                 }
             }
 
+            // PRIORITAS 1: Google Maps Intent
+            val location = event.location
+            if (isPhysicalLocation(location)) {
+                btnMap.visibility = android.view.View.VISIBLE
+                btnMap.setOnClickListener {
+                    openGoogleMaps(location)
+                }
+            } else {
+                btnMap.visibility = android.view.View.GONE
+            }
+
             // Prioritas 3: Button Daftar Sekarang
             btnDaftarSekarang.setOnClickListener {
                 val url = event.registrationUrl
@@ -99,6 +110,25 @@ class EventDetailActivity : AppCompatActivity() {
                     Toast.makeText(this@EventDetailActivity, "Link pendaftaran tidak tersedia", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+    }
+
+    private fun isPhysicalLocation(location: String?): Boolean {
+        if (location.isNullOrBlank()) return false
+        val onlineKeywords = listOf("online", "virtual", "zoom meeting","zoom", "google meet", "gmeet", "link", "daring", "youtube", "live", "streaming", "webinar", "discord", "microsoft teams", "teams", "webex", "telegram", "twitch")
+        return !onlineKeywords.any { location.contains(it, ignoreCase = true) }
+    }
+
+    private fun openGoogleMaps(location: String) {
+        val gmmIntentUri = Uri.parse("geo:0,0?q=${Uri.encode(location)}")
+        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+        
+        // Memaksa pencarian hanya di aplikasi Maps (opsional, tapi disarankan agar lebih seamless)
+        // Jika ingin membiarkan user memilih (Waze/Browser), cukup startActivity(mapIntent)
+        try {
+            startActivity(mapIntent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Aplikasi peta tidak ditemukan", Toast.LENGTH_SHORT).show()
         }
     }
 }

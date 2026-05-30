@@ -1,11 +1,6 @@
 package com.example.joko.activities
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.joko.data.local.entity.EventEntity
 import com.example.joko.data.remote.request.CreateEventRequest
 import com.example.joko.data.repository.AuthRepository
@@ -18,6 +13,8 @@ class EventViewModel(
 ) : ViewModel() {
 
     private val _filterCategory = MutableLiveData<String>("Semua")
+    val currentFilter: LiveData<String> = _filterCategory
+
     private val _allEventsFromDb = eventRepository.allEvents.asLiveData()
 
     // MediatorLiveData menggabungkan data DB dan Filter secara reaktif
@@ -28,6 +25,15 @@ class EventViewModel(
         addSource(_filterCategory) { category ->
             value = filterList(_allEventsFromDb.value ?: emptyList(), category)
         }
+    }
+
+    // Langkah 1: Dynamic Categories Source
+    // Mengekstrak daftar kategori unik dari data yang ada di database secara reaktif
+    val categories: LiveData<List<String>> = _allEventsFromDb.map { list ->
+        list.map { it.category.trim() }
+            .filter { it.isNotEmpty() }
+            .distinctBy { it.lowercase() } // Menghindari duplikasi berdasarkan huruf kecil
+            .sorted()
     }
 
     private fun filterList(list: List<EventEntity>, category: String): List<EventEntity> {

@@ -2,7 +2,6 @@ package com.example.joko.activities
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -13,21 +12,20 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.joko.R
 import com.example.joko.utils.ViewModelFactory
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import java.util.Calendar
 import com.example.joko.fragments.ChipInputFragment
 
 class CreateEventActivity : AppCompatActivity() {
 
-    private lateinit var chipInputFragment: ChipInputFragment
+    private lateinit var fragmentTags: ChipInputFragment
+    private lateinit var fragmentRequirements: ChipInputFragment
+    
     private lateinit var tvStartDate: TextView
     private lateinit var tvEndDate: TextView
     private lateinit var etJudulEvent: EditText
@@ -35,9 +33,6 @@ class CreateEventActivity : AppCompatActivity() {
     private lateinit var etLokasi: EditText
     private lateinit var etLinkPendaftaran: EditText
     private lateinit var etDeskripsiEvent: EditText
-    private lateinit var layoutRequirementsContainer: android.widget.LinearLayout
-    private lateinit var etRequirementInput: EditText
-    private lateinit var btnAddRequirement: ImageView
     private lateinit var spinnerKategori: Spinner
     private lateinit var btnPublish: Button
 
@@ -65,9 +60,14 @@ class CreateEventActivity : AppCompatActivity() {
         val btnBack = findViewById<ImageView>(R.id.btnBack)
         btnBack.setOnClickListener { finish() }
 
-        // Inisialisasi Fragment melalui SupportFragmentManager
-        chipInputFragment = supportFragmentManager
+        fragmentTags = supportFragmentManager
             .findFragmentById(R.id.fragmentContainerTags) as ChipInputFragment
+        
+        fragmentRequirements = supportFragmentManager
+            .findFragmentById(R.id.fragmentContainerRequirements) as ChipInputFragment
+
+        fragmentTags.setHint("Tambah Tag (misal: Teknologi)...")
+        fragmentRequirements.setHint("Tambah Persyaratan (misal: Mahasiswa Aktif)...")
 
         tvStartDate = findViewById(R.id.tvStartDate)
         tvEndDate = findViewById(R.id.tvEndDate)
@@ -76,9 +76,7 @@ class CreateEventActivity : AppCompatActivity() {
         etLokasi = findViewById(R.id.etLokasi)
         etLinkPendaftaran = findViewById(R.id.etLinkPendaftaran)
         etDeskripsiEvent = findViewById(R.id.etDeskripsiEvent)
-        layoutRequirementsContainer = findViewById(R.id.layoutRequirementsContainer)
-        etRequirementInput = findViewById(R.id.etRequirementInput)
-        btnAddRequirement = findViewById(R.id.btnAddRequirement)
+        
         spinnerKategori = findViewById(R.id.spinnerKategori)
         btnPublish = findViewById(R.id.btnPublish)
 
@@ -103,14 +101,6 @@ class CreateEventActivity : AppCompatActivity() {
             }
         }
 
-        btnAddRequirement.setOnClickListener {
-            val reqText = etRequirementInput.text.toString().trim()
-            if (reqText.isNotEmpty()) {
-                addRequirementItem(reqText)
-                etRequirementInput.text.clear()
-            }
-        }
-
         btnPublish.setOnClickListener {
             validateAndPublish()
         }
@@ -125,13 +115,17 @@ class CreateEventActivity : AppCompatActivity() {
         val startDate = tvStartDate.text.toString()
         val endDate = tvEndDate.text.toString()
         val regUrl = etLinkPendaftaran.text.toString().trim()
-        val tagsList = chipInputFragment.getTags()
         
-        val requirementsList = mutableListOf<String>()
-        for (i in 0 until layoutRequirementsContainer.childCount) {
-            val itemView = layoutRequirementsContainer.getChildAt(i)
-            val tvText = itemView.findViewById<TextView>(R.id.tvRequirementText)
-            requirementsList.add(tvText.text.toString())
+        val tagsList = if (::fragmentTags.isInitialized && fragmentTags.isAdded) {
+            fragmentTags.getTags()
+        } else {
+            emptyList()
+        }
+
+        val requirementsList = if (::fragmentRequirements.isInitialized && fragmentRequirements.isAdded) {
+            fragmentRequirements.getTags()
+        } else {
+            emptyList()
         }
 
         if (title.isEmpty() || organizer.isEmpty() || location.isEmpty() ||
@@ -151,21 +145,8 @@ class CreateEventActivity : AppCompatActivity() {
             imageUrl = "https://via.placeholder.com/180",
             registrationUrl = if (regUrl.isEmpty()) null else regUrl,
             requirements = requirementsList,
-            tags = if (tagsList.isEmpty()) null else tagsList
+            tags = tagsList
         )
-    }
-
-    private fun addRequirementItem(text: String) {
-        val itemView = LayoutInflater.from(this).inflate(R.layout.item_input_requirement, layoutRequirementsContainer, false)
-        val tvText = itemView.findViewById<TextView>(R.id.tvRequirementText)
-        val btnRemove = itemView.findViewById<ImageView>(R.id.btnRemoveRequirement)
-
-        tvText.text = text
-        btnRemove.setOnClickListener {
-            layoutRequirementsContainer.removeView(itemView)
-        }
-
-        layoutRequirementsContainer.addView(itemView)
     }
 
     private fun observeViewModel() {
