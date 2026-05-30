@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.example.joko.data.local.entity.EventEntity
 import com.example.joko.data.remote.request.CreateEventRequest
@@ -16,7 +17,20 @@ class EventViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    val allEvents: LiveData<List<EventEntity>> = eventRepository.allEvents.asLiveData()
+    private val _filterCategory = MutableLiveData<String>("Semua")
+    
+    // Observasi data dengan filtering di level LiveData/UI logic agar responsif
+    val allEvents: LiveData<List<EventEntity>> = _filterCategory.switchMap { category ->
+        eventRepository.allEvents.asLiveData().switchMap { list ->
+            val filteredList = MutableLiveData<List<EventEntity>>()
+            if (category == "Semua") {
+                filteredList.value = list
+            } else {
+                filteredList.value = list.filter { it.category.equals(category, ignoreCase = true) }
+            }
+            filteredList
+        }
+    }
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -26,6 +40,14 @@ class EventViewModel(
 
     private val _publishSuccess = MutableLiveData<Boolean>()
     val publishSuccess: LiveData<Boolean> = _publishSuccess
+
+    fun setFilter(category: String) {
+        _filterCategory.value = category
+    }
+
+    fun getEventById(id: String): LiveData<EventEntity?> {
+        return eventRepository.getEventById(id).asLiveData()
+    }
 
     fun fetchEvents() {
         _isLoading.value = true

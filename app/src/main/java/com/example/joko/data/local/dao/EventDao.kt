@@ -10,11 +10,20 @@ interface EventDao {
     @Query("SELECT * FROM events")
     fun getAllEvents(): Flow<List<EventEntity>>
 
+    @Query("SELECT * FROM events WHERE id = :id")
+    fun getEventById(id: String): Flow<EventEntity?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEvents(events: List<EventEntity>)
 
     @Query("DELETE FROM events")
     suspend fun deleteAllEvents()
+
+    @Transaction
+    suspend fun replaceEvents(events: List<EventEntity>) {
+        deleteAllEvents()
+        insertEvents(events)
+    }
 
     @Query("SELECT * FROM bookmarked_events ORDER BY createdAt DESC")
     fun getAllBookmarks(): Flow<List<BookmarkEventEntity>>

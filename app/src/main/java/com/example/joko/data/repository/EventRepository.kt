@@ -18,11 +18,14 @@ class EventRepository(
 
     val allEvents: Flow<List<EventEntity>> = eventDao.getAllEvents()
 
+    fun getEventById(id: String): Flow<EventEntity?> = eventDao.getEventById(id)
+
     suspend fun refreshEvents() {
         try {
             val response = apiService.getEvents()
             val entities = response.map { it.toEntity() }
-            eventDao.insertEvents(entities)
+            // Clean Sync Strategy: Hapus data lama dan masukkan data terbaru dari server dalam satu transaksi
+            eventDao.replaceEvents(entities)
         } catch (e: Exception) {
             Log.e(TAG, "Refresh Events Error: ${e.message}")
             throw e
