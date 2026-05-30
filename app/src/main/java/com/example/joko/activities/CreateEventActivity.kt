@@ -22,11 +22,11 @@ import com.example.joko.utils.ViewModelFactory
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import java.util.Calendar
+import com.example.joko.fragments.ChipInputFragment
 
 class CreateEventActivity : AppCompatActivity() {
 
-    private lateinit var chipGroupTags: ChipGroup
-    private lateinit var btnAddTag: Chip
+    private lateinit var chipInputFragment: ChipInputFragment
     private lateinit var tvStartDate: TextView
     private lateinit var tvEndDate: TextView
     private lateinit var etJudulEvent: EditText
@@ -61,8 +61,10 @@ class CreateEventActivity : AppCompatActivity() {
         val btnBack = findViewById<ImageView>(R.id.btnBack)
         btnBack.setOnClickListener { finish() }
 
-        chipGroupTags = findViewById(R.id.chipGroupTags)
-        btnAddTag = findViewById(R.id.btnAddTag)
+        // Inisialisasi Fragment melalui SupportFragmentManager
+        chipInputFragment = supportFragmentManager
+            .findFragmentById(R.id.fragmentContainerTags) as ChipInputFragment
+
         tvStartDate = findViewById(R.id.tvStartDate)
         tvEndDate = findViewById(R.id.tvEndDate)
         etJudulEvent = findViewById(R.id.etJudulEvent)
@@ -94,8 +96,6 @@ class CreateEventActivity : AppCompatActivity() {
             }
         }
 
-        btnAddTag.setOnClickListener { showAddTagDialog() }
-
         btnPublish.setOnClickListener {
             validateAndPublish()
         }
@@ -110,16 +110,9 @@ class CreateEventActivity : AppCompatActivity() {
         val startDate = tvStartDate.text.toString()
         val endDate = tvEndDate.text.toString()
         val regUrl = etLinkPendaftaran.text.toString().trim()
-        
-        val tagsList = mutableListOf<String>()
-        for (i in 0 until chipGroupTags.childCount) {
-            val view = chipGroupTags.getChildAt(i)
-            if (view is Chip && view != btnAddTag) {
-                tagsList.add(view.text.toString().replace("#", ""))
-            }
-        }
+        val tagsList = chipInputFragment.getTags()
 
-        if (title.isEmpty() || organizer.isEmpty() || location.isEmpty() || 
+        if (title.isEmpty() || organizer.isEmpty() || location.isEmpty() ||
             description.isEmpty() || startDate == "mm/dd/yyyy" || endDate == "mm/dd/yyyy") {
             Toast.makeText(this, "Mohon lengkapi data wajib", Toast.LENGTH_SHORT).show()
             return
@@ -166,29 +159,5 @@ class CreateEventActivity : AppCompatActivity() {
             val formattedDate = String.format("%04d-%02d-%02d", y, m + 1, d)
             onDateSelected(formattedDate)
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
-    }
-
-    private fun showAddTagDialog() {
-        val input = EditText(this)
-        input.setHint("Nama Tag (misal: Teknologi)")
-        AlertDialog.Builder(this)
-            .setTitle("Tambah Tag")
-            .setView(input)
-            .setPositiveButton("Tambah") { _, _ ->
-                val tagText = input.text.toString().trim()
-                if (tagText.isNotEmpty()) addTagToGroup(tagText)
-            }
-            .setNegativeButton("Batal", null)
-            .show()
-    }
-
-    private fun addTagToGroup(tagText: String) {
-        val chip = Chip(this)
-        chip.text = "#$tagText"
-        chip.isCloseIconVisible = true
-        chip.setChipBackgroundColorResource(R.color.primary)
-        chip.setTextColor(ContextCompat.getColor(this, R.color.bg_base))
-        chip.setOnCloseIconClickListener { chipGroupTags.removeView(chip) }
-        chipGroupTags.addView(chip, chipGroupTags.indexOfChild(btnAddTag))
     }
 }

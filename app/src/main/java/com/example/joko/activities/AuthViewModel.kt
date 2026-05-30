@@ -39,13 +39,14 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
         name: String?,
         university: String?,
         interests: List<String>?,
+        skills: List<String>?,
         portfolioLink: String?
     ) {
         _isLoading.value = true
         _errorMessage.value = null
         viewModelScope.launch {
             try {
-                repository.signUp(email, password, name, university, interests, portfolioLink)
+                repository.signUp(email, password, name, university, interests, skills, portfolioLink)
                 _authSuccess.value = true
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "Registrasi gagal, silakan coba lagi"

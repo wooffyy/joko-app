@@ -39,7 +39,7 @@
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
                 android:text="HACKATHON"
-                android:textColor="@color/bg_base"
+                android:textColor="@color/white"
                 android:textSize="10sp"
                 android:textStyle="bold" />
         </RelativeLayout>

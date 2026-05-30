@@ -373,24 +373,13 @@
                 android:textColor="@color/text_disabled"
                 android:textSize="12sp" />
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupTags"
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentContainerTags"
+                android:name="com.example.joko.fragments.ChipInputFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/btnAddTag"
-                    style="@style/Widget.MaterialComponents.Chip.Action"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="+ Tambah Tag"
-                    android:textColor="@color/text_secondary"
-                    app:chipBackgroundColor="@color/bg_surface"
-                    app:chipStrokeColor="@color/outline_variant"
-                    app:chipStrokeWidth="1dp" />
-
-            </com.google.android.material.chip.ChipGroup>
+                android:layout_marginTop="8dp"
+                tools:layout="@layout/fragment_chip" />
 
 
 

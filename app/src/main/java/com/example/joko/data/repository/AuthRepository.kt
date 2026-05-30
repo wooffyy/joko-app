@@ -1,5 +1,6 @@
 package com.example.joko.data.repository
 
+import android.R
 import android.util.Log
 import com.example.joko.data.remote.api.ApiService
 import com.example.joko.data.remote.request.AuthRequest
@@ -20,6 +21,7 @@ class AuthRepository(
         name: String?,
         university: String?,
         interests: List<String>?,
+        skills: List<String>?,
         portfolioLink: String?
     ): AuthResponse {
         try {
@@ -27,7 +29,8 @@ class AuthRepository(
                 "full_name" to name,
                 "university" to university,
                 "interests" to interests,
-                "portfolio_links" to portfolioLink
+                "portfolio_link" to portfolioLink,
+                "skills" to skills
             )
 
             val authRequest = AuthRequest(

@@ -18,11 +18,11 @@ import com.example.joko.R
 import com.example.joko.utils.ViewModelFactory
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.example.joko.fragments.ChipInputFragment
 
 class RegisterActivity : AppCompatActivity() {
-
     private var isPasswordVisible = false
-
+    private lateinit var skillInputFragment: ChipInputFragment
     private val viewModel: AuthViewModel by viewModels {
         ViewModelFactory(this)
     }
@@ -66,6 +66,11 @@ class RegisterActivity : AppCompatActivity() {
             etPassword.setSelection(etPassword.text.length)
         }
 
+        skillInputFragment = supportFragmentManager
+            .findFragmentById(R.id.fragmentContainerSkills) as ChipInputFragment
+
+        skillInputFragment.setHint("+ Tambah Skill...")
+
         // Tombol Daftar Sekarang
         btnDaftar.setOnClickListener {
             val email = etEmail.text.toString().trim()
@@ -79,6 +84,7 @@ class RegisterActivity : AppCompatActivity() {
                 findViewById<Chip>(id).text.toString()
             }
 
+            val selectedSkills = skillInputFragment.getTags()
             if (email.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty()) {
                 if (password.length >= 6) {
                     viewModel.register(
@@ -87,6 +93,7 @@ class RegisterActivity : AppCompatActivity() {
                         name = name,
                         university = university,
                         interests = selectedInterests,
+                        skills = selectedSkills,
                         portfolioLink = portfolio
                     )
                 } else {
