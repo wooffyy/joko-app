@@ -59,11 +59,13 @@ class AuthRepository(
             val accessToken = response.accessToken
             val refreshToken = response.refreshToken
             val userId = response.userId
+            val fullName = response.fullName
 
             if (accessToken != null && refreshToken != null && userId != null) {
                 sessionManager.saveAuthToken(accessToken)
                 sessionManager.saveRefreshToken(refreshToken)
                 sessionManager.saveUserId(userId)
+                fullName?.let { sessionManager.saveUserName(it) }
                 Log.d(TAG, "Login successful: UserID $userId saved")
             } else {
                 throw Exception("Login failed: Session data missing")
@@ -91,6 +93,8 @@ class AuthRepository(
     fun isLoggedIn(): Boolean = sessionManager.isLoggedIn()
     
     fun getUserId(): String? = sessionManager.getUserId()
+
+    fun getUserName(): String? = sessionManager.getUserName()
 
     suspend fun validateSession(): Boolean {
         return try {

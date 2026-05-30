@@ -30,6 +30,14 @@ class SessionManager(context: Context) {
         return prefs.getString(USER_ID, null)
     }
 
+    fun saveUserName(name: String) {
+        prefs.edit().putString(USER_NAME, name).apply()
+    }
+
+    fun getUserName(): String? {
+        return prefs.getString(USER_NAME, null)
+    }
+
     fun clearSession() {
         prefs.edit().clear().apply()
     }
@@ -43,5 +51,6 @@ class SessionManager(context: Context) {
         private const val AUTH_TOKEN = "auth_token"
         private const val REFRESH_TOKEN = "refresh_token"
         private const val USER_ID = "user_id"
+        private const val USER_NAME = "user_name"
     }
 }
