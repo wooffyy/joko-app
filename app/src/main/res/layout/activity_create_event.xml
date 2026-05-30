@@ -117,6 +117,8 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_input_field"
                 android:hint="Contoh: JOKO Hackathon 2024"
+                android:inputType="text"
+                android:maxLines="1"
                 android:padding="16dp"
                 android:textColor="@color/white"
                 android:textColorHint="@color/text_disabled"
@@ -144,6 +146,53 @@
                 android:textColor="@color/white"
                 android:textColorHint="@color/text_disabled"
                 android:textSize="14sp" />
+
+            <!-- Persyaratan Event -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Persyaratan Event"
+                android:textColor="@color/primary"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:id="@+id/layoutRequirementsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!-- Requirements will be added here -->
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingEnd="8dp">
+
+                <EditText
+                    android:id="@+id/etRequirementInput"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:hint="Contoh: Mahasiswa aktif..."
+                    android:padding="16dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/text_disabled"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/btnAddRequirement"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="4dp"
+                    android:src="@android:drawable/ic_input_add"
+                    app:tint="@color/primary" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -197,6 +246,8 @@
                         android:layout_marginTop="8dp"
                         android:background="@drawable/bg_input_field"
                         android:hint="Nama Org/Tim"
+                        android:inputType="text"
+                        android:maxLines="1"
                         android:padding="16dp"
                         android:textColor="@color/white"
                         android:textColorHint="@color/text_disabled"
@@ -234,6 +285,8 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:hint="Nama Gedung atau 'Daring'"
+                    android:inputType="text"
+                    android:maxLines="1"
                     android:padding="16dp"
                     android:textColor="@color/white"
                     android:textColorHint="@color/text_disabled"
@@ -350,6 +403,8 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:hint="https://example.com/register"
+                    android:inputType="textUri"
+                    android:maxLines="1"
                     android:padding="16dp"
                     android:textColor="@color/white"
                     android:textColorHint="@color/text_disabled"

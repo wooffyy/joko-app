@@ -2,6 +2,7 @@ package com.example.joko.activities
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -34,6 +35,9 @@ class CreateEventActivity : AppCompatActivity() {
     private lateinit var etLokasi: EditText
     private lateinit var etLinkPendaftaran: EditText
     private lateinit var etDeskripsiEvent: EditText
+    private lateinit var layoutRequirementsContainer: android.widget.LinearLayout
+    private lateinit var etRequirementInput: EditText
+    private lateinit var btnAddRequirement: ImageView
     private lateinit var spinnerKategori: Spinner
     private lateinit var btnPublish: Button
 
@@ -72,6 +76,9 @@ class CreateEventActivity : AppCompatActivity() {
         etLokasi = findViewById(R.id.etLokasi)
         etLinkPendaftaran = findViewById(R.id.etLinkPendaftaran)
         etDeskripsiEvent = findViewById(R.id.etDeskripsiEvent)
+        layoutRequirementsContainer = findViewById(R.id.layoutRequirementsContainer)
+        etRequirementInput = findViewById(R.id.etRequirementInput)
+        btnAddRequirement = findViewById(R.id.btnAddRequirement)
         spinnerKategori = findViewById(R.id.spinnerKategori)
         btnPublish = findViewById(R.id.btnPublish)
 
@@ -96,6 +103,14 @@ class CreateEventActivity : AppCompatActivity() {
             }
         }
 
+        btnAddRequirement.setOnClickListener {
+            val reqText = etRequirementInput.text.toString().trim()
+            if (reqText.isNotEmpty()) {
+                addRequirementItem(reqText)
+                etRequirementInput.text.clear()
+            }
+        }
+
         btnPublish.setOnClickListener {
             validateAndPublish()
         }
@@ -111,6 +126,13 @@ class CreateEventActivity : AppCompatActivity() {
         val endDate = tvEndDate.text.toString()
         val regUrl = etLinkPendaftaran.text.toString().trim()
         val tagsList = chipInputFragment.getTags()
+        
+        val requirementsList = mutableListOf<String>()
+        for (i in 0 until layoutRequirementsContainer.childCount) {
+            val itemView = layoutRequirementsContainer.getChildAt(i)
+            val tvText = itemView.findViewById<TextView>(R.id.tvRequirementText)
+            requirementsList.add(tvText.text.toString())
+        }
 
         if (title.isEmpty() || organizer.isEmpty() || location.isEmpty() ||
             description.isEmpty() || startDate == "mm/dd/yyyy" || endDate == "mm/dd/yyyy") {
@@ -128,9 +150,22 @@ class CreateEventActivity : AppCompatActivity() {
             organizer = organizer,
             imageUrl = "https://via.placeholder.com/180",
             registrationUrl = if (regUrl.isEmpty()) null else regUrl,
-            requirements = listOf("Mahasiswa Umum"),
+            requirements = requirementsList,
             tags = if (tagsList.isEmpty()) null else tagsList
         )
+    }
+
+    private fun addRequirementItem(text: String) {
+        val itemView = LayoutInflater.from(this).inflate(R.layout.item_input_requirement, layoutRequirementsContainer, false)
+        val tvText = itemView.findViewById<TextView>(R.id.tvRequirementText)
+        val btnRemove = itemView.findViewById<ImageView>(R.id.btnRemoveRequirement)
+
+        tvText.text = text
+        btnRemove.setOnClickListener {
+            layoutRequirementsContainer.removeView(itemView)
+        }
+
+        layoutRequirementsContainer.addView(itemView)
     }
 
     private fun observeViewModel() {
