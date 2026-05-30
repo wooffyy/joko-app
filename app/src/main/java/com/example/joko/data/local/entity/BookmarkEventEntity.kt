@@ -11,8 +11,13 @@ data class BookmarkEventEntity(
     val organizer: String,
     val category: String,
     val location: String,
-    val deadline: String,
+    val startDate: String,
+    val endDate: String,
     val description: String,
     val imageUrl: String,
+    val registrationUrl: String? = null,
+    val tags: String? = null,
+    val requirements: String? = null,
+    val ownerId: String,
     val createdAt: Long = System.currentTimeMillis()
 )
