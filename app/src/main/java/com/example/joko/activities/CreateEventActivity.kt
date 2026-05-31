@@ -29,7 +29,9 @@ import com.example.joko.fragments.ChipInputFragment
 class CreateEventActivity : AppCompatActivity() {
 
     private lateinit var fragmentTags: ChipInputFragment
-    private lateinit var fragmentRequirements: ChipInputFragment
+    private lateinit var layoutRequirementsContainer: android.widget.LinearLayout
+    private lateinit var etRequirementInput: EditText
+    private lateinit var btnAddRequirement: ImageView
     
     private lateinit var tvStartDate: TextView
     private lateinit var tvEndDate: TextView
@@ -84,12 +86,8 @@ class CreateEventActivity : AppCompatActivity() {
 
         fragmentTags = supportFragmentManager
             .findFragmentById(R.id.fragmentContainerTags) as ChipInputFragment
-        
-        fragmentRequirements = supportFragmentManager
-            .findFragmentById(R.id.fragmentContainerRequirements) as ChipInputFragment
 
         fragmentTags.setHint("Tambah Tag (misal: Teknologi)...")
-        fragmentRequirements.setHint("Tambah Persyaratan (misal: Mahasiswa Aktif)...")
 
         tvStartDate = findViewById(R.id.tvStartDate)
         tvEndDate = findViewById(R.id.tvEndDate)
@@ -98,6 +96,10 @@ class CreateEventActivity : AppCompatActivity() {
         etLokasi = findViewById(R.id.etLokasi)
         etLinkPendaftaran = findViewById(R.id.etLinkPendaftaran)
         etDeskripsiEvent = findViewById(R.id.etDeskripsiEvent)
+        
+        layoutRequirementsContainer = findViewById(R.id.layoutRequirementsContainer)
+        etRequirementInput = findViewById(R.id.etRequirementInput)
+        btnAddRequirement = findViewById(R.id.btnAddRequirement)
         
         spinnerKategori = findViewById(R.id.spinnerKategori)
         btnPublish = findViewById(R.id.btnPublish)
@@ -132,6 +134,14 @@ class CreateEventActivity : AppCompatActivity() {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
+        btnAddRequirement.setOnClickListener {
+            val reqText = etRequirementInput.text.toString().trim()
+            if (reqText.isNotEmpty()) {
+                addRequirementItem(reqText)
+                etRequirementInput.text.clear()
+            }
+        }
+
         btnPublish.setOnClickListener {
             validateAndPublish()
         }
@@ -164,10 +174,11 @@ class CreateEventActivity : AppCompatActivity() {
             emptyList()
         }
 
-        val requirementsList = if (::fragmentRequirements.isInitialized && fragmentRequirements.isAdded) {
-            fragmentRequirements.getTags()
-        } else {
-            emptyList()
+        val requirementsList = mutableListOf<String>()
+        for (i in 0 until layoutRequirementsContainer.childCount) {
+            val itemView = layoutRequirementsContainer.getChildAt(i)
+            val tvText = itemView.findViewById<TextView>(R.id.tvRequirementText)
+            requirementsList.add(tvText.text.toString())
         }
 
         if (title.isEmpty() || organizer.isEmpty() || location.isEmpty() ||
@@ -189,6 +200,19 @@ class CreateEventActivity : AppCompatActivity() {
             requirements = requirementsList,
             tags = tagsList
         )
+    }
+
+    private fun addRequirementItem(text: String) {
+        val itemView = android.view.LayoutInflater.from(this).inflate(R.layout.item_input_requirement, layoutRequirementsContainer, false)
+        val tvText = itemView.findViewById<TextView>(R.id.tvRequirementText)
+        val btnRemove = itemView.findViewById<ImageView>(R.id.btnRemoveRequirement)
+
+        tvText.text = text
+        btnRemove.setOnClickListener {
+            layoutRequirementsContainer.removeView(itemView)
+        }
+
+        layoutRequirementsContainer.addView(itemView)
     }
 
     private fun observeViewModel() {

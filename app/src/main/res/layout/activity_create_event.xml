@@ -166,13 +166,44 @@
                 android:textColor="@color/primary"
                 android:textSize="14sp" />
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/fragmentContainerRequirements"
-                android:name="com.example.joko.fragments.ChipInputFragment"
+            <LinearLayout
+                android:id="@+id/layoutRequirementsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!-- Requirements will be added here -->
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                tools:layout="@layout/fragment_chip" />
+                android:background="@drawable/bg_input_field"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingEnd="8dp">
+
+                <EditText
+                    android:id="@+id/etRequirementInput"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:hint="Contoh: Mahasiswa aktif..."
+                    android:padding="16dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/text_disabled"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/btnAddRequirement"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_login_card"
+                    android:padding="8dp"
+                    android:src="@android:drawable/ic_input_add"
+                    app:tint="@color/primary" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
