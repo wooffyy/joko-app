@@ -1,6 +1,7 @@
 package com.example.joko.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -10,6 +11,7 @@ import com.example.joko.R
 import com.example.joko.data.local.entity.EventEntity
 import com.example.joko.databinding.ItemEventBinding
 import com.google.android.material.chip.Chip
+import java.util.Locale
 
 class EventAdapter(private val onItemClick: (EventEntity) -> Unit) :
     ListAdapter<EventEntity, EventAdapter.EventViewHolder>(DiffCallback) {
@@ -33,6 +35,18 @@ class EventAdapter(private val onItemClick: (EventEntity) -> Unit) :
                 tvLocation.text = "📍 ${event.location}"
                 tvDate.text = event.startDate
                 tvCategoryLabel.text = event.category.uppercase()
+
+                // Verified Badge Visibility
+                ivVerifiedBadge.visibility = if (event.isVerified) View.VISIBLE else View.GONE
+
+                // Langkah 2: UI Integration - Mengatur Trust Score
+                if (event.trustScore > 0.0) {
+                    tvTrustScore.visibility = View.VISIBLE
+                    tvTrustScore.text = String.format(Locale.US, "⭐ %.1f", event.trustScore)
+                } else {
+                    // Hide jika score 0.0 agar UI tetap clean (subtle approach)
+                    tvTrustScore.visibility = View.GONE
+                }
 
                 Glide.with(itemView.context)
                     .load(event.imageUrl)

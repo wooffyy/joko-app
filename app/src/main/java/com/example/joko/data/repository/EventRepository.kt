@@ -1,6 +1,7 @@
 package com.example.joko.data.repository
 
 import android.util.Log
+import com.example.joko.BuildConfig
 import com.example.joko.data.local.dao.EventDao
 import com.example.joko.data.local.entity.BookmarkEventEntity
 import com.example.joko.data.local.entity.EventEntity
@@ -8,6 +9,8 @@ import com.example.joko.data.remote.api.ApiService
 import com.example.joko.data.remote.request.CreateEventRequest
 import com.example.joko.data.remote.response.EventResponse
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 
 class EventRepository(
@@ -15,6 +18,11 @@ class EventRepository(
     private val eventDao: EventDao
 ) {
     private val TAG = "EventRepository"
+
+    companion object {
+        // Single Source of Truth untuk nama bucket Supabase Storage
+        private const val EVENT_IMAGES_BUCKET = "event-images"
+    }
 
     val allEvents: Flow<List<EventEntity>> = eventDao.getAllEvents()
 
@@ -24,7 +32,6 @@ class EventRepository(
         try {
             val response = apiService.getEvents()
             val entities = response.map { it.toEntity() }
-            // Clean Sync Strategy: Hapus data lama dan masukkan data terbaru dari server dalam satu transaksi
             eventDao.replaceEvents(entities)
         } catch (e: Exception) {
             Log.e(TAG, "Refresh Events Error: ${e.message}")
@@ -51,6 +58,45 @@ class EventRepository(
         }
     }
 
+    // Langkah 1: Data Foundation - Fungsi Upload Binary ke Supabase Storage
+    suspend fun uploadEventBanner(ownerId: String, imageBytes: ByteArray): String {
+        val bucket = EVENT_IMAGES_BUCKET
+        val fileName = "${System.currentTimeMillis()}_${ownerId}.jpg"
+        val path = "banners/$fileName"
+
+        return try {
+            Log.d(TAG, "Uploading image to $bucket/$path...")
+            
+            val requestBody = imageBytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
+            val response = apiService.uploadImage(bucket, path, requestBody)
+
+            if (response.isSuccessful) {
+                // Membangun Public URL secara manual (asumsi bucket bersifat public)
+                val publicUrl = "${BuildConfig.SUPABASE_URL}/storage/v1/object/public/$bucket/$path"
+                Log.d(TAG, "Upload Successful. Public URL: $publicUrl")
+                publicUrl
+            } else {
+                val errorBody = response.errorBody()?.string()
+                Log.e(TAG, "Upload Failed! HTTP ${response.code()}: $errorBody")
+                throw Exception("Upload failed: $errorBody")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Upload Exception: ${e.message}")
+            throw e
+        }
+    }
+
+    suspend fun incrementEventClick(id: String) {
+        try {
+            val response = apiService.incrementEventClick(mapOf("event_id" to id))
+            if (response.isSuccessful) {
+                eventDao.incrementClickCount(id)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error incrementing click count: ${e.message}")
+        }
+    }
+
     val allBookmarks: Flow<List<BookmarkEventEntity>> = eventDao.getAllBookmarks()
 
     fun isBookmarked(id: String): Flow<Boolean> = eventDao.isBookmarked(id)
@@ -69,7 +115,10 @@ class EventRepository(
             registrationUrl = event.registrationUrl,
             tags = event.tags,
             requirements = event.requirements,
-            ownerId = event.ownerId
+            ownerId = event.ownerId,
+            clickCount = event.clickCount,
+            isVerified = event.isVerified,
+            trustScore = event.trustScore
         )
         eventDao.insertBookmark(bookmark)
     }
@@ -90,9 +139,12 @@ class EventRepository(
             description = description ?: "",
             imageUrl = imageUrl ?: "",
             registrationUrl = registrationUrl,
-            tags = tags?.joinToString(","), // Map List to String for Room
-            requirements = requirements?.joinToString(","), // Map List to String for Room
-            ownerId = ownerId ?: ""
+            tags = tags?.joinToString(","),
+            requirements = requirements?.joinToString(","),
+            ownerId = ownerId ?: "",
+            clickCount = clickCount ?: 0,
+            isVerified = isVerified ?: false,
+            trustScore = trustScore ?: 0.0
         )
     }
 }

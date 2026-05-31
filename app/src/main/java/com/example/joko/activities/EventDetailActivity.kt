@@ -40,7 +40,11 @@ class EventDetailActivity : AppCompatActivity() {
         val eventId = intent.getStringExtra("EVENT_ID")
         if (eventId != null) {
             viewModel.getEventById(eventId).observe(this) { event ->
-                event?.let { setupUI(it) }
+                event?.let {
+                    setupUI(it)
+                    // Langkah 4: Trigger increment click count setelah data berhasil dimuat
+                    viewModel.incrementClickCount(it.id)
+                }
             }
         } else {
             Toast.makeText(this, "Event ID tidak ditemukan", Toast.LENGTH_SHORT).show()
@@ -93,7 +97,7 @@ class EventDetailActivity : AppCompatActivity() {
             if (isPhysicalLocation(location)) {
                 btnMap.visibility = android.view.View.VISIBLE
                 btnMap.setOnClickListener {
-                    openGoogleMaps(location)
+                    openGoogleMaps(location!!)
                 }
             } else {
                 btnMap.visibility = android.view.View.GONE
@@ -115,16 +119,13 @@ class EventDetailActivity : AppCompatActivity() {
 
     private fun isPhysicalLocation(location: String?): Boolean {
         if (location.isNullOrBlank()) return false
-        val onlineKeywords = listOf("online", "virtual", "zoom meeting","zoom", "google meet", "gmeet", "link", "daring", "youtube", "live", "streaming", "webinar", "discord", "microsoft teams", "teams", "webex", "telegram", "twitch")
+        val onlineKeywords = listOf("online", "virtual", "zoom", "google meet", "gmeet", "link", "daring", "live")
         return !onlineKeywords.any { location.contains(it, ignoreCase = true) }
     }
 
     private fun openGoogleMaps(location: String) {
         val gmmIntentUri = Uri.parse("geo:0,0?q=${Uri.encode(location)}")
         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-        
-        // Memaksa pencarian hanya di aplikasi Maps (opsional, tapi disarankan agar lebih seamless)
-        // Jika ingin membiarkan user memilih (Waze/Browser), cukup startActivity(mapIntent)
         try {
             startActivity(mapIntent)
         } catch (e: Exception) {

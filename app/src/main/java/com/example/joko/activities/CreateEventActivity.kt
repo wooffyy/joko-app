@@ -1,7 +1,9 @@
 package com.example.joko.activities
 
 import android.app.DatePickerDialog
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -11,11 +13,14 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.bumptech.glide.Glide
 import com.example.joko.R
 import com.example.joko.utils.ViewModelFactory
 import java.util.Calendar
@@ -35,6 +40,23 @@ class CreateEventActivity : AppCompatActivity() {
     private lateinit var etDeskripsiEvent: EditText
     private lateinit var spinnerKategori: Spinner
     private lateinit var btnPublish: Button
+
+    // Image Upload Step 2: Views for Preview
+    private lateinit var ivEventBannerPreview: ImageView
+    private lateinit var layoutUploadPlaceholder: View
+    private var selectedImageUri: Uri? = null
+
+    // Image Upload Step 2: Photo Picker Launcher
+    private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) {
+            selectedImageUri = uri
+            showPreview(uri)
+            // Langkah 4.1: Trigger processing segera setelah URI didapatkan
+            viewModel.processImage(this, uri)
+        } else {
+            Log.d("PhotoPicker", "No media selected")
+        }
+    }
 
     private val viewModel: EventViewModel by viewModels {
         ViewModelFactory(this)
@@ -80,6 +102,10 @@ class CreateEventActivity : AppCompatActivity() {
         spinnerKategori = findViewById(R.id.spinnerKategori)
         btnPublish = findViewById(R.id.btnPublish)
 
+        // Image Upload Step 2: Inisialisasi View Preview & Placeholder
+        ivEventBannerPreview = findViewById(R.id.ivEventBannerPreview)
+        layoutUploadPlaceholder = findViewById(R.id.layoutUploadPlaceholder)
+
         val categories = arrayOf("Hackathon", "Competition", "Seminar", "Workshop")
         val adapter = ArrayAdapter(this, R.layout.item_spinner, categories)
         adapter.setDropDownViewResource(R.layout.item_spinner_dropdown)
@@ -101,9 +127,25 @@ class CreateEventActivity : AppCompatActivity() {
             }
         }
 
+        // Image Upload Step 2: Listener untuk memicu Photo Picker
+        findViewById<View>(R.id.btnUploadBanner).setOnClickListener {
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+
         btnPublish.setOnClickListener {
             validateAndPublish()
         }
+    }
+
+    // Image Upload Step 2: Fungsi untuk menampilkan preview
+    private fun showPreview(uri: Uri) {
+        ivEventBannerPreview.visibility = View.VISIBLE
+        layoutUploadPlaceholder.visibility = View.GONE
+        
+        Glide.with(this)
+            .load(uri)
+            .centerCrop()
+            .into(ivEventBannerPreview)
     }
 
     private fun validateAndPublish() {
@@ -134,6 +176,7 @@ class CreateEventActivity : AppCompatActivity() {
             return
         }
 
+        // Langkah 4.2.B — Clean Parameter: Activity tidak lagi mengirim imageUrl
         viewModel.publishEvent(
             title = title,
             category = category,
@@ -142,7 +185,6 @@ class CreateEventActivity : AppCompatActivity() {
             endDate = endDate,
             description = description,
             organizer = organizer,
-            imageUrl = "https://via.placeholder.com/180",
             registrationUrl = if (regUrl.isEmpty()) null else regUrl,
             requirements = requirementsList,
             tags = tagsList

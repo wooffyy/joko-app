@@ -25,6 +25,9 @@ interface EventDao {
         insertEvents(events)
     }
 
+    @Query("UPDATE events SET clickCount = clickCount + 1 WHERE id = :id")
+    suspend fun incrementClickCount(id: String)
+
     @Query("SELECT * FROM bookmarked_events ORDER BY createdAt DESC")
     fun getAllBookmarks(): Flow<List<BookmarkEventEntity>>
 

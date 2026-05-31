@@ -6,11 +6,13 @@ import com.example.joko.data.remote.request.CreateUserRequest
 import com.example.joko.data.remote.response.AuthResponse
 import com.example.joko.data.remote.response.EventResponse
 import com.example.joko.data.remote.response.UserResponse
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
@@ -39,5 +41,19 @@ interface ApiService {
     suspend fun createEvent(
         @Header("Prefer") prefer: String = "return=minimal",
         @Body request: CreateEventRequest
+    ): Response<Unit>
+
+    @POST("rest/v1/rpc/increment_event_click")
+    suspend fun incrementEventClick(
+        @Body body: Map<String, String>
+    ): Response<Unit>
+
+    // Langkah 1: Data Foundation - Kontrak Upload Image ke Supabase Storage
+    @POST("storage/v1/object/{bucket}/{path}")
+    suspend fun uploadImage(
+        @Path("bucket") bucket: String,
+        @Path("path") path: String,
+        @Body image: RequestBody,
+        @Header("Content-Type") contentType: String = "image/jpeg"
     ): Response<Unit>
 }

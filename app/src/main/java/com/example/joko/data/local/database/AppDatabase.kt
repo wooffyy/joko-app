@@ -10,7 +10,7 @@ import com.example.joko.data.local.entity.EventEntity
 
 @Database(
     entities = [EventEntity::class, BookmarkEventEntity::class],
-    version = 4,
+    version = 7,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
