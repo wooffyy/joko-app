@@ -199,8 +199,7 @@
                     android:id="@+id/btnAddRequirement"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:background="@drawable/bg_login_card"
-                    android:padding="8dp"
+                    android:padding="4dp"
                     android:src="@android:drawable/ic_input_add"
                     app:tint="@color/primary" />
             </LinearLayout>
