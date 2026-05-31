@@ -5,6 +5,7 @@ import android.util.Log
 import com.example.joko.data.remote.api.ApiService
 import com.example.joko.data.remote.request.AuthRequest
 import com.example.joko.data.remote.response.AuthResponse
+import com.example.joko.data.remote.response.ProfileResponse
 import com.example.joko.utils.SessionManager
 import org.json.JSONObject
 import retrofit2.HttpException
@@ -87,6 +88,12 @@ class AuthRepository(
         } catch (e: Exception) {
             throw e
         }
+    }
+
+    suspend fun getUserProfile(): ProfileResponse? {
+        val userId = getUserId() ?: return null
+        val response = apiService.getUserProfile("eq.$userId")
+        return response.firstOrNull()
     }
 
     fun logout() {
