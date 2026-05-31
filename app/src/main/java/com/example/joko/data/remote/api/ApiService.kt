@@ -16,7 +16,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
-    @GET("rest/v1/events?select=*")
+    @GET("rest/v1/events?select=*&owner_id=not.is.null")
     suspend fun getEvents(
         @Query("order") order: String = "start_date.desc"
     ): List<EventResponse>
@@ -43,12 +43,11 @@ interface ApiService {
         @Body request: CreateEventRequest
     ): Response<Unit>
 
-    @POST("rest/v1/rpc/increment_event_click")
+    @POST("rest/v1/rpc/increment_click_count")
     suspend fun incrementEventClick(
         @Body body: Map<String, String>
     ): Response<Unit>
 
-    // Langkah 1: Data Foundation - Kontrak Upload Image ke Supabase Storage
     @POST("storage/v1/object/{bucket}/{path}")
     suspend fun uploadImage(
         @Path("bucket") bucket: String,

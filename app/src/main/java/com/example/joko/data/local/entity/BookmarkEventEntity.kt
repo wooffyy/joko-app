@@ -18,7 +18,7 @@ data class BookmarkEventEntity(
     val registrationUrl: String? = null,
     val tags: String? = null,
     val requirements: String? = null,
-    val ownerId: String,
+    val ownerId: String?,
     val clickCount: Int = 0,
     val isVerified: Boolean = false,
     val trustScore: Double = 0.0,

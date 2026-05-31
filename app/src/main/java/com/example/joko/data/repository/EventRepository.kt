@@ -20,19 +20,21 @@ class EventRepository(
     private val TAG = "EventRepository"
 
     companion object {
-        // Single Source of Truth untuk nama bucket Supabase Storage
         private const val EVENT_IMAGES_BUCKET = "event-images"
     }
 
-    val allEvents: Flow<List<EventEntity>> = eventDao.getAllEvents()
+    val allEvents: Flow<List<EventEntity>> = eventDao.getAllActiveEvents()
 
     fun getEventById(id: String): Flow<EventEntity?> = eventDao.getEventById(id)
 
     suspend fun refreshEvents() {
         try {
             val response = apiService.getEvents()
+
+            // Konversi ke entity, data orphan/null ditangani di toEntity()
             val entities = response.map { it.toEntity() }
-            eventDao.replaceEvents(entities)
+
+            eventDao.syncEventsFromServer(entities)
         } catch (e: Exception) {
             Log.e(TAG, "Refresh Events Error: ${e.message}")
             throw e
@@ -41,8 +43,6 @@ class EventRepository(
 
     suspend fun publishEvent(request: CreateEventRequest): Response<Unit> {
         Log.d(TAG, "Publishing Event to Supabase...")
-        Log.d(TAG, "Request Body: $request")
-        
         return try {
             val response = apiService.createEvent(request = request)
             if (!response.isSuccessful) {
@@ -58,7 +58,6 @@ class EventRepository(
         }
     }
 
-    // Langkah 1: Data Foundation - Fungsi Upload Binary ke Supabase Storage
     suspend fun uploadEventBanner(ownerId: String, imageBytes: ByteArray): String {
         val bucket = EVENT_IMAGES_BUCKET
         val fileName = "${System.currentTimeMillis()}_${ownerId}.jpg"
@@ -66,12 +65,10 @@ class EventRepository(
 
         return try {
             Log.d(TAG, "Uploading image to $bucket/$path...")
-            
             val requestBody = imageBytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
             val response = apiService.uploadImage(bucket, path, requestBody)
 
             if (response.isSuccessful) {
-                // Membangun Public URL secara manual (asumsi bucket bersifat public)
                 val publicUrl = "${BuildConfig.SUPABASE_URL}/storage/v1/object/public/$bucket/$path"
                 Log.d(TAG, "Upload Successful. Public URL: $publicUrl")
                 publicUrl
@@ -90,7 +87,7 @@ class EventRepository(
         try {
             val response = apiService.incrementEventClick(mapOf("event_id" to id))
             if (response.isSuccessful) {
-                eventDao.incrementClickCount(id)
+                eventDao.incrementLocalClickCount(id)
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error incrementing click count: ${e.message}")
@@ -127,13 +124,14 @@ class EventRepository(
         eventDao.deleteBookmark(bookmark)
     }
 
+    // Mapping logis dan pengamanan data null dari network
     private fun EventResponse.toEntity(): EventEntity {
         return EventEntity(
             id = id,
             title = title,
-            organizer = organizer ?: "",
-            category = category ?: "",
-            location = location ?: "",
+            organizer = organizer ?: "Unknown Organizer",
+            category = category ?: "General",
+            location = location ?: "Online / TBD",
             startDate = startDate ?: "",
             endDate = endDate ?: "",
             description = description ?: "",

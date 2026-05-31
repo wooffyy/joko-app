@@ -1,9 +1,17 @@
 package com.example.joko.data.local.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "events")
+@Entity(
+    tableName = "events",
+    indices = [
+        Index(value = ["startDate"]),
+        Index(value = ["ownerId"]),
+        Index(value = ["isVerified"])
+    ]
+)
 data class EventEntity(
     @PrimaryKey
     val id: String,
@@ -18,7 +26,7 @@ data class EventEntity(
     val registrationUrl: String? = null,
     val tags: String? = null,
     val requirements: String? = null,
-    val ownerId: String,
+    val ownerId: String?,
     val clickCount: Int = 0,
     val isVerified: Boolean = false,
     val trustScore: Double = 0.0

@@ -42,7 +42,6 @@ class EventDetailActivity : AppCompatActivity() {
             viewModel.getEventById(eventId).observe(this) { event ->
                 event?.let {
                     setupUI(it)
-                    // Langkah 4: Trigger increment click count setelah data berhasil dimuat
                     viewModel.incrementClickCount(it.id)
                 }
             }
@@ -92,7 +91,7 @@ class EventDetailActivity : AppCompatActivity() {
                 }
             }
 
-            // PRIORITAS 1: Google Maps Intent
+
             val location = event.location
             if (isPhysicalLocation(location)) {
                 btnMap.visibility = android.view.View.VISIBLE
@@ -103,7 +102,7 @@ class EventDetailActivity : AppCompatActivity() {
                 btnMap.visibility = android.view.View.GONE
             }
 
-            // Prioritas 3: Button Daftar Sekarang
+
             btnDaftarSekarang.setOnClickListener {
                 val url = event.registrationUrl
                 if (!url.isNullOrBlank()) {
