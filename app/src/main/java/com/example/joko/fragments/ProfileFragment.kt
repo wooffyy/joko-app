@@ -2,6 +2,7 @@ package com.example.joko.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
@@ -49,7 +50,6 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupContactDropdown(view: View) {
-        val contactSection = view.findViewById<LinearLayout>(R.id.ContactSection)
         val contactHeader = view.findViewById<LinearLayout>(R.id.ContactHeader)
         val contactContent = view.findViewById<LinearLayout>(R.id.ContactContentContainer)
         val contactArrow = view.findViewById<ImageView>(R.id.ivContactArrow)
@@ -60,15 +60,18 @@ class ProfileFragment : Fragment() {
         contactHeader.setOnClickListener {
             isContactExpanded = !isContactExpanded
             
-            // Professional smooth expansion animation
-            TransitionManager.beginDelayedTransition(contactSection)
+            // Apply transition to the root container to ensure siblings below are "pushed" smoothly
+            val transition = AutoTransition().apply {
+                duration = 400
+            }
+            TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
             
             if (isContactExpanded) {
                 contactContent.visibility = View.VISIBLE
-                contactArrow.animate().rotation(180f).setDuration(300).start()
+                contactArrow.animate().rotation(180f).setDuration(400).start()
             } else {
                 contactContent.visibility = View.GONE
-                contactArrow.animate().rotation(0f).setDuration(300).start()
+                contactArrow.animate().rotation(0f).setDuration(400).start()
             }
         }
     }
@@ -103,7 +106,7 @@ class ProfileFragment : Fragment() {
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            // You can add a shimmer or progress bar here if needed
+
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
