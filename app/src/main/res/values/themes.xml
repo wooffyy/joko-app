@@ -45,4 +45,7 @@
     <style name="Theme.Joko.Splash" parent="Theme.Joko">
         <item name="android:windowDisablePreview">true</item>
     </style>
+
+    <style name="CircleImageView" parent="">
+        <item name="cornerSize">50%</item> </style>
 </resources>
