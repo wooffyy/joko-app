@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.joko.data.remote.response.ProfileResponse
 import com.example.joko.data.repository.AuthRepository
 import kotlinx.coroutines.launch
 
@@ -17,6 +18,9 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
 
     private val _authSuccess = MutableLiveData<Boolean>()
     val authSuccess: LiveData<Boolean> = _authSuccess
+
+    private val _userProfile = MutableLiveData<ProfileResponse?>()
+    val userProfile: LiveData<ProfileResponse?> = _userProfile
 
     fun login(email: String, password: String) {
         _isLoading.value = true
@@ -57,6 +61,20 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
     }
 
     fun isLoggedIn(): Boolean = repository.isLoggedIn()
+
+    fun getUserProfile(){
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                val profile = repository.getUserProfile()
+                _userProfile.value = profile
+            } catch (e: Exception) {
+                _errorMessage.value = "Gagal memuat profil: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 
     private val _isSessionValid = MutableLiveData<Boolean>()
     val isSessionValid: LiveData<Boolean> = _isSessionValid

@@ -5,6 +5,7 @@ import com.example.joko.data.remote.request.CreateEventRequest
 import com.example.joko.data.remote.request.CreateUserRequest
 import com.example.joko.data.remote.response.AuthResponse
 import com.example.joko.data.remote.response.EventResponse
+import com.example.joko.data.remote.response.ProfileResponse
 import com.example.joko.data.remote.response.UserResponse
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -55,4 +56,9 @@ interface ApiService {
         @Body image: RequestBody,
         @Header("Content-Type") contentType: String = "image/jpeg"
     ): Response<Unit>
+
+    @GET("rest/v1/users")
+    suspend fun getUserProfile(
+        @Query("id") userId: String
+    ): List<ProfileResponse>
 }
