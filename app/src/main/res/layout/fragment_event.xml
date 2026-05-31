@@ -81,15 +81,6 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/btnFilter"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_marginStart="12dp"
-                android:background="@drawable/bg_input_field"
-                android:padding="16dp"
-                android:src="@android:drawable/ic_menu_sort_by_size"
-                app:tint="@color/white" />
         </LinearLayout>
 
         <HorizontalScrollView
