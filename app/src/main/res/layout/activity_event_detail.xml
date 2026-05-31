@@ -87,14 +87,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="16dp"
-                        android:background="@drawable/bg_input_field"
-                        android:backgroundTint="#5B8FF9"
+                        android:background="@drawable/bg_cat_event"
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="6dp"
                         android:text="Competition"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
-                        android:alpha="0.8" />
+                        android:textSize="12sp" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
