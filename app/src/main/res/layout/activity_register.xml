@@ -84,17 +84,30 @@
             android:textSize="16sp"
             app:layout_constraintTop_toBottomOf="@id/labelNama" />
 
+        <TextView
+            android:id="@+id/tvErrorNama"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_alert"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etNama"
+            android:layout_marginTop="8dp"
+            tools:text="Error message"
+            tools:visibility="visible" />
+
         <!-- Email -->
         <TextView
             android:id="@+id/labelEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:text="Email"
             android:textColor="@color/primary"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/etNama" />
+            app:layout_constraintTop_toBottomOf="@id/tvErrorNama" />
 
         <EditText
             android:id="@+id/etEmail"
@@ -110,17 +123,30 @@
             android:textSize="16sp"
             app:layout_constraintTop_toBottomOf="@id/labelEmail" />
 
+        <TextView
+            android:id="@+id/tvErrorEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_alert"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etEmail"
+            android:layout_marginTop="8dp"
+            tools:text="Error message"
+            tools:visibility="visible" />
+
         <!-- Password -->
         <TextView
             android:id="@+id/labelPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:text="Password"
             android:textColor="@color/primary"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/etEmail" />
+            app:layout_constraintTop_toBottomOf="@id/tvErrorEmail" />
 
         <LinearLayout
             android:id="@+id/layoutPassword"
@@ -153,17 +179,30 @@
                 app:tint="@color/text_secondary" />
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/tvErrorPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_alert"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutPassword"
+            android:layout_marginTop="8dp"
+            tools:text="Error message"
+            tools:visibility="visible" />
+
         <!-- Universitas -->
         <TextView
             android:id="@+id/labelUniv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:text="Pilih Universitas"
             android:textColor="@color/primary"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layoutPassword" />
+            app:layout_constraintTop_toBottomOf="@id/tvErrorPassword" />
 
         <EditText
             android:id="@+id/etPilihUniv"
@@ -183,7 +222,7 @@
             android:id="@+id/labelInterest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="30dp"
             android:text="Pilih Interest"
             android:textColor="@color/primary"
             android:textSize="14sp"
@@ -283,7 +322,7 @@
             android:id="@+id/labelSkill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="30dp"
             android:text="Pilih Skill Utama"
             android:textColor="@color/primary"
             android:textSize="14sp"
@@ -305,7 +344,7 @@
             android:id="@+id/labelPortfolio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="30dp"
             android:text="Link Portfolio (Opsional)"
             android:textColor="@color/primary"
             android:textSize="14sp"

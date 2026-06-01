@@ -25,6 +25,8 @@ import com.example.joko.R
 import com.example.joko.utils.ViewModelFactory
 import java.util.Calendar
 import com.example.joko.fragments.ChipInputFragment
+import com.example.joko.utils.InputFieldValidator
+import com.example.joko.utils.InputFieldValidator.Companion.validateRequiredField
 
 class CreateEventActivity : AppCompatActivity() {
 
@@ -181,25 +183,41 @@ class CreateEventActivity : AppCompatActivity() {
             requirementsList.add(tvText.text.toString())
         }
 
-        if (title.isEmpty() || organizer.isEmpty() || location.isEmpty() ||
-            description.isEmpty() || startDate == "mm/dd/yyyy" || endDate == "mm/dd/yyyy") {
-            Toast.makeText(this, "Mohon lengkapi data wajib", Toast.LENGTH_SHORT).show()
-            return
-        }
+        val layoutStartDate = findViewById<View>(R.id.layoutStartDateContainer)
+        val layoutEndDate = findViewById<View>(R.id.layoutEndDateContainer)
 
-        // Langkah 4.2.B — Clean Parameter: Activity tidak lagi mengirim imageUrl
-        viewModel.publishEvent(
-            title = title,
-            category = category,
-            location = location,
-            startDate = startDate,
-            endDate = endDate,
-            description = description,
-            organizer = organizer,
-            registrationUrl = if (regUrl.isEmpty()) null else regUrl,
-            requirements = requirementsList,
-            tags = tagsList
-        )
+        val isTitleValid = validateRequiredField(title, etJudulEvent, "Judul event tidak boleh kosong")
+        val isDescValid = validateRequiredField(description, etDeskripsiEvent, "Deskripsi event wajib diisi")
+        val isOrganizerValid = validateRequiredField(organizer, etPenyelenggara, "Nama penyelenggara harus diisi")
+        val isLocationValid = validateRequiredField(location, etLokasi, "Lokasi event tidak boleh kosong")
+
+        val isStartDateValid = validateRequiredField(startDate, layoutStartDate, "Pilih tanggal mulai", isDate = true)
+        val isEndDateValid = validateRequiredField(endDate, layoutEndDate, "Pilih tanggal selesai", isDate = true)
+        
+        val regUrlError = when {
+            regUrl.isEmpty() -> "Link pendaftaran wajib diisi"
+            !android.util.Patterns.WEB_URL.matcher(regUrl).matches() -> "Format link tidak valid (gunakan http/https)"
+            else -> null
+        }
+        val isRegUrlValid = InputFieldValidator.validateField(regUrlError != null, etLinkPendaftaran, regUrlError ?: "")
+
+        // Cek hasil akhir validasi, kalo lolos validasi kirim ke viewModel
+        if (isTitleValid && isDescValid && isOrganizerValid && isLocationValid && isStartDateValid && isEndDateValid && isRegUrlValid) {
+            viewModel.publishEvent(
+                title = title,
+                category = category,
+                location = location,
+                startDate = startDate,
+                endDate = endDate,
+                description = description,
+                organizer = organizer,
+                registrationUrl = regUrl,
+                requirements = requirementsList,
+                tags = tagsList
+            )
+        } else {
+            Toast.makeText(this, "Mohon lengkapi data wajib", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun addRequirementItem(text: String) {

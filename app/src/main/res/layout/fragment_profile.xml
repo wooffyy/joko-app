@@ -432,7 +432,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:text="Keluar"
-                        android:textColor="#FF5252"
+                        android:textColor="@color/text_alert"
                         android:textSize="14sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
