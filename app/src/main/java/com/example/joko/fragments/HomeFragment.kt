@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.joko.MainActivity
 import com.example.joko.R
 import com.example.joko.activities.CreateEventActivity
@@ -62,7 +63,6 @@ class HomeFragment : Fragment() {
         val name = viewModel.userName ?: "User"
         tvUserName.text = "Halo, $name"
 
-        val profilePicture = viewModel.
         // Fungsi Logout
         btnLogout.setOnClickListener {
             val sessionManager = SessionManager(requireContext())
@@ -71,6 +71,10 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireContext(), LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
+        }
+
+        ivProfile.setOnClickListener {
+            (activity as? MainActivity)?.navigateToTab(R.id.nav_profile)
         }
 
         // Navigasi ke Create Event Activity
@@ -112,6 +116,7 @@ class HomeFragment : Fragment() {
 
     private fun observeViewModel(view: View) {
         val btnCreateEvent = view.findViewById<Button>(R.id.btnCreateEvent)
+        val ivProfile = view.findViewById<ImageView>(R.id.ivProfile)
         
         // Observe Data
         viewModel.latestEvents.observe(viewLifecycleOwner) { events ->
@@ -120,6 +125,15 @@ class HomeFragment : Fragment() {
 
         viewModel.isVerified.observe(viewLifecycleOwner) { isVerified ->
             btnCreateEvent.visibility = if (isVerified) View.VISIBLE else View.GONE
+        }
+
+        viewModel.pfpUrl.observe(viewLifecycleOwner) { url ->
+            Glide.with(this)
+                .load(url)
+                .placeholder(R.drawable.default_avatar)
+                .error(R.drawable.default_avatar)
+                .circleCrop()
+                .into(ivProfile)
         }
     }
 }

@@ -69,6 +69,20 @@ class EventViewModel(
     private val _publishSuccess = MutableLiveData<Boolean>()
     val publishSuccess: LiveData<Boolean> = _publishSuccess
 
+    private val _pfpUrl = MutableLiveData<String?>()
+    val pfpUrl: LiveData<String?> = _pfpUrl
+
+    fun fetchUserData() {
+        viewModelScope.launch {
+            try {
+                val profile = authRepository.getUserProfile()
+                _pfpUrl.postValue(profile?.pfpUrl)
+            } catch (e: Exception) {
+                _pfpUrl.postValue(null)
+            }
+        }
+    }
+
     fun processImage(context: Context, uri: Uri) {
         _isLoading.value = true
         _errorMessage.value = null

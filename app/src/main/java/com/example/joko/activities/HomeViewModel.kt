@@ -19,6 +19,9 @@ class HomeViewModel(
     private val _isVerified = MutableLiveData<Boolean>()
     val isVerified: LiveData<Boolean> = _isVerified
 
+    private val _pfpUrl = MutableLiveData<String?>()
+    val pfpUrl: LiveData<String?> = _pfpUrl
+
     // Mengambil nama user dari session
     val userName: String? get() = authRepository.getUserName()
 
@@ -32,8 +35,10 @@ class HomeViewModel(
             try {
                 val profile = authRepository.getUserProfile()
                 _isVerified.postValue(profile?.isVerified ?: false)
+                _pfpUrl.postValue(profile?.pfpUrl)
             } catch (e: Exception) {
                 _isVerified.postValue(false)
+                _pfpUrl.postValue(null)
             }
         }
     }

@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.example.joko.MainActivity
 import com.example.joko.R
 import com.example.joko.activities.EventDetailActivity
 import com.example.joko.activities.EventViewModel
@@ -46,6 +48,7 @@ class EventFragment : Fragment() {
 
         // Pemicu sinkronisasi data saat halaman dibuka
         viewModel.fetchEvents()
+        viewModel.fetchUserData()
     }
 
     private fun setupRecyclerView() {
@@ -65,6 +68,11 @@ class EventFragment : Fragment() {
     }
 
     private fun setupListeners() {
+        // Navigasi ke Profile Screen saat foto profil diklik
+        binding.ivProfile.setOnClickListener {
+            (activity as? MainActivity)?.navigateToTab(R.id.nav_profile)
+        }
+
         // Langkah 3.2.2: Listener Guard Stabilization
         binding.cgCategories.setOnCheckedStateChangeListener { group, checkedIds ->
             val currentFilterInViewModel = viewModel.currentFilter.value ?: "Semua"
@@ -111,6 +119,15 @@ class EventFragment : Fragment() {
             message?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
+        }
+
+        viewModel.pfpUrl.observe(viewLifecycleOwner) { url ->
+            Glide.with(this)
+                .load(url)
+                .placeholder(R.drawable.default_avatar)
+                .error(R.drawable.default_avatar)
+                .circleCrop()
+                .into(binding.ivProfile)
         }
     }
 
