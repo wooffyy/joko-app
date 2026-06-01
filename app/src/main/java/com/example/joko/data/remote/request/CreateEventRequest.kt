@@ -14,5 +14,6 @@ data class CreateEventRequest(
     @SerializedName("registration_url") val registrationUrl: String? = null,
     @SerializedName("requirements") val requirements: List<String>? = null,
     @SerializedName("tags") val tags: List<String>? = null,
-    @SerializedName("owner_id") val ownerId: String?
+    @SerializedName("owner_id") val ownerId: String?,
+    @SerializedName("is_verified") val isVerified: Boolean = true
 )

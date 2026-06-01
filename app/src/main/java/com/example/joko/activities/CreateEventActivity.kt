@@ -27,6 +27,8 @@ import java.util.Calendar
 import com.example.joko.fragments.ChipInputFragment
 import com.example.joko.utils.InputFieldValidator
 import com.example.joko.utils.InputFieldValidator.Companion.validateRequiredField
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class CreateEventActivity : AppCompatActivity() {
 
@@ -49,6 +51,8 @@ class CreateEventActivity : AppCompatActivity() {
     private lateinit var ivEventBannerPreview: ImageView
     private lateinit var layoutUploadPlaceholder: View
     private var selectedImageUri: Uri? = null
+
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     // Image Upload Step 2: Photo Picker Launcher
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -89,7 +93,7 @@ class CreateEventActivity : AppCompatActivity() {
         fragmentTags = supportFragmentManager
             .findFragmentById(R.id.fragmentContainerTags) as ChipInputFragment
 
-        fragmentTags.setHint("Tambah Tag (misal: Teknologi)...")
+        fragmentTags.setHint("Tambah Tag...")
 
         tvStartDate = findViewById(R.id.tvStartDate)
         tvEndDate = findViewById(R.id.tvEndDate)
@@ -117,14 +121,17 @@ class CreateEventActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        tvStartDate.setOnClickListener {
+        val layoutStartDate = findViewById<View>(R.id.layoutStartDateContainer)
+        val layoutEndDate = findViewById<View>(R.id.layoutEndDateContainer)
+
+        layoutStartDate.setOnClickListener {
             showDatePicker { date ->
                 tvStartDate.text = date
                 tvStartDate.setTextColor(ContextCompat.getColor(this, android.R.color.white))
             }
         }
 
-        tvEndDate.setOnClickListener {
+        layoutEndDate.setOnClickListener {
             showDatePicker { date ->
                 tvEndDate.text = date
                 tvEndDate.setTextColor(ContextCompat.getColor(this, android.R.color.white))
@@ -191,9 +198,17 @@ class CreateEventActivity : AppCompatActivity() {
         val isOrganizerValid = validateRequiredField(organizer, etPenyelenggara, "Nama penyelenggara harus diisi")
         val isLocationValid = validateRequiredField(location, etLokasi, "Lokasi event tidak boleh kosong")
 
-        val isStartDateValid = validateRequiredField(startDate, layoutStartDate, "Pilih tanggal mulai", isDate = true)
-        val isEndDateValid = validateRequiredField(endDate, layoutEndDate, "Pilih tanggal selesai", isDate = true)
-        
+        val startDateValue = try { LocalDate.parse(startDate, formatter) } catch (e: Exception) { null }
+        val endDateValue = try { LocalDate.parse(endDate, formatter) } catch (e: Exception) { null }
+
+        val endDateError = when {
+            endDate.isEmpty() || endDate == "mm/dd/yyyy" -> "Pilih tanggal selesai"
+            endDateValue != null && endDateValue.isBefore(LocalDate.now()) -> "Tanggal selesai invalid"
+            startDateValue != null && endDateValue != null && endDateValue.isBefore(startDateValue) -> "Tanggal invalid"
+            else -> null
+        }
+        val isEndDateValid = InputFieldValidator.validateField(endDateError != null, layoutEndDate, endDateError ?: "")
+
         val regUrlError = when {
             regUrl.isEmpty() -> "Link pendaftaran wajib diisi"
             !android.util.Patterns.WEB_URL.matcher(regUrl).matches() -> "Format link tidak valid (gunakan http/https)"
@@ -202,7 +217,7 @@ class CreateEventActivity : AppCompatActivity() {
         val isRegUrlValid = InputFieldValidator.validateField(regUrlError != null, etLinkPendaftaran, regUrlError ?: "")
 
         // Cek hasil akhir validasi, kalo lolos validasi kirim ke viewModel
-        if (isTitleValid && isDescValid && isOrganizerValid && isLocationValid && isStartDateValid && isEndDateValid && isRegUrlValid) {
+        if (isTitleValid && isDescValid && isOrganizerValid && isLocationValid && isEndDateValid && isRegUrlValid) {
             viewModel.publishEvent(
                 title = title,
                 category = category,

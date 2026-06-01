@@ -218,6 +218,10 @@ class EventViewModel(
         
         viewModelScope.launch {
             try {
+                // Ambil data profil untuk mendapatkan status verifikasi & trust score terbaru
+                val profile = authRepository.getUserProfile()
+                val isVerifiedStatus = profile?.isVerified ?: false
+
                 // Penentuan finalImageUrl dilakukan secara eksklusif di sini
                 var finalImageUrl = DEFAULT_BANNER_URL
                 
@@ -245,7 +249,8 @@ class EventViewModel(
                     registrationUrl = registrationUrl,
                     requirements = requirements,
                     tags = tags,
-                    ownerId = ownerId
+                    ownerId = ownerId,
+                    isVerified = isVerifiedStatus
                 )
 
                 val response = eventRepository.publishEvent(request)

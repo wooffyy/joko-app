@@ -62,6 +62,9 @@ class EventDetailActivity : AppCompatActivity() {
             tvEventDeadline.text = event.startDate
             tvEventDescription.text = event.description
 
+            // Setup Badge Verifikasi & Trust Score
+            icVerifiedOrganizer.visibility = if (event.isVerified) android.view.View.VISIBLE else android.view.View.GONE
+
             Glide.with(this@EventDetailActivity)
                 .load(event.imageUrl)
                 .placeholder(R.drawable.login_screen_overlay)
