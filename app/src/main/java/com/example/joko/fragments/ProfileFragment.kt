@@ -1,6 +1,7 @@
 package com.example.joko.fragments
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
@@ -80,6 +81,7 @@ class ProfileFragment : Fragment() {
         val btnLogout = view.findViewById<CardView>(R.id.btnLogout)
         val btnEditProfile = view.findViewById<CardView>(R.id.btnEditProfile)
         val btnMyBookmark = view.findViewById<CardView>(R.id.btnMyBookmark)
+        val btnAskVerification = view.findViewById<CardView>(R.id.btnAskVerification)
 
         btnLogout.setOnClickListener {
             viewModel.checkSession() // Double check if actually logged in or session expired
@@ -97,6 +99,12 @@ class ProfileFragment : Fragment() {
 
         btnMyBookmark.setOnClickListener {
             Toast.makeText(requireContext(), "Membuka Bookmark...", Toast.LENGTH_SHORT).show()
+        }
+
+        btnAskVerification.setOnClickListener {
+            val url = "https://forms.gle/iNToPgnBZ47wDfcQ8"
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
         }
     }
 
