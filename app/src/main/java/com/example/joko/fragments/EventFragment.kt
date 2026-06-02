@@ -2,6 +2,7 @@ package com.example.joko.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -82,7 +83,6 @@ class EventFragment : Fragment() {
                 val selectedCategory = chip.text.toString()
                 
                 // Guard: Hanya panggil setFilter jika kategori yang diklik berbeda dengan filter aktif di ViewModel.
-                // Ini krusial untuk mencegah loop/redundant rerender saat programmatic selection di renderFilterChips.
                 if (!selectedCategory.equals(currentFilterInViewModel, ignoreCase = true)) {
                     viewModel.setFilter(selectedCategory)
                 }
@@ -92,7 +92,6 @@ class EventFragment : Fragment() {
                     binding.chipSemua.isChecked = true
                     viewModel.setFilter("Semua")
                 } else {
-                    // Jika sudah di "Semua", pastikan visual tetap sinkron
                     binding.chipSemua.isChecked = true
                 }
             }
@@ -140,17 +139,21 @@ class EventFragment : Fragment() {
             binding.cgCategories.removeViewAt(1)
         }
 
-        // 2. Membuat Chip baru untuk setiap kategori dari database
+        // 2. Membuat Chip baru dengan sinkronisasi identitas visual (Warna + Teks)
         categories.forEach { category ->
             if (!category.equals("Semua", ignoreCase = true)) {
-                val chip = Chip(requireContext(), null, com.google.android.material.R.attr.chipStyle).apply {
+                // Gunakan ContextThemeWrapper untuk menyuntikkan dasar Geometri
+                val themedContext = ContextThemeWrapper(requireContext(), R.style.Widget_App_Chip_Filter)
+                val chip = Chip(themedContext).apply {
                     text = category.replaceFirstChar { it.uppercase() }
                     isCheckable = true
                     id = View.generateViewId()
+                    
+                    // Explicit Visual Identity Injection (Warna & State)
                     setChipBackgroundColorResource(R.color.chip_bg_selector)
                     setChipStrokeColorResource(R.color.chip_stroke_selector)
-                    setChipStrokeWidthResource(R.dimen.chip_stroke_width)
                     setTextColor(requireContext().getColorStateList(R.color.chip_text_selector))
+                    setTextAppearance(R.style.TextAppearance_App_Chip)
                 }
                 binding.cgCategories.addView(chip)
             }

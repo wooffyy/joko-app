@@ -63,6 +63,7 @@
                 android:paddingHorizontal="16dp">
 
                 <ImageView
+                    android:id="@+id/ivSearchIcon"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@android:drawable/ic_menu_search"
@@ -98,17 +99,12 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipSemua"
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    style="@style/Widget.App.Chip.Filter"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
+                    android:layout_height="wrap_content"
                     android:checkable="true"
                     android:checked="true"
-                    android:text="Semua"
-                    android:textColor="@color/chip_text_selector"
-                    app:checkedIconVisible="false"
-                    app:chipBackgroundColor="@color/chip_bg_selector"
-                    app:chipStrokeColor="@color/chip_stroke_selector"
-                    app:chipStrokeWidth="1dp" />
+                    android:text="Semua" />
 
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
