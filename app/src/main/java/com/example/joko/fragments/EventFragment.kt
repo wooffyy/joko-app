@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.joko.MainActivity
 import com.example.joko.R
+import com.example.joko.activities.CreateEventActivity
 import com.example.joko.activities.EventDetailActivity
 import com.example.joko.activities.EventViewModel
 import com.example.joko.adapters.EventAdapter
@@ -75,6 +76,12 @@ class EventFragment : Fragment() {
             (activity as? MainActivity)?.navigateToTab(R.id.nav_profile)
         }
 
+        // Navigasi ke Create Event Activity
+        binding.btnCreateEvent.setOnClickListener {
+            val intent = Intent(requireContext(), CreateEventActivity::class.java)
+            startActivity(intent)
+        }
+
         // Langkah 2: Fragment Search Integration
         // Mengirim input user ke ViewModel secara realtime
         binding.etSearch.doOnTextChanged { text, _, _, _ ->
@@ -111,6 +118,11 @@ class EventFragment : Fragment() {
         viewModel.allEvents.observe(viewLifecycleOwner) { events ->
             adapter.submitList(events)
             binding.tvEmptyState.visibility = if (events.isEmpty()) View.VISIBLE else View.GONE
+        }
+
+        // Observe isVerified untuk menampilkan/menyembunyikan tombol Buat Event
+        viewModel.isVerified.observe(viewLifecycleOwner) { isVerified ->
+            binding.btnCreateEvent.visibility = if (isVerified) View.VISIBLE else View.GONE
         }
 
         // Langkah 3.1: Dynamic Chip Rendering

@@ -26,6 +26,9 @@ class EventViewModel(
         private const val DEFAULT_BANNER_URL = "https://via.placeholder.com/180"
     }
 
+    private val _isVerified = MutableLiveData<Boolean>()
+    val isVerified: LiveData<Boolean> = _isVerified
+
     private val _imageByteArray = MutableLiveData<ByteArray?>()
     val imageByteArray: LiveData<ByteArray?> = _imageByteArray
 
@@ -131,8 +134,10 @@ class EventViewModel(
         viewModelScope.launch {
             try {
                 val profile = authRepository.getUserProfile()
+                _isVerified.postValue(profile?.isVerified ?: false)
                 _pfpUrl.postValue(profile?.pfpUrl)
             } catch (e: Exception) {
+                _isVerified.postValue(false)
                 _pfpUrl.postValue(null)
             }
         }

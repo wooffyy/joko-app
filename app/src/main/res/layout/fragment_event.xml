@@ -82,6 +82,21 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
+            <Button
+                android:id="@+id/btnCreateEvent"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_marginStart="12dp"
+                android:backgroundTint="@color/primary"
+                android:paddingHorizontal="16dp"
+                android:text="@string/btn_buat_event"
+                android:textAllCaps="false"
+                android:textColor="#0D0F14"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:cornerRadius="12dp"
+                tools:visibility="visible" />
+
         </LinearLayout>
 
         <HorizontalScrollView
