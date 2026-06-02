@@ -83,17 +83,6 @@ class EventRepository(
         }
     }
 
-    suspend fun incrementEventClick(id: String) {
-        try {
-            val response = apiService.incrementEventClick(mapOf("event_id" to id))
-            if (response.isSuccessful) {
-                eventDao.incrementLocalClickCount(id)
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error incrementing click count: ${e.message}")
-        }
-    }
-
     val allBookmarks: Flow<List<BookmarkEventEntity>> = eventDao.getAllBookmarks()
 
     fun isBookmarked(id: String): Flow<Boolean> = eventDao.isBookmarked(id)
@@ -113,7 +102,6 @@ class EventRepository(
             tags = event.tags,
             requirements = event.requirements,
             ownerId = event.ownerId,
-            clickCount = event.clickCount,
             isVerified = event.isVerified,
             trustScore = event.trustScore
         )
@@ -140,7 +128,6 @@ class EventRepository(
             tags = tags?.joinToString(","),
             requirements = requirements?.joinToString(","),
             ownerId = ownerId ?: "",
-            clickCount = clickCount ?: 0,
             isVerified = isVerified ?: false,
             trustScore = trustScore ?: 0.0
         )
