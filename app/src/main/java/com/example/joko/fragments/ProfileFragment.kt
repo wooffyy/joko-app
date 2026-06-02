@@ -109,12 +109,21 @@ class ProfileFragment : Fragment() {
     }
 
     private fun observeViewModel(view: View) {
+        val progressBar = view.findViewById<android.widget.ProgressBar>(R.id.pbProfile)
+        val scrollView = view.findViewById<android.widget.ScrollView>(R.id.svProfile)
+
         viewModel.userProfile.observe(viewLifecycleOwner) { profile ->
-            profile?.let { updateUI(view, it) }
+            profile?.let { 
+                updateUI(view, it)
+                scrollView.visibility = View.VISIBLE
+            }
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-
+            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            if (isLoading) {
+                scrollView.visibility = View.INVISIBLE
+            }
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
@@ -128,7 +137,6 @@ class ProfileFragment : Fragment() {
         val ivProfilePicture = view.findViewById<ImageView>(R.id.ivProfilePicture)
         val tvUsername = view.findViewById<TextView>(R.id.tvUsername)
         val tvUniversity = view.findViewById<TextView>(R.id.tvUniversity)
-        val tvTrustScore = view.findViewById<TextView>(R.id.tvTrustScore)
         val tvBio = view.findViewById<TextView>(R.id.tvBio)
         val cgSkills = view.findViewById<ChipGroup>(R.id.cgSkills)
         val ivVerifiedBadge = view.findViewById<ImageView>(R.id.ivVerifiedBadge)
@@ -136,7 +144,6 @@ class ProfileFragment : Fragment() {
         // Profile Details
         tvUsername.text = profile.name
         tvUniversity.text = profile.university ?: "Mahasiswa"
-        tvTrustScore.text = "⭐ ${profile.trustScore ?: 0.0}"
         tvBio.text = profile.bio ?: "Belum ada bio."
         ivVerifiedBadge.visibility = if (profile.isVerified == true) View.VISIBLE else View.GONE
 
