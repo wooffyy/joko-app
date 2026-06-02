@@ -34,14 +34,21 @@ class EventViewModel(
     private val _filterCategory = MutableLiveData<String>("Semua")
     val currentFilter: LiveData<String> = _filterCategory
 
+    // Langkah 1: Search State Preparation
+    private val _searchQuery = MutableLiveData<String>("")
+    
     private val _allEventsFromDb = eventRepository.allEvents.asLiveData()
 
+    // MediatorLiveData menggabungkan data DB, Filter Kategori, dan Search Query secara reaktif
     val allEvents = MediatorLiveData<List<EventEntity>>().apply {
         addSource(_allEventsFromDb) { list ->
-            value = filterList(list, _filterCategory.value ?: "Semua")
+            value = filterList(list, _filterCategory.value ?: "Semua", _searchQuery.value ?: "")
         }
         addSource(_filterCategory) { category ->
-            value = filterList(_allEventsFromDb.value ?: emptyList(), category)
+            value = filterList(_allEventsFromDb.value ?: emptyList(), category, _searchQuery.value ?: "")
+        }
+        addSource(_searchQuery) { query ->
+            value = filterList(_allEventsFromDb.value ?: emptyList(), _filterCategory.value ?: "Semua", query)
         }
     }
 
@@ -52,11 +59,59 @@ class EventViewModel(
             .sorted()
     }
 
-    private fun filterList(list: List<EventEntity>, category: String): List<EventEntity> {
-        return if (category == "Semua") {
+    // Logic filtering gabungan: Kategori (AND) Search Query
+    private fun filterList(list: List<EventEntity>, category: String, query: String): List<EventEntity> {
+        val trimmedQuery = query.trim()
+        
+        // 1. Filter berdasarkan kategori
+        val categoryFiltered = if (category == "Semua") {
             list
         } else {
             list.filter { it.category.trim().equals(category.trim(), ignoreCase = true) }
+        }
+
+        // 2. Filter berdasarkan search query (Title atau Organizer)
+        return if (trimmedQuery.isEmpty()) {
+            categoryFiltered
+        } else {
+            categoryFiltered.filter { 
+                it.title.contains(trimmedQuery, ignoreCase = true) || 
+                it.organizer.contains(trimmedQuery, ignoreCase = true)
+            }
+        }
+    }
+
+    fun setFilter(category: String) {
+        _filterCategory.value = category
+    }
+
+    // Setter untuk Search Query
+    fun setSearch(query: String) {
+        _searchQuery.value = query
+    }
+
+    fun getEventById(id: String): LiveData<EventEntity?> {
+        return eventRepository.getEventById(id).asLiveData()
+    }
+
+    fun incrementClickCount(id: String) {
+        if (incrementedEventIds.contains(id)) return
+        incrementedEventIds.add(id)
+        viewModelScope.launch {
+            eventRepository.incrementEventClick(id)
+        }
+    }
+
+    fun fetchEvents() {
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                eventRepository.refreshEvents()
+            } catch (e: Exception) {
+                _errorMessage.value = "Gagal memperbarui data: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
@@ -164,37 +219,6 @@ class EventViewModel(
         }
     }
 
-    fun setFilter(category: String) {
-        _filterCategory.value = category
-    }
-
-    fun getEventById(id: String): LiveData<EventEntity?> {
-        return eventRepository.getEventById(id).asLiveData()
-    }
-
-    fun incrementClickCount(id: String) {
-        if (incrementedEventIds.contains(id)) return
-        incrementedEventIds.add(id)
-        viewModelScope.launch {
-            eventRepository.incrementEventClick(id)
-        }
-    }
-
-    fun fetchEvents() {
-        _isLoading.value = true
-        viewModelScope.launch {
-            try {
-                eventRepository.refreshEvents()
-            } catch (e: Exception) {
-                _errorMessage.value = "Gagal memperbarui data: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
-    // Langkah 4.2.A — ViewModel Signature Fix
-    // Parameter imageUrl dihapus agar ViewModel menjadi Single Source of Truth
     fun publishEvent(
         title: String,
         category: String,
@@ -218,11 +242,6 @@ class EventViewModel(
         
         viewModelScope.launch {
             try {
-                // Ambil data profil untuk mendapatkan status verifikasi & trust score terbaru
-                val profile = authRepository.getUserProfile()
-                val isVerifiedStatus = profile?.isVerified ?: false
-
-                // Penentuan finalImageUrl dilakukan secara eksklusif di sini
                 var finalImageUrl = DEFAULT_BANNER_URL
                 
                 val imageBytes = _imageByteArray.value
@@ -236,7 +255,6 @@ class EventViewModel(
                     }
                 }
 
-                // Menggunakan parameter camelCase sesuai dengan data class CreateEventRequest
                 val request = CreateEventRequest(
                     title = title,
                     category = category,
@@ -249,8 +267,7 @@ class EventViewModel(
                     registrationUrl = registrationUrl,
                     requirements = requirements,
                     tags = tags,
-                    ownerId = ownerId,
-                    isVerified = isVerifiedStatus
+                    ownerId = ownerId
                 )
 
                 val response = eventRepository.publishEvent(request)

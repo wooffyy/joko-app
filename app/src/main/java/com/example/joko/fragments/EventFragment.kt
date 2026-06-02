@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -74,6 +75,12 @@ class EventFragment : Fragment() {
             (activity as? MainActivity)?.navigateToTab(R.id.nav_profile)
         }
 
+        // Langkah 2: Fragment Search Integration
+        // Mengirim input user ke ViewModel secara realtime
+        binding.etSearch.doOnTextChanged { text, _, _, _ ->
+            viewModel.setSearch(text?.toString() ?: "")
+        }
+
         // Langkah 3.2.2: Listener Guard Stabilization
         binding.cgCategories.setOnCheckedStateChangeListener { group, checkedIds ->
             val currentFilterInViewModel = viewModel.currentFilter.value ?: "Semua"
@@ -92,6 +99,7 @@ class EventFragment : Fragment() {
                     binding.chipSemua.isChecked = true
                     viewModel.setFilter("Semua")
                 } else {
+                    // Jika sudah di "Semua", pastikan visual tetap sinkron
                     binding.chipSemua.isChecked = true
                 }
             }
@@ -99,7 +107,7 @@ class EventFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        // Observe allEvents yang sudah menangani logic filtering secara reaktif
+        // Observe allEvents yang sudah menangani logic filtering secara reaktif (DB + Category + Search)
         viewModel.allEvents.observe(viewLifecycleOwner) { events ->
             adapter.submitList(events)
             binding.tvEmptyState.visibility = if (events.isEmpty()) View.VISIBLE else View.GONE
