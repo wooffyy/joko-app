@@ -32,8 +32,6 @@ class EventViewModel(
     private val _imageByteArray = MutableLiveData<ByteArray?>()
     val imageByteArray: LiveData<ByteArray?> = _imageByteArray
 
-    private val incrementedEventIds = mutableSetOf<String>()
-
     private val _filterCategory = MutableLiveData<String>("Semua")
     val currentFilter: LiveData<String> = _filterCategory
 
@@ -95,14 +93,6 @@ class EventViewModel(
 
     fun getEventById(id: String): LiveData<EventEntity?> {
         return eventRepository.getEventById(id).asLiveData()
-    }
-
-    fun incrementClickCount(id: String) {
-        if (incrementedEventIds.contains(id)) return
-        incrementedEventIds.add(id)
-        viewModelScope.launch {
-            eventRepository.incrementEventClick(id)
-        }
     }
 
     fun fetchEvents() {
@@ -247,6 +237,11 @@ class EventViewModel(
         
         viewModelScope.launch {
             try {
+                // Ambil data profil untuk mendapatkan status verifikasi & trust score terbaru
+                val profile = authRepository.getUserProfile()
+                val isVerifiedStatus = profile?.isVerified ?: false
+
+                // Penentuan finalImageUrl dilakukan secara eksklusif di sini
                 var finalImageUrl = DEFAULT_BANNER_URL
                 
                 val imageBytes = _imageByteArray.value
@@ -260,6 +255,7 @@ class EventViewModel(
                     }
                 }
 
+                // Menggunakan parameter camelCase sesuai dengan data class CreateEventRequest
                 val request = CreateEventRequest(
                     title = title,
                     category = category,
@@ -272,7 +268,8 @@ class EventViewModel(
                     registrationUrl = registrationUrl,
                     requirements = requirements,
                     tags = tags,
-                    ownerId = ownerId
+                    ownerId = ownerId,
+                    isVerified = isVerifiedStatus
                 )
 
                 val response = eventRepository.publishEvent(request)
