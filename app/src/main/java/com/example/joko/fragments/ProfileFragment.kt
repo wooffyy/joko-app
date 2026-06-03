@@ -102,7 +102,7 @@ class ProfileFragment : Fragment() {
         }
 
         btnAskVerification.setOnClickListener {
-            val url = "https://forms.gle/iNToPgnBZ47wDfcQ8"
+            val url = "https://forms.gle/8PpNagB1rKUwMESv5"
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
         }
