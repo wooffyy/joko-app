@@ -61,18 +61,25 @@ class EventViewModel(
 
     private fun filterList(list: List<EventEntity>, category: String, query: String): List<EventEntity> {
         val trimmedQuery = query.trim()
+        
+        // 1. Filter berdasarkan kategori (AND logic)
         val categoryFiltered = if (category == "Semua") {
             list
         } else {
             list.filter { it.category.trim().equals(category.trim(), ignoreCase = true) }
         }
 
+        // 2. Filter berdasarkan search query (OR logic multi-field)
         return if (trimmedQuery.isEmpty()) {
             categoryFiltered
         } else {
-            categoryFiltered.filter { 
-                it.title.contains(trimmedQuery, ignoreCase = true) || 
-                it.organizer.contains(trimmedQuery, ignoreCase = true)
+            categoryFiltered.filter { event ->
+                event.title.contains(trimmedQuery, ignoreCase = true) || 
+                event.organizer.contains(trimmedQuery, ignoreCase = true) ||
+                event.category.contains(trimmedQuery, ignoreCase = true) ||
+                event.location.contains(trimmedQuery, ignoreCase = true) ||
+                (event.description.contains(trimmedQuery, ignoreCase = true)) ||
+                (event.tags?.contains(trimmedQuery, ignoreCase = true) == true)
             }
         }
     }
@@ -230,18 +237,15 @@ class EventViewModel(
             return
         }
 
-        // Reset states secara eksplisit sebelum memulai flow
         _isLoading.value = true
         _errorMessage.value = null
         _publishSuccess.value = false
         
         viewModelScope.launch {
             try {
-                // 1. Ambil data profil untuk verifikasi status terbaru
                 val profile = authRepository.getUserProfile()
                 val isVerifiedStatus = profile?.isVerified ?: false
 
-                // 2. Alur Upload Banner (Gagal di sini akan langsung ke catch utama)
                 var finalImageUrl = DEFAULT_BANNER_URL
                 val imageBytes = _imageByteArray.value
                 
@@ -249,7 +253,6 @@ class EventViewModel(
                     finalImageUrl = eventRepository.uploadEventBanner(ownerId, imageBytes)
                 }
 
-                // 3. Persiapan Request
                 val request = CreateEventRequest(
                     title = title,
                     category = category,
@@ -266,7 +269,6 @@ class EventViewModel(
                     isVerified = isVerifiedStatus
                 )
 
-                // 4. Publikasi
                 val response = eventRepository.publishEvent(request)
                 if (response.isSuccessful) {
                     _publishSuccess.value = true
@@ -276,10 +278,8 @@ class EventViewModel(
                     _errorMessage.value = "Gagal mempublikasikan event: $errorBody"
                 }
             } catch (e: Exception) {
-                // Menangkap semua error (Network, Upload, Auth, dll) dalam satu tempat
                 _errorMessage.value = e.message ?: "Terjadi kesalahan saat memproses event"
             } finally {
-                // Menjamin isLoading selalu reset ke false, sehingga tombol bisa di-klik kembali (retry)
                 _isLoading.value = false
             }
         }
