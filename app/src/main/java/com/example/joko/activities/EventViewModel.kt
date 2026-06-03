@@ -24,6 +24,7 @@ class EventViewModel(
 
     companion object {
         private const val DEFAULT_BANNER_URL = "https://via.placeholder.com/180"
+        private const val MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024 // 2MB limit
     }
 
     private val _isVerified = MutableLiveData<Boolean>()
@@ -35,12 +36,10 @@ class EventViewModel(
     private val _filterCategory = MutableLiveData<String>("Semua")
     val currentFilter: LiveData<String> = _filterCategory
 
-    // Langkah 1: Search State Preparation
     private val _searchQuery = MutableLiveData<String>("")
     
     private val _allEventsFromDb = eventRepository.allEvents.asLiveData()
 
-    // MediatorLiveData menggabungkan data DB, Filter Kategori, dan Search Query secara reaktif
     val allEvents = MediatorLiveData<List<EventEntity>>().apply {
         addSource(_allEventsFromDb) { list ->
             value = filterList(list, _filterCategory.value ?: "Semua", _searchQuery.value ?: "")
@@ -60,18 +59,14 @@ class EventViewModel(
             .sorted()
     }
 
-    // Logic filtering gabungan: Kategori (AND) Search Query
     private fun filterList(list: List<EventEntity>, category: String, query: String): List<EventEntity> {
         val trimmedQuery = query.trim()
-        
-        // 1. Filter berdasarkan kategori
         val categoryFiltered = if (category == "Semua") {
             list
         } else {
             list.filter { it.category.trim().equals(category.trim(), ignoreCase = true) }
         }
 
-        // 2. Filter berdasarkan search query (Title atau Organizer)
         return if (trimmedQuery.isEmpty()) {
             categoryFiltered
         } else {
@@ -86,7 +81,6 @@ class EventViewModel(
         _filterCategory.value = category
     }
 
-    // Setter untuk Search Query
     fun setSearch(query: String) {
         _searchQuery.value = query
     }
@@ -154,6 +148,10 @@ class EventViewModel(
         }
     }
 
+    fun resetImageByteArray() {
+        _imageByteArray.value = null
+    }
+
     private fun validateFileMetadata(context: Context, uri: Uri) {
         val contentResolver = context.contentResolver
         val type = contentResolver.getType(uri)
@@ -165,8 +163,8 @@ class EventViewModel(
             val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
             cursor.moveToFirst()
             val size = cursor.getLong(sizeIndex)
-            if (size > 5 * 1024 * 1024) {
-                throw Exception("Ukuran file terlalu besar. Maksimal 5MB.")
+            if (size > MAX_IMAGE_SIZE_BYTES) {
+                throw Exception("Ukuran file terlalu besar. Maksimal 2MB.")
             }
         }
     }
@@ -207,8 +205,8 @@ class EventViewModel(
             val result = outputStream.toByteArray()
             bitmap.recycle()
             
-            if (result.size > 5 * 1024 * 1024) {
-                throw Exception("Gagal mengompres gambar di bawah 5MB")
+            if (result.size > MAX_IMAGE_SIZE_BYTES) {
+                throw Exception("Gagal mengompres gambar di bawah 2MB")
             }
             result
         }
@@ -228,34 +226,30 @@ class EventViewModel(
     ) {
         val ownerId = authRepository.getUserId()
         if (ownerId == null) {
-            _errorMessage.value = "User session expired. Please login again."
+            _errorMessage.value = "Sesi berakhir. Silakan login kembali."
             return
         }
 
+        // Reset states secara eksplisit sebelum memulai flow
         _isLoading.value = true
         _errorMessage.value = null
+        _publishSuccess.value = false
         
         viewModelScope.launch {
             try {
-                // Ambil data profil untuk mendapatkan status verifikasi & trust score terbaru
+                // 1. Ambil data profil untuk verifikasi status terbaru
                 val profile = authRepository.getUserProfile()
                 val isVerifiedStatus = profile?.isVerified ?: false
 
-                // Penentuan finalImageUrl dilakukan secara eksklusif di sini
+                // 2. Alur Upload Banner (Gagal di sini akan langsung ke catch utama)
                 var finalImageUrl = DEFAULT_BANNER_URL
-                
                 val imageBytes = _imageByteArray.value
+                
                 if (imageBytes != null) {
-                    try {
-                        finalImageUrl = eventRepository.uploadEventBanner(ownerId, imageBytes)
-                    } catch (e: Exception) {
-                        _errorMessage.value = "Gagal mengunggah banner: ${e.message}"
-                        _isLoading.value = false
-                        return@launch 
-                    }
+                    finalImageUrl = eventRepository.uploadEventBanner(ownerId, imageBytes)
                 }
 
-                // Menggunakan parameter camelCase sesuai dengan data class CreateEventRequest
+                // 3. Persiapan Request
                 val request = CreateEventRequest(
                     title = title,
                     category = category,
@@ -272,16 +266,20 @@ class EventViewModel(
                     isVerified = isVerifiedStatus
                 )
 
+                // 4. Publikasi
                 val response = eventRepository.publishEvent(request)
                 if (response.isSuccessful) {
                     _publishSuccess.value = true
                     eventRepository.refreshEvents()
                 } else {
-                    _errorMessage.value = "Failed to publish event"
+                    val errorBody = response.errorBody()?.string()
+                    _errorMessage.value = "Gagal mempublikasikan event: $errorBody"
                 }
             } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "An unexpected error occurred"
+                // Menangkap semua error (Network, Upload, Auth, dll) dalam satu tempat
+                _errorMessage.value = e.message ?: "Terjadi kesalahan saat memproses event"
             } finally {
+                // Menjamin isLoading selalu reset ke false, sehingga tombol bisa di-klik kembali (retry)
                 _isLoading.value = false
             }
         }

@@ -47,19 +47,20 @@ class CreateEventActivity : AppCompatActivity() {
     private lateinit var spinnerKategori: Spinner
     private lateinit var btnPublish: Button
 
-    // Image Upload Step 2: Views for Preview
+    // Image Upload UX: Views for Preview & Control
     private lateinit var ivEventBannerPreview: ImageView
+    private lateinit var layoutPreviewContainer: View
     private lateinit var layoutUploadPlaceholder: View
+    private lateinit var btnRemoveImage: ImageView
     private var selectedImageUri: Uri? = null
 
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-    // Image Upload Step 2: Photo Picker Launcher
+    // Image Upload Launcher
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             selectedImageUri = uri
             showPreview(uri)
-            // Langkah 4.1: Trigger processing segera setelah URI didapatkan
             viewModel.processImage(this, uri)
         } else {
             Log.d("PhotoPicker", "No media selected")
@@ -110,9 +111,11 @@ class CreateEventActivity : AppCompatActivity() {
         spinnerKategori = findViewById(R.id.spinnerKategori)
         btnPublish = findViewById(R.id.btnPublish)
 
-        // Image Upload Step 2: Inisialisasi View Preview & Placeholder
+        // Image Upload UX: Inisialisasi View Control
         ivEventBannerPreview = findViewById(R.id.ivEventBannerPreview)
+        layoutPreviewContainer = findViewById(R.id.layoutPreviewContainer)
         layoutUploadPlaceholder = findViewById(R.id.layoutUploadPlaceholder)
+        btnRemoveImage = findViewById(R.id.btnRemoveImage)
 
         val categories = arrayOf("Hackathon", "Competition", "Seminar", "Workshop")
         val adapter = ArrayAdapter(this, R.layout.item_spinner, categories)
@@ -138,9 +141,14 @@ class CreateEventActivity : AppCompatActivity() {
             }
         }
 
-        // Image Upload Step 2: Listener untuk memicu Photo Picker
+        // Trigger Photo Picker
         findViewById<View>(R.id.btnUploadBanner).setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+
+        // Logic Reset Image (Tombol X)
+        btnRemoveImage.setOnClickListener {
+            resetImageSelection()
         }
 
         btnAddRequirement.setOnClickListener {
@@ -156,15 +164,22 @@ class CreateEventActivity : AppCompatActivity() {
         }
     }
 
-    // Image Upload Step 2: Fungsi untuk menampilkan preview
     private fun showPreview(uri: Uri) {
-        ivEventBannerPreview.visibility = View.VISIBLE
+        layoutPreviewContainer.visibility = View.VISIBLE
         layoutUploadPlaceholder.visibility = View.GONE
         
         Glide.with(this)
             .load(uri)
             .centerCrop()
             .into(ivEventBannerPreview)
+    }
+
+    private fun resetImageSelection() {
+        selectedImageUri = null
+        viewModel.resetImageByteArray()
+        layoutPreviewContainer.visibility = View.GONE
+        layoutUploadPlaceholder.visibility = View.VISIBLE
+        ivEventBannerPreview.setImageDrawable(null)
     }
 
     private fun validateAndPublish() {
@@ -252,6 +267,10 @@ class CreateEventActivity : AppCompatActivity() {
         viewModel.isLoading.observe(this) { isLoading ->
             btnPublish.isEnabled = !isLoading
             btnPublish.text = if (isLoading) "Memproses..." else "Publikasikan"
+            
+            // Disable reset button saat sedang loading/processing
+            btnRemoveImage.isEnabled = !isLoading
+            btnRemoveImage.alpha = if (isLoading) 0.5f else 1.0f
         }
 
         viewModel.errorMessage.observe(this) { message ->

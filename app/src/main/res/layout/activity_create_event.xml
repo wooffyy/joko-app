@@ -70,13 +70,31 @@
                 android:clickable="true"
                 android:focusable="true">
 
-                <!-- Preview Image -->
-                <ImageView
-                    android:id="@+id/ivEventBannerPreview"
+                <!-- Preview Image Container -->
+                <FrameLayout
+                    android:id="@+id/layoutPreviewContainer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone" />
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/ivEventBannerPreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop" />
+
+                    <!-- Remove Image Button (X) -->
+                    <ImageView
+                        android:id="@+id/btnRemoveImage"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="top|end"
+                        android:layout_margin="8dp"
+                        android:background="@drawable/bg_input_field"
+                        android:padding="6dp"
+                        android:src="@android:drawable/ic_menu_close_clear_cancel"
+                        app:tint="@color/white" />
+                </FrameLayout>
 
                 <!-- Upload Placeholder -->
                 <LinearLayout
@@ -105,7 +123,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Maks. 5MB • JPG, PNG"
+                        android:text="Maks. 2MB • JPG, PNG"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>
