@@ -18,6 +18,7 @@ import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.joko.R
 import com.example.joko.activities.AuthViewModel
+import com.example.joko.activities.EditProfileActivity
 import com.example.joko.activities.LoginActivity
 import com.example.joko.data.remote.response.ProfileResponse
 import com.example.joko.utils.ViewModelFactory
@@ -45,8 +46,10 @@ class ProfileFragment : Fragment() {
         setupContactDropdown(view)
         setupClickListeners(view)
         observeViewModel(view)
+    }
 
-        // Initial load
+    override fun onResume() {
+        super.onResume()
         viewModel.getUserProfile()
     }
 
@@ -94,7 +97,8 @@ class ProfileFragment : Fragment() {
         }
 
         btnEditProfile.setOnClickListener {
-            Toast.makeText(requireContext(), "Fitur Edit Profil segera hadir!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(requireContext(), EditProfileActivity::class.java)
+            startActivity(intent)
         }
 
         btnMyBookmark.setOnClickListener {

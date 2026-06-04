@@ -2,11 +2,15 @@ package com.example.joko.data.repository
 
 import android.R
 import android.util.Log
+import com.example.joko.BuildConfig
 import com.example.joko.data.remote.api.ApiService
 import com.example.joko.data.remote.request.AuthRequest
+import com.example.joko.data.remote.request.UpdateProfileRequest
 import com.example.joko.data.remote.response.AuthResponse
 import com.example.joko.data.remote.response.ProfileResponse
 import com.example.joko.utils.SessionManager
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import retrofit2.HttpException
 
@@ -15,6 +19,35 @@ class AuthRepository(
     private val sessionManager: SessionManager
 ) {
     private val TAG = "AuthRepository"
+
+    companion object {
+        private const val PROFILE_IMAGES_BUCKET = "pfp-images"
+    }
+
+    suspend fun uploadProfileImage(userId: String, imageBytes: ByteArray): String {
+        val bucket = PROFILE_IMAGES_BUCKET
+        val fileName = "${System.currentTimeMillis()}_${userId}.jpg"
+        val path = "profiles/$fileName"
+
+        return try {
+            Log.d(TAG, "Uploading profile image to $bucket/$path...")
+            val requestBody = imageBytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
+            val response = apiService.uploadImage(bucket, path, requestBody)
+
+            if (response.isSuccessful) {
+                val publicUrl = "${BuildConfig.SUPABASE_URL}/storage/v1/object/public/$bucket/$path"
+                Log.d(TAG, "Upload Successful. Public URL: $publicUrl")
+                publicUrl
+            } else {
+                val errorBody = response.errorBody()?.string()
+                Log.e(TAG, "Upload Failed! HTTP ${response.code()}: $errorBody")
+                throw Exception("Upload failed: $errorBody")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Upload Exception: ${e.message}")
+            throw e
+        }
+    }
 
     suspend fun signUp(
         email: String,
@@ -94,6 +127,12 @@ class AuthRepository(
         val userId = getUserId() ?: return null
         val response = apiService.getUserProfile("eq.$userId")
         return response.firstOrNull()
+    }
+
+    suspend fun updateProfile(request: UpdateProfileRequest): Boolean {
+        val userId = getUserId() ?: return false
+        val response = apiService.updateProfile("eq.$userId", request)
+        return response.isSuccessful
     }
 
     fun logout() {

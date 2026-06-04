@@ -83,4 +83,19 @@ class ChipInputFragment : Fragment() {
         }
         return tagsList
     }
+
+    fun setTags(tags: List<String>) {
+        // Clear existing chips (keep the EditText)
+        val chipsToRemove = mutableListOf<View>()
+        for (i in 0 until chipGroupTags.childCount) {
+            val view = chipGroupTags.getChildAt(i)
+            if (view is Chip) {
+                chipsToRemove.add(view)
+            }
+        }
+        chipsToRemove.forEach { chipGroupTags.removeView(it) }
+
+        // Add new chips
+        tags.forEach { addChipToGroup(it) }
+    }
 }
