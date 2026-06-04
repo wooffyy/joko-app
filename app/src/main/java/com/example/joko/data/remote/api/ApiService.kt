@@ -3,6 +3,7 @@ package com.example.joko.data.remote.api
 import com.example.joko.data.remote.request.AuthRequest
 import com.example.joko.data.remote.request.CreateEventRequest
 import com.example.joko.data.remote.request.CreateUserRequest
+import com.example.joko.data.remote.request.UpdateProfileRequest
 import com.example.joko.data.remote.response.AuthResponse
 import com.example.joko.data.remote.response.EventResponse
 import com.example.joko.data.remote.response.ProfileResponse
@@ -12,6 +13,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -61,4 +63,10 @@ interface ApiService {
     suspend fun getUserProfile(
         @Query("id") userId: String
     ): List<ProfileResponse>
+
+    @PATCH("rest/v1/users")
+    suspend fun updateProfile(
+        @Query("id") userId: String,
+        @Body request: UpdateProfileRequest
+    ): Response<Unit>
 }

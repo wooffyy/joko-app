@@ -73,6 +73,20 @@
                     android:scaleType="centerCrop"
                     android:visibility="gone" />
 
+                <!-- Remove Button (Matching Reference) -->
+                <ImageView
+                    android:id="@+id/btnRemoveImage"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/bg_input_field"
+                    android:padding="8dp"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    android:visibility="gone"
+                    app:tint="@color/white" />
+
                 <!-- Upload Placeholder -->
                 <LinearLayout
                     android:id="@+id/layoutUploadPlaceholder"
@@ -174,6 +188,22 @@
                 android:textColor="@color/white"
                 android:textColorHint="@color/text_disabled"
                 android:textSize="14sp" />
+
+            <!-- Skills -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Skills"
+                android:textColor="@color/primary"
+                android:textSize="14sp" />
+
+            <fragment
+                android:id="@+id/fragmentContainerSkills"
+                android:name="com.example.joko.fragments.ChipInputFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
 
             <TextView
                 android:layout_width="wrap_content"
