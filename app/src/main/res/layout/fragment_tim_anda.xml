@@ -234,6 +234,7 @@
 
         <!-- Create New Team Section -->
         <FrameLayout
+            android:id="@+id/btn_create_team_bottom"
             android:layout_width="match_parent"
             android:layout_height="140dp"
             android:layout_marginTop="8dp"

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.example.joko.R
+import com.example.joko.activities.CreateTeamActivity
 import com.example.joko.activities.ManageApplicantsActivity
 
 class TimAndaFragment : Fragment() {
@@ -16,6 +17,20 @@ class TimAndaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_tim_anda, container, false)
+
+        // Tombol Buat Tim di Header
+        val btnCreateHeader = view.findViewById<Button>(R.id.btn_create_team_header)
+        btnCreateHeader?.setOnClickListener {
+            val intent = Intent(requireContext(), CreateTeamActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Card Create New Team di bagian bawah
+        val btnCreateBottom = view.findViewById<View>(R.id.btn_create_team_bottom)
+        btnCreateBottom?.setOnClickListener {
+            val intent = Intent(requireContext(), CreateTeamActivity::class.java)
+            startActivity(intent)
+        }
 
         // Tombol Manage di kartu pertama (Nebula Squad - Active)
         val card1 = view.findViewById<View>(R.id.card_my_team_1)
