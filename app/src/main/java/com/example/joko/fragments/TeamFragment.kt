@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ class TeamFragment : Fragment() {
     private lateinit var tvTimAnda: TextView
     private lateinit var indicatorUntukAnda: View
     private lateinit var indicatorTimAnda: View
+    private lateinit var btnSearch: ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,6 +32,7 @@ class TeamFragment : Fragment() {
         tvTimAnda = view.findViewById(R.id.tv_tim_anda)
         indicatorUntukAnda = view.findViewById(R.id.indicator_untuk_anda)
         indicatorTimAnda = view.findViewById(R.id.indicator_tim_anda)
+        btnSearch = view.findViewById(R.id.btn_search)
 
         // Set default fragment
         replaceFragment(UntukAndaFragment())
@@ -42,6 +45,13 @@ class TeamFragment : Fragment() {
         btnTimAnda.setOnClickListener {
             setActiveTab(false)
             replaceFragment(TimAndaFragment())
+        }
+
+        btnSearch.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, SearchTeamFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
         return view
