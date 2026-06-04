@@ -41,36 +41,15 @@
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tv_role"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tv_trust_score"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_status_badge"
-                        android:backgroundTint="#1B4332"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="2dp"
-                        android:text="Trust Score 5.0"
-                        android:textColor="#4ADE80"
-                        android:textSize="10sp"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <TextView
-                        android:id="@+id/tv_role"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="OWNER"
-                        android:textColor="@color/primary"
-                        android:textSize="10sp"
-                        android:fontFamily="sans-serif-black" />
-                </LinearLayout>
+                    android:text="OWNER"
+                    android:textColor="@color/primary"
+                    android:textSize="10sp"
+                    android:fontFamily="sans-serif-black" />
             </LinearLayout>
 
             <ImageView
@@ -81,7 +60,7 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_profile"
                 app:tint="@color/text_secondary"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </RelativeLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -97,7 +76,7 @@
             app:strokeColor="#FF5252"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

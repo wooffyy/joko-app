@@ -87,7 +87,6 @@ class ManageApplicantsActivity : AppCompatActivity() {
         // Owner Item
         val ownerView = inflater.inflate(R.layout.item_member_card, containerContent, false)
         ownerView.findViewById<TextView>(R.id.tv_name).text = "Felix Wong"
-        ownerView.findViewById<TextView>(R.id.tv_trust_score).text = "Trust Score 5.0"
         ownerView.findViewById<TextView>(R.id.tv_role).text = "OWNER"
         // Owner doesn't have remove button visible usually
         containerContent.addView(ownerView)
@@ -95,7 +94,6 @@ class ManageApplicantsActivity : AppCompatActivity() {
         // Member Item
         val memberView = inflater.inflate(R.layout.item_member_card, containerContent, false)
         memberView.findViewById<TextView>(R.id.tv_name).text = "Sarah Chen"
-        memberView.findViewById<TextView>(R.id.tv_trust_score).text = "Trust Score 4.8"
         memberView.findViewById<TextView>(R.id.tv_role).text = "FRONTEND"
         
         val btnRemove = memberView.findViewById<Button>(R.id.btn_remove)

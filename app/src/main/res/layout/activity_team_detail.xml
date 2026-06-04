@@ -25,9 +25,10 @@
             android:background="?attr/selectableItemBackgroundBorderless"/>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
@@ -45,6 +46,16 @@
                 android:textColor="@color/primary"
                 android:textSize="12sp" />
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btn_bookmark_top"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_bookmark"
+            app:tint="@color/white"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -59,84 +70,30 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Project Banner Placeholder -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                app:cardBackgroundColor="@color/bg_surface"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp">
+            <!-- Verified Badge (No banner) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_status_badge"
+                android:backgroundTint="#1B4332"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_verified" />
 
-                    <ImageView
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:layout_centerInParent="true"
-                        android:alpha="0.2"
-                        android:src="@android:drawable/ic_menu_gallery"
-                        app:tint="@color/white" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_margin="16dp"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_status_badge"
-                            android:backgroundTint="#1B4332"
-                            android:gravity="center_vertical"
-                            android:paddingHorizontal="10dp"
-                            android:paddingVertical="6dp">
-
-                            <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
-                                android:src="@drawable/ic_verified" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="6dp"
-                                android:text="Verified Project"
-                                android:textColor="#4ADE80"
-                                android:textSize="11sp"
-                                android:fontFamily="sans-serif-medium" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:background="@drawable/bg_status_badge"
-                            android:gravity="center_vertical"
-                            android:paddingHorizontal="10dp"
-                            android:paddingVertical="6dp">
-
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:src="@android:drawable/btn_star_big_on"
-                                app:tint="@color/text_secondary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="6dp"
-                                android:text="4.9 Trust Score"
-                                android:textColor="@color/text_secondary"
-                                android:textSize="11sp"
-                                android:fontFamily="sans-serif-medium" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="Verified Project"
+                    android:textColor="#4ADE80"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif-black" />
+            </LinearLayout>
 
             <!-- Recruitment Progress Card -->
             <androidx.cardview.widget.CardView
@@ -187,7 +144,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp">
 
-                        <!-- Avatars placeholder -->
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -266,7 +222,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_status_badge"
+                    android:background="@drawable/bg_tag"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="8dp"
@@ -350,11 +306,11 @@
         android:paddingHorizontal="16dp">
 
         <ImageButton
-            android:id="@+id/btn_bookmark"
+            android:id="@+id/btn_contact"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:background="@drawable/bg_status_badge"
-            android:src="@drawable/ic_bookmark"
+            android:src="@drawable/contact"
             android:padding="16dp"
             android:scaleType="centerInside"
             app:tint="@color/white" />

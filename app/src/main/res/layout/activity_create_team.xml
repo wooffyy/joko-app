@@ -92,55 +92,80 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Banner Image"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="120dp"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/bg_dashed_border">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:orientation="vertical">
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:src="@android:drawable/ic_menu_camera"
-                                app:tint="@color/text_secondary" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="Tap to upload banner"
-                                android:textColor="@color/text_secondary"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
                         android:text="Team Name"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 
                     <EditText
+                        android:id="@+id/et_team_name"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:layout_marginTop="8dp"
-                        android:background="@drawable/bg_status_badge"
+                        android:background="@drawable/bg_input_field"
                         android:hint="e.g. CyberSentinels"
                         android:paddingHorizontal="16dp"
                         android:textColor="@color/white"
                         android:textColorHint="@color/text_disabled"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:inputType="text" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Section: Contact Information -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_link"
+                    app:tint="@color/primary" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="sans-serif-black"
+                    android:text="Contact Information"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:cardBackgroundColor="@color/bg_surface"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Contact Email / Link"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:id="@+id/et_contact"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="e.g. contact@email.com"
+                        android:paddingHorizontal="16dp"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/text_disabled"
+                        android:textSize="14sp"
+                        android:inputType="textEmailAddress" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -176,15 +201,17 @@
                 app:contentPadding="16dp">
 
                 <EditText
+                    android:id="@+id/et_mission"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
-                    android:background="@drawable/bg_status_badge"
+                    android:background="@drawable/bg_input_field"
                     android:gravity="top"
                     android:hint="What is the main goal of this team? Define the problem you're solving..."
                     android:padding="16dp"
                     android:textColor="@color/white"
                     android:textColorHint="@color/text_disabled"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:inputType="textMultiLine" />
             </androidx.cardview.widget.CardView>
 
             <!-- Section: Recruitment Details -->
@@ -230,7 +257,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:layout_marginTop="8dp"
-                        android:background="@drawable/bg_status_badge"
+                        android:background="@drawable/bg_input_field"
                         android:gravity="center_vertical"
                         android:paddingHorizontal="16dp">
                         <ImageView
@@ -239,6 +266,7 @@
                             android:src="@drawable/ic_team"
                             app:tint="@color/text_secondary" />
                         <EditText
+                            android:id="@+id/et_slots"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginStart="8dp"
@@ -262,12 +290,18 @@
                         android:text="Project Type"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
-                    <Spinner
+                    <EditText
+                        android:id="@+id/et_project_type"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:layout_marginTop="8dp"
-                        android:background="@drawable/bg_status_badge"
-                        android:paddingHorizontal="16dp" />
+                        android:background="@drawable/bg_input_field"
+                        android:hint="e.g. Web App"
+                        android:paddingHorizontal="16dp"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/text_disabled"
+                        android:textSize="14sp"
+                        android:inputType="text" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -328,7 +362,7 @@
                             android:layout_width="0dp"
                             android:layout_height="48dp"
                             android:layout_weight="1"
-                            android:background="@drawable/bg_status_badge"
+                            android:background="@drawable/bg_input_field"
                             android:hint="Add technology..."
                             android:paddingHorizontal="16dp"
                             android:textColor="@color/white"
