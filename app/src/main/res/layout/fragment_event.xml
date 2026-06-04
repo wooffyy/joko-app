@@ -6,18 +6,21 @@
     android:layout_height="match_parent"
     android:background="@color/bg_base">
 
-    <!-- Header Area -->
+    <!-- Header Area dengan jarak atas -->
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="20dp"
+        android:paddingTop="40dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivProfile"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_marginTop="16dp"
             android:background="@color/bg_surface"
             android:scaleType="centerCrop"
             app:shapeAppearanceOverlay="@style/CircleImage" />
@@ -26,7 +29,8 @@
             android:id="@+id/ivLogo"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
             android:src="@drawable/ic_logo_joko" />
 
         <ImageView
@@ -34,7 +38,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
+            android:layout_marginTop="24dp"
             android:src="@android:drawable/ic_popup_reminder"
             app:tint="@color/primary" />
     </RelativeLayout>

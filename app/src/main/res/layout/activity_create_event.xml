@@ -7,14 +7,16 @@
     android:layout_height="match_parent"
     android:background="@color/bg_base">
 
-    <!-- Sticky Header -->
+    <!-- Sticky Header dengan jarak atas -->
     <LinearLayout
         android:id="@+id/CreateEventHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="24dp"
+        android:paddingTop="32dp"
+        android:paddingBottom="24dp"
+        android:paddingHorizontal="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">

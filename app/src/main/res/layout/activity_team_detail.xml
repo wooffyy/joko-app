@@ -5,11 +5,13 @@
     android:layout_height="match_parent"
     android:background="@color/bg_base">
 
-    <!-- Header -->
+    <!-- Header dengan jarak atas -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
+        android:minHeight="56dp"
+        android:paddingTop="40dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="16dp">
@@ -70,7 +72,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Verified Badge (No banner) -->
+            <!-- Verified Badge -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -211,7 +213,6 @@
                 android:textColor="@color/white"
                 android:textSize="20sp" />
 
-            <!-- Tags Section -->
             <com.google.android.material.chip.ChipGroup
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

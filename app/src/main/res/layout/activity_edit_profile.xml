@@ -6,11 +6,17 @@
     android:layout_height="match_parent"
     android:background="@color/bg_base">
 
+    <!-- Header dengan jarak atas -->
     <LinearLayout
         android:id="@+id/EditProfileHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:minHeight="56dp"
+        android:paddingTop="36dp"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">

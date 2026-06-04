@@ -5,11 +5,13 @@
     android:layout_height="match_parent"
     android:background="@color/bg_base">
 
-    <!-- Header -->
+    <!-- Header dengan jarak atas agar tidak terhalang kamera -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
+        android:minHeight="56dp"
+        android:paddingTop="40dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="16dp">

@@ -6,10 +6,12 @@
     android:background="@color/bg_base"
     android:orientation="vertical">
 
-    <!-- Top Search Bar -->
+    <!-- Top Search Bar dengan jarak atas -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
+        android:minHeight="56dp"
+        android:paddingTop="40dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="16dp">

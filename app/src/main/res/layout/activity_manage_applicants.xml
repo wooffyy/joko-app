@@ -6,25 +6,25 @@
     android:background="@color/bg_base"
     android:orientation="vertical">
 
-    <!-- Header -->
+    <!-- Header dengan jarak atas agar tidak terhalang kamera -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
+        android:minHeight="56dp"
+        android:paddingTop="40dp"
         android:paddingHorizontal="16dp">
 
         <ImageView
             android:id="@+id/btn_back"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_centerVertical="true"
             android:src="@drawable/abc_ic_ab_back_material"
             app:tint="@color/white" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="17dp"
             android:layout_toEndOf="@id/btn_back"
             android:fontFamily="sans-serif-black"
             android:text="Edit Tim"

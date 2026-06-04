@@ -27,13 +27,15 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:paddingHorizontal="24dp"
+            android:paddingBottom="24dp"
+            android:paddingTop="40dp">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivProfilePicture"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/default_avatar"
                 app:shapeAppearanceOverlay="@style/CircleImage" />
