@@ -24,24 +24,31 @@ class EventViewModel(
 
     companion object {
         private const val DEFAULT_BANNER_URL = "https://via.placeholder.com/180"
+        private const val MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024 // 2MB limit
     }
+
+    private val _isVerified = MutableLiveData<Boolean>()
+    val isVerified: LiveData<Boolean> = _isVerified
 
     private val _imageByteArray = MutableLiveData<ByteArray?>()
     val imageByteArray: LiveData<ByteArray?> = _imageByteArray
 
-    private val incrementedEventIds = mutableSetOf<String>()
-
     private val _filterCategory = MutableLiveData<String>("Semua")
     val currentFilter: LiveData<String> = _filterCategory
 
+    private val _searchQuery = MutableLiveData<String>("")
+    
     private val _allEventsFromDb = eventRepository.allEvents.asLiveData()
 
     val allEvents = MediatorLiveData<List<EventEntity>>().apply {
         addSource(_allEventsFromDb) { list ->
-            value = filterList(list, _filterCategory.value ?: "Semua")
+            value = filterList(list, _filterCategory.value ?: "Semua", _searchQuery.value ?: "")
         }
         addSource(_filterCategory) { category ->
-            value = filterList(_allEventsFromDb.value ?: emptyList(), category)
+            value = filterList(_allEventsFromDb.value ?: emptyList(), category, _searchQuery.value ?: "")
+        }
+        addSource(_searchQuery) { query ->
+            value = filterList(_allEventsFromDb.value ?: emptyList(), _filterCategory.value ?: "Semua", query)
         }
     }
 
@@ -52,11 +59,53 @@ class EventViewModel(
             .sorted()
     }
 
-    private fun filterList(list: List<EventEntity>, category: String): List<EventEntity> {
-        return if (category == "Semua") {
+    private fun filterList(list: List<EventEntity>, category: String, query: String): List<EventEntity> {
+        val trimmedQuery = query.trim()
+        
+        // 1. Filter berdasarkan kategori (AND logic)
+        val categoryFiltered = if (category == "Semua") {
             list
         } else {
             list.filter { it.category.trim().equals(category.trim(), ignoreCase = true) }
+        }
+
+        // 2. Filter berdasarkan search query (OR logic multi-field)
+        return if (trimmedQuery.isEmpty()) {
+            categoryFiltered
+        } else {
+            categoryFiltered.filter { event ->
+                event.title.contains(trimmedQuery, ignoreCase = true) || 
+                event.organizer.contains(trimmedQuery, ignoreCase = true) ||
+                event.category.contains(trimmedQuery, ignoreCase = true) ||
+                event.location.contains(trimmedQuery, ignoreCase = true) ||
+                (event.description.contains(trimmedQuery, ignoreCase = true)) ||
+                (event.tags?.contains(trimmedQuery, ignoreCase = true) == true)
+            }
+        }
+    }
+
+    fun setFilter(category: String) {
+        _filterCategory.value = category
+    }
+
+    fun setSearch(query: String) {
+        _searchQuery.value = query
+    }
+
+    fun getEventById(id: String): LiveData<EventEntity?> {
+        return eventRepository.getEventById(id).asLiveData()
+    }
+
+    fun fetchEvents() {
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                eventRepository.refreshEvents()
+            } catch (e: Exception) {
+                _errorMessage.value = "Gagal memperbarui data: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
@@ -68,6 +117,22 @@ class EventViewModel(
 
     private val _publishSuccess = MutableLiveData<Boolean>()
     val publishSuccess: LiveData<Boolean> = _publishSuccess
+
+    private val _pfpUrl = MutableLiveData<String?>()
+    val pfpUrl: LiveData<String?> = _pfpUrl
+
+    fun fetchUserData() {
+        viewModelScope.launch {
+            try {
+                val profile = authRepository.getUserProfile()
+                _isVerified.postValue(profile?.isVerified ?: false)
+                _pfpUrl.postValue(profile?.pfpUrl)
+            } catch (e: Exception) {
+                _isVerified.postValue(false)
+                _pfpUrl.postValue(null)
+            }
+        }
+    }
 
     fun processImage(context: Context, uri: Uri) {
         _isLoading.value = true
@@ -90,6 +155,10 @@ class EventViewModel(
         }
     }
 
+    fun resetImageByteArray() {
+        _imageByteArray.value = null
+    }
+
     private fun validateFileMetadata(context: Context, uri: Uri) {
         val contentResolver = context.contentResolver
         val type = contentResolver.getType(uri)
@@ -101,8 +170,8 @@ class EventViewModel(
             val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
             cursor.moveToFirst()
             val size = cursor.getLong(sizeIndex)
-            if (size > 5 * 1024 * 1024) {
-                throw Exception("Ukuran file terlalu besar. Maksimal 5MB.")
+            if (size > MAX_IMAGE_SIZE_BYTES) {
+                throw Exception("Ukuran file terlalu besar. Maksimal 2MB.")
             }
         }
     }
@@ -143,44 +212,13 @@ class EventViewModel(
             val result = outputStream.toByteArray()
             bitmap.recycle()
             
-            if (result.size > 5 * 1024 * 1024) {
-                throw Exception("Gagal mengompres gambar di bawah 5MB")
+            if (result.size > MAX_IMAGE_SIZE_BYTES) {
+                throw Exception("Gagal mengompres gambar di bawah 2MB")
             }
             result
         }
     }
 
-    fun setFilter(category: String) {
-        _filterCategory.value = category
-    }
-
-    fun getEventById(id: String): LiveData<EventEntity?> {
-        return eventRepository.getEventById(id).asLiveData()
-    }
-
-    fun incrementClickCount(id: String) {
-        if (incrementedEventIds.contains(id)) return
-        incrementedEventIds.add(id)
-        viewModelScope.launch {
-            eventRepository.incrementEventClick(id)
-        }
-    }
-
-    fun fetchEvents() {
-        _isLoading.value = true
-        viewModelScope.launch {
-            try {
-                eventRepository.refreshEvents()
-            } catch (e: Exception) {
-                _errorMessage.value = "Gagal memperbarui data: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
-    // Langkah 4.2.A — ViewModel Signature Fix
-    // Parameter imageUrl dihapus agar ViewModel menjadi Single Source of Truth
     fun publishEvent(
         title: String,
         category: String,
@@ -195,30 +233,26 @@ class EventViewModel(
     ) {
         val ownerId = authRepository.getUserId()
         if (ownerId == null) {
-            _errorMessage.value = "User session expired. Please login again."
+            _errorMessage.value = "Sesi berakhir. Silakan login kembali."
             return
         }
 
         _isLoading.value = true
         _errorMessage.value = null
+        _publishSuccess.value = false
         
         viewModelScope.launch {
             try {
-                // Penentuan finalImageUrl dilakukan secara eksklusif di sini
+                val profile = authRepository.getUserProfile()
+                val isVerifiedStatus = profile?.isVerified ?: false
+
                 var finalImageUrl = DEFAULT_BANNER_URL
-                
                 val imageBytes = _imageByteArray.value
+                
                 if (imageBytes != null) {
-                    try {
-                        finalImageUrl = eventRepository.uploadEventBanner(ownerId, imageBytes)
-                    } catch (e: Exception) {
-                        _errorMessage.value = "Gagal mengunggah banner: ${e.message}"
-                        _isLoading.value = false
-                        return@launch 
-                    }
+                    finalImageUrl = eventRepository.uploadEventBanner(ownerId, imageBytes)
                 }
 
-                // Menggunakan parameter camelCase sesuai dengan data class CreateEventRequest
                 val request = CreateEventRequest(
                     title = title,
                     category = category,
@@ -231,7 +265,8 @@ class EventViewModel(
                     registrationUrl = registrationUrl,
                     requirements = requirements,
                     tags = tags,
-                    ownerId = ownerId
+                    ownerId = ownerId,
+                    isVerified = isVerifiedStatus
                 )
 
                 val response = eventRepository.publishEvent(request)
@@ -239,10 +274,11 @@ class EventViewModel(
                     _publishSuccess.value = true
                     eventRepository.refreshEvents()
                 } else {
-                    _errorMessage.value = "Failed to publish event"
+                    val errorBody = response.errorBody()?.string()
+                    _errorMessage.value = "Gagal mempublikasikan event: $errorBody"
                 }
             } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "An unexpected error occurred"
+                _errorMessage.value = e.message ?: "Terjadi kesalahan saat memproses event"
             } finally {
                 _isLoading.value = false
             }

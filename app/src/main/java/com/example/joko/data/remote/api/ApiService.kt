@@ -46,11 +46,6 @@ interface ApiService {
         @Body request: CreateEventRequest
     ): Response<Unit>
 
-    @POST("rest/v1/rpc/increment_click_count")
-    suspend fun incrementEventClick(
-        @Body body: Map<String, String>
-    ): Response<Unit>
-
     @POST("storage/v1/object/{bucket}/{path}")
     suspend fun uploadImage(
         @Path("bucket") bucket: String,

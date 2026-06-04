@@ -25,6 +25,10 @@ import com.example.joko.R
 import com.example.joko.utils.ViewModelFactory
 import java.util.Calendar
 import com.example.joko.fragments.ChipInputFragment
+import com.example.joko.utils.InputFieldValidator
+import com.example.joko.utils.InputFieldValidator.Companion.validateRequiredField
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class CreateEventActivity : AppCompatActivity() {
 
@@ -43,17 +47,20 @@ class CreateEventActivity : AppCompatActivity() {
     private lateinit var spinnerKategori: Spinner
     private lateinit var btnPublish: Button
 
-    // Image Upload Step 2: Views for Preview
+    // Image Upload UX: Views for Preview & Control
     private lateinit var ivEventBannerPreview: ImageView
+    private lateinit var layoutPreviewContainer: View
     private lateinit var layoutUploadPlaceholder: View
+    private lateinit var btnRemoveImage: ImageView
     private var selectedImageUri: Uri? = null
 
-    // Image Upload Step 2: Photo Picker Launcher
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    // Image Upload Launcher
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             selectedImageUri = uri
             showPreview(uri)
-            // Langkah 4.1: Trigger processing segera setelah URI didapatkan
             viewModel.processImage(this, uri)
         } else {
             Log.d("PhotoPicker", "No media selected")
@@ -87,7 +94,7 @@ class CreateEventActivity : AppCompatActivity() {
         fragmentTags = supportFragmentManager
             .findFragmentById(R.id.fragmentContainerTags) as ChipInputFragment
 
-        fragmentTags.setHint("Tambah Tag (misal: Teknologi)...")
+        fragmentTags.setHint("Tambah Tag...")
 
         tvStartDate = findViewById(R.id.tvStartDate)
         tvEndDate = findViewById(R.id.tvEndDate)
@@ -104,9 +111,11 @@ class CreateEventActivity : AppCompatActivity() {
         spinnerKategori = findViewById(R.id.spinnerKategori)
         btnPublish = findViewById(R.id.btnPublish)
 
-        // Image Upload Step 2: Inisialisasi View Preview & Placeholder
+        // Image Upload UX: Inisialisasi View Control
         ivEventBannerPreview = findViewById(R.id.ivEventBannerPreview)
+        layoutPreviewContainer = findViewById(R.id.layoutPreviewContainer)
         layoutUploadPlaceholder = findViewById(R.id.layoutUploadPlaceholder)
+        btnRemoveImage = findViewById(R.id.btnRemoveImage)
 
         val categories = arrayOf("Hackathon", "Competition", "Seminar", "Workshop")
         val adapter = ArrayAdapter(this, R.layout.item_spinner, categories)
@@ -115,23 +124,31 @@ class CreateEventActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        tvStartDate.setOnClickListener {
+        val layoutStartDate = findViewById<View>(R.id.layoutStartDateContainer)
+        val layoutEndDate = findViewById<View>(R.id.layoutEndDateContainer)
+
+        layoutStartDate.setOnClickListener {
             showDatePicker { date ->
                 tvStartDate.text = date
                 tvStartDate.setTextColor(ContextCompat.getColor(this, android.R.color.white))
             }
         }
 
-        tvEndDate.setOnClickListener {
+        layoutEndDate.setOnClickListener {
             showDatePicker { date ->
                 tvEndDate.text = date
                 tvEndDate.setTextColor(ContextCompat.getColor(this, android.R.color.white))
             }
         }
 
-        // Image Upload Step 2: Listener untuk memicu Photo Picker
+        // Trigger Photo Picker
         findViewById<View>(R.id.btnUploadBanner).setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+
+        // Logic Reset Image (Tombol X)
+        btnRemoveImage.setOnClickListener {
+            resetImageSelection()
         }
 
         btnAddRequirement.setOnClickListener {
@@ -147,15 +164,22 @@ class CreateEventActivity : AppCompatActivity() {
         }
     }
 
-    // Image Upload Step 2: Fungsi untuk menampilkan preview
     private fun showPreview(uri: Uri) {
-        ivEventBannerPreview.visibility = View.VISIBLE
+        layoutPreviewContainer.visibility = View.VISIBLE
         layoutUploadPlaceholder.visibility = View.GONE
         
         Glide.with(this)
             .load(uri)
             .centerCrop()
             .into(ivEventBannerPreview)
+    }
+
+    private fun resetImageSelection() {
+        selectedImageUri = null
+        viewModel.resetImageByteArray()
+        layoutPreviewContainer.visibility = View.GONE
+        layoutUploadPlaceholder.visibility = View.VISIBLE
+        ivEventBannerPreview.setImageDrawable(null)
     }
 
     private fun validateAndPublish() {
@@ -181,25 +205,49 @@ class CreateEventActivity : AppCompatActivity() {
             requirementsList.add(tvText.text.toString())
         }
 
-        if (title.isEmpty() || organizer.isEmpty() || location.isEmpty() ||
-            description.isEmpty() || startDate == "mm/dd/yyyy" || endDate == "mm/dd/yyyy") {
-            Toast.makeText(this, "Mohon lengkapi data wajib", Toast.LENGTH_SHORT).show()
-            return
-        }
+        val layoutStartDate = findViewById<View>(R.id.layoutStartDateContainer)
+        val layoutEndDate = findViewById<View>(R.id.layoutEndDateContainer)
 
-        // Langkah 4.2.B — Clean Parameter: Activity tidak lagi mengirim imageUrl
-        viewModel.publishEvent(
-            title = title,
-            category = category,
-            location = location,
-            startDate = startDate,
-            endDate = endDate,
-            description = description,
-            organizer = organizer,
-            registrationUrl = if (regUrl.isEmpty()) null else regUrl,
-            requirements = requirementsList,
-            tags = tagsList
-        )
+        val isTitleValid = validateRequiredField(title, etJudulEvent, "Judul event tidak boleh kosong")
+        val isDescValid = validateRequiredField(description, etDeskripsiEvent, "Deskripsi event wajib diisi")
+        val isOrganizerValid = validateRequiredField(organizer, etPenyelenggara, "Nama penyelenggara harus diisi")
+        val isLocationValid = validateRequiredField(location, etLokasi, "Lokasi event tidak boleh kosong")
+
+        val startDateValue = try { LocalDate.parse(startDate, formatter) } catch (e: Exception) { null }
+        val endDateValue = try { LocalDate.parse(endDate, formatter) } catch (e: Exception) { null }
+
+        val endDateError = when {
+            endDate.isEmpty() || endDate == "mm/dd/yyyy" -> "Pilih tanggal selesai"
+            endDateValue != null && endDateValue.isBefore(LocalDate.now()) -> "Tanggal selesai invalid"
+            startDateValue != null && endDateValue != null && endDateValue.isBefore(startDateValue) -> "Tanggal invalid"
+            else -> null
+        }
+        val isEndDateValid = InputFieldValidator.validateField(endDateError != null, layoutEndDate, endDateError ?: "")
+
+        val regUrlError = when {
+            regUrl.isEmpty() -> "Link pendaftaran wajib diisi"
+            !android.util.Patterns.WEB_URL.matcher(regUrl).matches() -> "Format link tidak valid (gunakan http/https)"
+            else -> null
+        }
+        val isRegUrlValid = InputFieldValidator.validateField(regUrlError != null, etLinkPendaftaran, regUrlError ?: "")
+
+        // Cek hasil akhir validasi, kalo lolos validasi kirim ke viewModel
+        if (isTitleValid && isDescValid && isOrganizerValid && isLocationValid && isEndDateValid && isRegUrlValid) {
+            viewModel.publishEvent(
+                title = title,
+                category = category,
+                location = location,
+                startDate = startDate,
+                endDate = endDate,
+                description = description,
+                organizer = organizer,
+                registrationUrl = regUrl,
+                requirements = requirementsList,
+                tags = tagsList
+            )
+        } else {
+            Toast.makeText(this, "Mohon lengkapi data wajib", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun addRequirementItem(text: String) {
@@ -219,6 +267,10 @@ class CreateEventActivity : AppCompatActivity() {
         viewModel.isLoading.observe(this) { isLoading ->
             btnPublish.isEnabled = !isLoading
             btnPublish.text = if (isLoading) "Memproses..." else "Publikasikan"
+            
+            // Disable reset button saat sedang loading/processing
+            btnRemoveImage.isEnabled = !isLoading
+            btnRemoveImage.alpha = if (isLoading) 0.5f else 1.0f
         }
 
         viewModel.errorMessage.observe(this) { message ->

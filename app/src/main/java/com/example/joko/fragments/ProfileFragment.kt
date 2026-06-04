@@ -1,7 +1,9 @@
 package com.example.joko.fragments
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
@@ -52,7 +54,6 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupContactDropdown(view: View) {
-        val contactSection = view.findViewById<LinearLayout>(R.id.ContactSection)
         val contactHeader = view.findViewById<LinearLayout>(R.id.ContactHeader)
         val contactContent = view.findViewById<LinearLayout>(R.id.ContactContentContainer)
         val contactArrow = view.findViewById<ImageView>(R.id.ivContactArrow)
@@ -63,15 +64,18 @@ class ProfileFragment : Fragment() {
         contactHeader.setOnClickListener {
             isContactExpanded = !isContactExpanded
             
-            // Professional smooth expansion animation
-            TransitionManager.beginDelayedTransition(contactSection)
+            // Apply transition to the root container to ensure siblings below are "pushed" smoothly
+            val transition = AutoTransition().apply {
+                duration = 400
+            }
+            TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
             
             if (isContactExpanded) {
                 contactContent.visibility = View.VISIBLE
-                contactArrow.animate().rotation(180f).setDuration(300).start()
+                contactArrow.animate().rotation(180f).setDuration(400).start()
             } else {
                 contactContent.visibility = View.GONE
-                contactArrow.animate().rotation(0f).setDuration(300).start()
+                contactArrow.animate().rotation(0f).setDuration(400).start()
             }
         }
     }
@@ -80,6 +84,7 @@ class ProfileFragment : Fragment() {
         val btnLogout = view.findViewById<CardView>(R.id.btnLogout)
         val btnEditProfile = view.findViewById<CardView>(R.id.btnEditProfile)
         val btnMyBookmark = view.findViewById<CardView>(R.id.btnMyBookmark)
+        val btnAskVerification = view.findViewById<CardView>(R.id.btnAskVerification)
 
         btnLogout.setOnClickListener {
             viewModel.checkSession() // Double check if actually logged in or session expired
@@ -99,15 +104,30 @@ class ProfileFragment : Fragment() {
         btnMyBookmark.setOnClickListener {
             Toast.makeText(requireContext(), "Membuka Bookmark...", Toast.LENGTH_SHORT).show()
         }
+
+        btnAskVerification.setOnClickListener {
+            val url = "https://forms.gle/8PpNagB1rKUwMESv5"
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
+        }
     }
 
     private fun observeViewModel(view: View) {
+        val progressBar = view.findViewById<android.widget.ProgressBar>(R.id.pbProfile)
+        val scrollView = view.findViewById<android.widget.ScrollView>(R.id.svProfile)
+
         viewModel.userProfile.observe(viewLifecycleOwner) { profile ->
-            profile?.let { updateUI(view, it) }
+            profile?.let { 
+                updateUI(view, it)
+                scrollView.visibility = View.VISIBLE
+            }
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            // You can add a shimmer or progress bar here if needed
+            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            if (isLoading) {
+                scrollView.visibility = View.INVISIBLE
+            }
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
@@ -121,7 +141,6 @@ class ProfileFragment : Fragment() {
         val ivProfilePicture = view.findViewById<ImageView>(R.id.ivProfilePicture)
         val tvUsername = view.findViewById<TextView>(R.id.tvUsername)
         val tvUniversity = view.findViewById<TextView>(R.id.tvUniversity)
-        val tvTrustScore = view.findViewById<TextView>(R.id.tvTrustScore)
         val tvBio = view.findViewById<TextView>(R.id.tvBio)
         val cgSkills = view.findViewById<ChipGroup>(R.id.cgSkills)
         val ivVerifiedBadge = view.findViewById<ImageView>(R.id.ivVerifiedBadge)
@@ -129,7 +148,6 @@ class ProfileFragment : Fragment() {
         // Profile Details
         tvUsername.text = profile.name
         tvUniversity.text = profile.university ?: "Mahasiswa"
-        tvTrustScore.text = "⭐ ${profile.trustScore ?: 0.0}"
         tvBio.text = profile.bio ?: "Belum ada bio."
         ivVerifiedBadge.visibility = if (profile.isVerified == true) View.VISIBLE else View.GONE
 

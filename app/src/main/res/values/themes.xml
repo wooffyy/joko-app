@@ -14,6 +14,43 @@
         <item name="textAppearanceTitleLarge">@style/TextAppearance.App.TitleLarge</item>
     </style>
 
+    <!-- Style untuk Filter Chips (Final Normalized Geometry + Visual Identity) -->
+    <style name="Widget.App.Chip.Filter" parent="Widget.MaterialComponents.Chip.Filter">
+        <!-- Geometry: Mengunci tinggi ke 32dp agar ramping -->
+        <item name="chipMinHeight">@dimen/chip_height</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.App.Chip</item>
+        <item name="chipStrokeWidth">@dimen/chip_stroke_width</item>
+
+        <!-- Padding & Spacing -->
+        <item name="android:paddingStart">@dimen/chip_horizontal_padding</item>
+        <item name="android:paddingEnd">@dimen/chip_horizontal_padding</item>
+        <item name="chipStartPadding">@dimen/chip_horizontal_padding</item>
+        <item name="chipEndPadding">@dimen/chip_horizontal_padding</item>
+
+        <!-- Visual identity: Mengunci warna agar tidak berubah hitam -->
+        <item name="chipBackgroundColor">@color/chip_bg_selector</item>
+        <item name="chipStrokeColor">@color/chip_stroke_selector</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAppearance">@style/TextAppearance.App.Chip</item>
+
+        <!-- Behavior: Sembunyikan icon centang -->
+        <item name="checkedIconVisible">false</item>
+    </style>
+
+    <!-- Shape Appearance: Pill shape -->
+    <style name="ShapeAppearance.App.Chip" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerSize">@dimen/chip_corner_radius</item>
+    </style>
+
+    <!-- Tipografi: Teks Bold dan Putih -->
+    <style name="TextAppearance.App.Chip" parent="TextAppearance.MaterialComponents.Chip">
+        <item name="android:textSize">@dimen/chip_text_size</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/font_body</item>
+        <item name="android:fontFamily">@font/font_body</item>
+    </style>
+
     <!-- Style untuk gambar profil bulat -->
     <style name="CircleImage">
         <item name="cornerSize">50%</item>

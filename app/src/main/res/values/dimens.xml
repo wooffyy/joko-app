@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Chip Filter Dimensions (Final Normalized Geometry) -->
+    <dimen name="chip_height">32dp</dimen>
+    <dimen name="chip_corner_radius">16dp</dimen>
     <dimen name="chip_stroke_width">1dp</dimen>
+    <dimen name="chip_text_size">13sp</dimen>
+    <dimen name="chip_horizontal_padding">12dp</dimen>
 </resources>

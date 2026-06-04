@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.joko.MainActivity
 import com.example.joko.R
 import com.example.joko.activities.CreateEventActivity
@@ -34,36 +35,33 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
+        return inflater.inflate(R.layout.fragment_home, container, false)
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupUI(view)
+        setupRecyclerView(view)
+        observeViewModel(view)
+
+        // Initial load
+        viewModel.fetchUserData()
+    }
+
+    private fun setupUI(view: View) {
         val tvUserName = view.findViewById<TextView>(R.id.tvUserName)
+        val ivProfile = view.findViewById<ImageView>(R.id.ivProfile)
         val btnLogout = view.findViewById<ImageView>(R.id.btnLogout)
         val btnLihatSemuaEvents = view.findViewById<TextView>(R.id.btnLihatSemuaEvents)
         val btnLihatTim = view.findViewById<TextView>(R.id.btnLihatTim)
         val btnAturMinat = view.findViewById<Button>(R.id.btnAturMinat)
         val btnExploreBanner = view.findViewById<Button>(R.id.btnExploreBanner)
         val btnCreateEvent = view.findViewById<Button>(R.id.btnCreateEvent)
-        val rvHomeEvents = view.findViewById<RecyclerView>(R.id.rvHomeEvents)
 
         // Set Dynamic Greeting
         val name = viewModel.userName ?: "User"
         tvUserName.text = "Halo, $name"
-
-        // Setup RecyclerView
-        eventAdapter = HomeEventAdapter { event ->
-            val intent = Intent(requireContext(), EventDetailActivity::class.java)
-            intent.putExtra("EVENT_ID", event.id)
-            startActivity(intent)
-        }
-        rvHomeEvents.apply {
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            adapter = eventAdapter
-        }
-
-        // Observe Data
-        viewModel.latestEvents.observe(viewLifecycleOwner) { events ->
-            eventAdapter.submitList(events)
-        }
 
         // Fungsi Logout
         btnLogout.setOnClickListener {
@@ -73,6 +71,10 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireContext(), LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
+        }
+
+        ivProfile.setOnClickListener {
+            (activity as? MainActivity)?.navigateToTab(R.id.nav_profile)
         }
 
         // Navigasi ke Create Event Activity
@@ -97,7 +99,41 @@ class HomeFragment : Fragment() {
         btnAturMinat.setOnClickListener {
             (activity as? MainActivity)?.navigateToTab(R.id.nav_profile)
         }
+    }
 
-        return view
+    private fun setupRecyclerView(view: View) {
+        val rvHomeEvents = view.findViewById<RecyclerView>(R.id.rvHomeEvents)
+        eventAdapter = HomeEventAdapter { event ->
+            val intent = Intent(requireContext(), EventDetailActivity::class.java)
+            intent.putExtra("EVENT_ID", event.id)
+            startActivity(intent)
+        }
+        rvHomeEvents.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = eventAdapter
+        }
+    }
+
+    private fun observeViewModel(view: View) {
+        val btnCreateEvent = view.findViewById<Button>(R.id.btnCreateEvent)
+        val ivProfile = view.findViewById<ImageView>(R.id.ivProfile)
+        
+        // Observe Data
+        viewModel.latestEvents.observe(viewLifecycleOwner) { events ->
+            eventAdapter.submitList(events)
+        }
+
+        viewModel.isVerified.observe(viewLifecycleOwner) { isVerified ->
+            btnCreateEvent.visibility = if (isVerified) View.VISIBLE else View.GONE
+        }
+
+        viewModel.pfpUrl.observe(viewLifecycleOwner) { url ->
+            Glide.with(this)
+                .load(url)
+                .placeholder(R.drawable.default_avatar)
+                .error(R.drawable.default_avatar)
+                .circleCrop()
+                .into(ivProfile)
+        }
     }
 }

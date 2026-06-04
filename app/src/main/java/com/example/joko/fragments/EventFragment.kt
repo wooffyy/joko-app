@@ -2,14 +2,19 @@ package com.example.joko.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.example.joko.MainActivity
 import com.example.joko.R
+import com.example.joko.activities.CreateEventActivity
 import com.example.joko.activities.EventDetailActivity
 import com.example.joko.activities.EventViewModel
 import com.example.joko.adapters.EventAdapter
@@ -46,6 +51,7 @@ class EventFragment : Fragment() {
 
         // Pemicu sinkronisasi data saat halaman dibuka
         viewModel.fetchEvents()
+        viewModel.fetchUserData()
     }
 
     private fun setupRecyclerView() {
@@ -65,6 +71,23 @@ class EventFragment : Fragment() {
     }
 
     private fun setupListeners() {
+        // Navigasi ke Profile Screen saat foto profil diklik
+        binding.ivProfile.setOnClickListener {
+            (activity as? MainActivity)?.navigateToTab(R.id.nav_profile)
+        }
+
+        // Navigasi ke Create Event Activity
+        binding.btnCreateEvent.setOnClickListener {
+            val intent = Intent(requireContext(), CreateEventActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Langkah 2: Fragment Search Integration
+        // Mengirim input user ke ViewModel secara realtime
+        binding.etSearch.doOnTextChanged { text, _, _, _ ->
+            viewModel.setSearch(text?.toString() ?: "")
+        }
+
         // Langkah 3.2.2: Listener Guard Stabilization
         binding.cgCategories.setOnCheckedStateChangeListener { group, checkedIds ->
             val currentFilterInViewModel = viewModel.currentFilter.value ?: "Semua"
@@ -74,7 +97,6 @@ class EventFragment : Fragment() {
                 val selectedCategory = chip.text.toString()
                 
                 // Guard: Hanya panggil setFilter jika kategori yang diklik berbeda dengan filter aktif di ViewModel.
-                // Ini krusial untuk mencegah loop/redundant rerender saat programmatic selection di renderFilterChips.
                 if (!selectedCategory.equals(currentFilterInViewModel, ignoreCase = true)) {
                     viewModel.setFilter(selectedCategory)
                 }
@@ -92,10 +114,15 @@ class EventFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        // Observe allEvents yang sudah menangani logic filtering secara reaktif
+        // Observe allEvents yang sudah menangani logic filtering secara reaktif (DB + Category + Search)
         viewModel.allEvents.observe(viewLifecycleOwner) { events ->
             adapter.submitList(events)
             binding.tvEmptyState.visibility = if (events.isEmpty()) View.VISIBLE else View.GONE
+        }
+
+        // Observe isVerified untuk menampilkan/menyembunyikan tombol Buat Event
+        viewModel.isVerified.observe(viewLifecycleOwner) { isVerified ->
+            binding.btnCreateEvent.visibility = if (isVerified) View.VISIBLE else View.GONE
         }
 
         // Langkah 3.1: Dynamic Chip Rendering
@@ -112,6 +139,15 @@ class EventFragment : Fragment() {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
         }
+
+        viewModel.pfpUrl.observe(viewLifecycleOwner) { url ->
+            Glide.with(this)
+                .load(url)
+                .placeholder(R.drawable.default_avatar)
+                .error(R.drawable.default_avatar)
+                .circleCrop()
+                .into(binding.ivProfile)
+        }
     }
 
     private fun renderFilterChips(categories: List<String>) {
@@ -123,17 +159,21 @@ class EventFragment : Fragment() {
             binding.cgCategories.removeViewAt(1)
         }
 
-        // 2. Membuat Chip baru untuk setiap kategori dari database
+        // 2. Membuat Chip baru dengan sinkronisasi identitas visual (Warna + Teks)
         categories.forEach { category ->
             if (!category.equals("Semua", ignoreCase = true)) {
-                val chip = Chip(requireContext(), null, com.google.android.material.R.attr.chipStyle).apply {
+                // Gunakan ContextThemeWrapper untuk menyuntikkan dasar Geometri
+                val themedContext = ContextThemeWrapper(requireContext(), R.style.Widget_App_Chip_Filter)
+                val chip = Chip(themedContext).apply {
                     text = category.replaceFirstChar { it.uppercase() }
                     isCheckable = true
                     id = View.generateViewId()
+                    
+                    // Explicit Visual Identity Injection (Warna & State)
                     setChipBackgroundColorResource(R.color.chip_bg_selector)
                     setChipStrokeColorResource(R.color.chip_stroke_selector)
-                    setChipStrokeWidthResource(R.dimen.chip_stroke_width)
                     setTextColor(requireContext().getColorStateList(R.color.chip_text_selector))
+                    setTextAppearance(R.style.TextAppearance_App_Chip)
                 }
                 binding.cgCategories.addView(chip)
             }

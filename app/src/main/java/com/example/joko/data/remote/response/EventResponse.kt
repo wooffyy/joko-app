@@ -17,6 +17,5 @@ data class EventResponse(
     @SerializedName("tags") val tags: List<String>? = null,
     @SerializedName("owner_id") val ownerId: String? = null,
     @SerializedName("is_verified") val isVerified: Boolean? = false,
-    @SerializedName("click_count") val clickCount: Int? = 0,
     @SerializedName("trust_score") val trustScore: Double? = 0.0
 )

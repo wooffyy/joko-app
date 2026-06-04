@@ -42,7 +42,6 @@ class EventDetailActivity : AppCompatActivity() {
             viewModel.getEventById(eventId).observe(this) { event ->
                 event?.let {
                     setupUI(it)
-                    viewModel.incrementClickCount(it.id)
                 }
             }
         } else {
@@ -61,6 +60,9 @@ class EventDetailActivity : AppCompatActivity() {
             tvEventLocation.text = event.location
             tvEventDeadline.text = event.startDate
             tvEventDescription.text = event.description
+
+            // Setup Badge Verifikasi
+            icVerifiedOrganizer.visibility = if (event.isVerified) android.view.View.VISIBLE else android.view.View.GONE
 
             Glide.with(this@EventDetailActivity)
                 .load(event.imageUrl)

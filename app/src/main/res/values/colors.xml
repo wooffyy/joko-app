@@ -13,6 +13,7 @@
     <color name="text_primary">#F0F4FF</color>
     <color name="text_secondary">#8B95A9</color>
     <color name="text_disabled">#3D4557</color>
+    <color name="text_alert">#FF5252</color>
     <color name="outline_variant">#424753</color>
 
     <color name="black">#FF000000</color>

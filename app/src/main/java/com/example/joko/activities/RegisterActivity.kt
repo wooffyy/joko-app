@@ -19,6 +19,7 @@ import com.example.joko.utils.ViewModelFactory
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.example.joko.fragments.ChipInputFragment
+import com.example.joko.utils.InputFieldValidator
 
 class RegisterActivity : AppCompatActivity() {
     private var isPasswordVisible = false
@@ -48,6 +49,11 @@ class RegisterActivity : AppCompatActivity() {
         val ivShowPassword = findViewById<ImageView>(R.id.ivShowPassword)
         val btnDaftar = findViewById<Button>(R.id.btnDaftar)
         val tvMasuk = findViewById<TextView>(R.id.tvMasuk)
+        
+        val tvErrorNama = findViewById<TextView>(R.id.tvErrorNama)
+        val tvErrorEmail = findViewById<TextView>(R.id.tvErrorEmail)
+        val tvErrorPassword = findViewById<TextView>(R.id.tvErrorPassword)
+        val layoutPassword = findViewById<android.widget.LinearLayout>(R.id.layoutPassword)
 
         // Tombol Back
         btnBack.setOnClickListener {
@@ -79,28 +85,36 @@ class RegisterActivity : AppCompatActivity() {
             val university = etUniversity.text.toString().trim().ifEmpty { null }
             val portfolio = etPortfolio.text.toString().trim().ifEmpty { null }
 
-            // Mengambil list interest yang dipilih
-            val selectedInterests = cgInterest.checkedChipIds.map { id ->
-                findViewById<Chip>(id).text.toString()
+            // Validasi
+            val isNameValid = InputFieldValidator.validateRequiredField(name, etName, "Nama tidak boleh kosong", errorView = tvErrorNama)
+            val isEmailValid = InputFieldValidator.validateRequiredField(email, etEmail, "Email tidak boleh kosong", errorView = tvErrorEmail)
+            
+            val passwordError = when {
+                password.isEmpty() -> "Password tidak boleh kosong"
+                password.length < 8 -> "Password minimal 8 karakter"
+                else -> null
             }
+            val isPasswordValid = InputFieldValidator.validateField(passwordError != null, layoutPassword, passwordError ?: "", errorView = tvErrorPassword)
 
-            val selectedSkills = skillInputFragment.getTags()
-            if (email.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty()) {
-                if (password.length >= 6) {
-                    viewModel.register(
-                        email = email,
-                        password = password,
-                        name = name,
-                        university = university,
-                        interests = selectedInterests,
-                        skills = selectedSkills,
-                        portfolioLink = portfolio
-                    )
-                } else {
-                    Toast.makeText(this, "Password minimal 6 karakter", Toast.LENGTH_SHORT).show()
+            if (isNameValid && isEmailValid && isPasswordValid) {
+                // Mengambil list interest yang dipilih
+                val selectedInterests = cgInterest.checkedChipIds.map { id ->
+                    findViewById<Chip>(id).text.toString()
                 }
+
+                val selectedSkills = skillInputFragment.getTags()
+                
+                viewModel.register(
+                    email = email,
+                    password = password,
+                    name = name,
+                    university = university,
+                    interests = selectedInterests,
+                    skills = selectedSkills,
+                    portfolioLink = portfolio
+                )
             } else {
-                Toast.makeText(this, "Nama, Email dan password tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Mohon lengkapi data dengan benar", Toast.LENGTH_SHORT).show()
             }
         }
 

@@ -63,6 +63,7 @@
                 android:paddingHorizontal="16dp">
 
                 <ImageView
+                    android:id="@+id/ivSearchIcon"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@android:drawable/ic_menu_search"
@@ -81,15 +82,21 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/btnFilter"
-                android:layout_width="56dp"
+            <Button
+                android:id="@+id/btnCreateEvent"
+                android:layout_width="wrap_content"
                 android:layout_height="56dp"
                 android:layout_marginStart="12dp"
-                android:background="@drawable/bg_input_field"
-                android:padding="16dp"
-                android:src="@android:drawable/ic_menu_sort_by_size"
-                app:tint="@color/white" />
+                android:backgroundTint="@color/primary"
+                android:paddingHorizontal="16dp"
+                android:text="@string/btn_buat_event"
+                android:textAllCaps="false"
+                android:textColor="#0D0F14"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:cornerRadius="12dp"
+                tools:visibility="visible" />
+
         </LinearLayout>
 
         <HorizontalScrollView
@@ -107,17 +114,12 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipSemua"
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    style="@style/Widget.App.Chip.Filter"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
+                    android:layout_height="wrap_content"
                     android:checkable="true"
                     android:checked="true"
-                    android:text="Semua"
-                    android:textColor="@color/chip_text_selector"
-                    app:checkedIconVisible="false"
-                    app:chipBackgroundColor="@color/chip_bg_selector"
-                    app:chipStrokeColor="@color/chip_stroke_selector"
-                    app:chipStrokeWidth="1dp" />
+                    android:text="Semua" />
 
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>

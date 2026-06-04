@@ -12,8 +12,17 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Joko">
-        <activity
+      <activity
             android:name=".activities.EditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.CreateTeamActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ManageApplicantsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.TeamDetailActivity"
             android:exported="false" />
         <activity
             android:name=".activities.ProfileActivity"
