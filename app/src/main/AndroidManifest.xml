@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Joko">
         <activity
+            android:name=".activities.ManageApplicantsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.TeamDetailActivity"
             android:exported="false" />
         <activity
