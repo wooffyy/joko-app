@@ -7,6 +7,7 @@ import com.example.joko.data.remote.request.TeamRequest
 import com.example.joko.data.remote.response.TeamMemberResponse
 import com.example.joko.data.remote.response.TeamResponse
 import com.example.joko.utils.SessionManager
+import retrofit2.HttpException
 import retrofit2.Response
 
 class TeamRepository(
@@ -79,19 +80,18 @@ class TeamRepository(
         }
     }
 
-    /**
-     * Menggunakan RPC apply_to_team.
-     * Validasi (duplicate, owner, capacity) dilakukan sepenuhnya di sisi database.
-     */
     suspend fun applyToTeam(teamId: String): Response<Unit> {
-        val request = mapOf("p_team_id" to teamId)
+        val userId = sessionManager.getUserId() ?: throw Exception("User not logged in")
+        val request = mapOf(
+            "p_team_id" to teamId,
+            "p_user_id" to userId
+        )
 
         return try {
             val response = apiService.applyToTeam(request = request)
             if (!response.isSuccessful) {
                 val errorBody = response.errorBody()?.string()
                 Log.e(TAG, "Apply to team failed: $errorBody")
-                // Melempar error message dari backend agar bisa ditangkap ViewModel
             }
             response
         } catch (e: Exception) {
@@ -103,6 +103,13 @@ class TeamRepository(
     suspend fun getTeamMembers(teamId: String): List<TeamMemberResponse> {
         return try {
             apiService.getTeamMembers(teamId = "eq.$teamId")
+        } catch (e: HttpException) {
+            val response = e.response()
+            Log.e(TAG, "URL request: ${response?.raw()?.request?.url}")
+            Log.e(TAG, "HTTP code: ${e.code()}")
+            Log.e(TAG, "Response message: ${e.message()}")
+            Log.e(TAG, "Error body: ${response?.errorBody()?.string()}")
+            throw e
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching team members: ${e.message}")
             throw e
@@ -112,7 +119,14 @@ class TeamRepository(
     suspend fun getUserApplications(): List<TeamMemberResponse> {
         val userId = sessionManager.getUserId() ?: throw Exception("User not logged in")
         return try {
-            apiService.getUserApplications(userId = userId, status = "pending")
+            apiService.getUserApplications(userId = "eq.$userId", status = "eq.pending")
+        } catch (e: HttpException) {
+            val response = e.response()
+            Log.e(TAG, "URL request: ${response?.raw()?.request?.url}")
+            Log.e(TAG, "HTTP code: ${e.code()}")
+            Log.e(TAG, "Response message: ${e.message()}")
+            Log.e(TAG, "Error body: ${response?.errorBody()?.string()}")
+            throw e
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching user applications: ${e.message}")
             throw e
@@ -146,7 +160,7 @@ class TeamRepository(
      * Menggunakan RPC accept_applicant.
      */
     suspend fun acceptApplicant(applicationId: String): Response<Unit> {
-        val request = mapOf("p_application_id" to applicationId)
+        val request = mapOf("p_member_id" to applicationId)
         return try {
             val response = apiService.acceptApplicant(request = request)
             if (!response.isSuccessful) {
