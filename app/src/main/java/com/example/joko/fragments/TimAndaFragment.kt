@@ -109,21 +109,20 @@ class TimAndaFragment : Fragment() {
         
         // UI updates for filter buttons
         val activeBg = ContextCompat.getDrawable(requireContext(), R.drawable.bg_tag)
-        val inactiveBg = ContextCompat.getDrawable(requireContext(), R.color.transparent)
-        val activeColor = ContextCompat.getColor(requireContext(), R.color.black)
-        val inactiveColor = ContextCompat.getColor(requireContext(), R.color.white)
+        val inactiveBg = ContextCompat.getDrawable(requireContext(), R.drawable.bg_tag_inactive)
+        val textColor = ContextCompat.getColor(requireContext(), R.color.white)
 
         binding.btnFilterCreated.apply {
             background = if (filter == "created") activeBg else inactiveBg
-            setTextColor(if (filter == "created") activeColor else inactiveColor)
+            setTextColor(textColor)
         }
         binding.btnFilterJoined.apply {
             background = if (filter == "joined") activeBg else inactiveBg
-            setTextColor(if (filter == "joined") activeColor else inactiveColor)
+            setTextColor(textColor)
         }
         binding.btnFilterPending.apply {
             background = if (filter == "pending") activeBg else inactiveBg
-            setTextColor(if (filter == "pending") activeColor else inactiveColor)
+            setTextColor(textColor)
         }
 
         refreshList()

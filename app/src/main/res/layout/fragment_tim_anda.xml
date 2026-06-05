@@ -28,7 +28,7 @@
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="8dp"
                 android:text="Created"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:fontFamily="sans-serif-black" />
 
@@ -37,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/bg_tag_inactive"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="8dp"
                 android:text="Joined"
@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/bg_tag_inactive"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="8dp"
                 android:text="Pending"
