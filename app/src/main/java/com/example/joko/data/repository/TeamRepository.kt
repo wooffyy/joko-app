@@ -119,7 +119,8 @@ class TeamRepository(
     suspend fun getUserApplications(): List<TeamMemberResponse> {
         val userId = sessionManager.getUserId() ?: throw Exception("User not logged in")
         return try {
-            apiService.getUserApplications(userId = "eq.$userId", status = "eq.pending")
+            // Sync with DB Contract: PENDING
+            apiService.getUserApplications(userId = "eq.$userId", status = "eq.PENDING")
         } catch (e: HttpException) {
             val response = e.response()
             Log.e(TAG, "URL request: ${response?.raw()?.request?.url}")
@@ -138,7 +139,8 @@ class TeamRepository(
      */
     suspend fun updateMemberStatus(memberId: String, status: String): Response<Unit> {
         return try {
-            val response = if (status == "accepted") {
+            // Sync with DB Contract: APPROVED
+            val response = if (status == "APPROVED") {
                 acceptApplicant(memberId)
             } else {
                 val request = MemberActionRequest(status = status)

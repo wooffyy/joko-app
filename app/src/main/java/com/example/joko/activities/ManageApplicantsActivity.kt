@@ -92,16 +92,18 @@ class ManageApplicantsActivity : AppCompatActivity() {
 
         viewModel.teamMembers.observe(this) { members ->
             val total = members.size
-            val pending = members.count { it.status == "pending" }
-            val accepted = members.count { it.status == "accepted" }
-            val rejected = members.count { it.status == "rejected" }
+            // Sync with DB Contract: PENDING, APPROVED, REJECTED
+            val pending = members.count { it.status == "PENDING" }
+            val approved = members.count { it.status == "APPROVED" }
+            val rejected = members.count { it.status == "REJECTED" }
 
             Log.d("ManageApplicants", """
                 --- Runtime Statistics ---
                 Total Members: $total
-                Pending: $pending
-                Accepted: $accepted
-                Rejected: $rejected
+                PENDING: $pending
+                APPROVED: $approved
+                REJECTED: $rejected
+                Raw Statuses: ${members.map { it.status }}
                 ----------------------------
             """.trimIndent())
 
@@ -157,15 +159,15 @@ class ManageApplicantsActivity : AppCompatActivity() {
     private fun updateList() {
         val members = viewModel.teamMembers.value ?: emptyList()
         val filteredList = if (isShowingApplicants) {
-            members.filter { it.status == "pending" }
+            members.filter { it.status == "PENDING" }
         } else {
-            members.filter { it.status == "accepted" }
+            members.filter { it.status == "APPROVED" }
         }
 
         val adapter = TeamMemberAdapter(
             isApplicant = isShowingApplicants,
-            onAcceptClick = { id -> viewModel.updateMemberStatus(id, "accepted") },
-            onRejectClick = { id -> viewModel.updateMemberStatus(id, "rejected") },
+            onAcceptClick = { id -> viewModel.updateMemberStatus(id, "APPROVED") },
+            onRejectClick = { id -> viewModel.updateMemberStatus(id, "REJECTED") },
             isProcessing = viewModel.isLoading.value ?: false
         )
         rvTeamMembers.adapter = adapter

@@ -1,5 +1,6 @@
 package com.example.joko.activities
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -69,21 +70,23 @@ class TeamViewModel(private val teamRepository: TeamRepository) : ViewModel() {
 
         // Cari user di dalam list member
         val userMemberEntry = members.find { it.userId == currentUserId }
+        
+        Log.d("TeamViewModel", "Calculating role status for user $currentUserId. Entry status: ${userMemberEntry?.status}")
 
-        // 2. Prioritas APPROVED
-        if (userMemberEntry?.status == "accepted") {
+        // 2. Prioritas APPROVED (Sync with DB Contract)
+        if (userMemberEntry?.status == "APPROVED") {
             _userRoleStatus.value = UserRoleStatus.APPROVED
             return
         }
 
-        // 3. Prioritas PENDING
-        if (userMemberEntry?.status == "pending") {
+        // 3. Prioritas PENDING (Sync with DB Contract)
+        if (userMemberEntry?.status == "PENDING") {
             _userRoleStatus.value = UserRoleStatus.PENDING
             return
         }
 
-        // 4. Prioritas REJECTED
-        if (userMemberEntry?.status == "rejected") {
+        // 4. Prioritas REJECTED (Sync with DB Contract)
+        if (userMemberEntry?.status == "REJECTED") {
             _userRoleStatus.value = UserRoleStatus.REJECTED
             return
         }
