@@ -19,7 +19,10 @@ import com.example.joko.activities.CreateEventActivity
 import com.example.joko.activities.EventDetailActivity
 import com.example.joko.activities.HomeViewModel
 import com.example.joko.activities.LoginActivity
+import com.example.joko.activities.TeamDetailActivity
+import com.example.joko.activities.TeamViewModel
 import com.example.joko.adapters.HomeEventAdapter
+import com.example.joko.adapters.HomeTeamAdapter
 import com.example.joko.utils.SessionManager
 import com.example.joko.utils.ViewModelFactory
 
@@ -29,7 +32,12 @@ class HomeFragment : Fragment() {
         ViewModelFactory(requireContext())
     }
 
+    private val teamViewModel: TeamViewModel by viewModels {
+        ViewModelFactory(requireContext())
+    }
+
     private lateinit var eventAdapter: HomeEventAdapter
+    private lateinit var teamAdapter: HomeTeamAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,11 +50,12 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupUI(view)
-        setupRecyclerView(view)
+        setupRecyclerViews(view)
         observeViewModel(view)
 
         // Initial load
         viewModel.fetchUserData()
+        teamViewModel.loadTeams()
     }
 
     private fun setupUI(view: View) {
@@ -101,7 +110,8 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setupRecyclerView(view: View) {
+    private fun setupRecyclerViews(view: View) {
+        // Events RecyclerView
         val rvHomeEvents = view.findViewById<RecyclerView>(R.id.rvHomeEvents)
         eventAdapter = HomeEventAdapter { event ->
             val intent = Intent(requireContext(), EventDetailActivity::class.java)
@@ -112,15 +122,33 @@ class HomeFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = eventAdapter
         }
+
+        // Teams RecyclerView
+        val rvHomeTeams = view.findViewById<RecyclerView>(R.id.rv_home_teams)
+        teamAdapter = HomeTeamAdapter { team ->
+            val intent = Intent(requireContext(), TeamDetailActivity::class.java)
+            intent.putExtra(TeamDetailActivity.EXTRA_TEAM_ID, team.id)
+            startActivity(intent)
+        }
+        rvHomeTeams.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = teamAdapter
+        }
     }
 
     private fun observeViewModel(view: View) {
         val btnCreateEvent = view.findViewById<Button>(R.id.btnCreateEvent)
         val ivProfile = view.findViewById<ImageView>(R.id.ivProfile)
         
-        // Observe Data
+        // Observe Data Events
         viewModel.latestEvents.observe(viewLifecycleOwner) { events ->
             eventAdapter.submitList(events)
+        }
+
+        // Observe Data Teams
+        teamViewModel.teams.observe(viewLifecycleOwner) { teams ->
+            val filteredTeams = teams.filter { it.currentMembersCount < it.maxCapacity }.take(5)
+            teamAdapter.submitList(filteredTeams)
         }
 
         viewModel.isVerified.observe(viewLifecycleOwner) { isVerified ->

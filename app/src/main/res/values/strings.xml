@@ -34,4 +34,10 @@
     <string name="label_kata_kunci">Kata Kunci / Tag</string>
     <string name="btn_publikasikan">Publikasikan Event</string>
     <string name="event_published">Event berhasil dipublikasikan!</string>
+
+    <string name="label_member_role_default">MEMBER</string>
+    <string name="label_no_applicants">Belum ada pelamar</string>
+    <string name="label_no_members">Belum ada anggota</string>
+    <string name="label_tab_applicants">Yg Mau Join</string>
+    <string name="label_tab_members">Yg udah join</string>
 </resources>

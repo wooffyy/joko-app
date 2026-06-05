@@ -5,6 +5,7 @@ import com.example.joko.data.local.database.AppDatabase
 import com.example.joko.data.remote.api.RetrofitClient
 import com.example.joko.data.repository.AuthRepository
 import com.example.joko.data.repository.EventRepository
+import com.example.joko.data.repository.TeamRepository
 import com.example.joko.utils.SessionManager
 
 object Injection {
@@ -18,5 +19,11 @@ object Injection {
         val apiService = RetrofitClient.getApiService(context)
         val sessionManager = SessionManager(context)
         return AuthRepository(apiService, sessionManager)
+    }
+
+    fun provideTeamRepository(context: Context): TeamRepository {
+        val apiService = RetrofitClient.getApiService(context)
+        val sessionManager = SessionManager(context)
+        return TeamRepository(apiService, sessionManager)
     }
 }

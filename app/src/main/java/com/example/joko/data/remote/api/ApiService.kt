@@ -3,14 +3,19 @@ package com.example.joko.data.remote.api
 import com.example.joko.data.remote.request.AuthRequest
 import com.example.joko.data.remote.request.CreateEventRequest
 import com.example.joko.data.remote.request.CreateUserRequest
+import com.example.joko.data.remote.request.MemberActionRequest
+import com.example.joko.data.remote.request.TeamRequest
 import com.example.joko.data.remote.request.UpdateProfileRequest
 import com.example.joko.data.remote.response.AuthResponse
 import com.example.joko.data.remote.response.EventResponse
 import com.example.joko.data.remote.response.ProfileResponse
+import com.example.joko.data.remote.response.TeamMemberResponse
+import com.example.joko.data.remote.response.TeamResponse
 import com.example.joko.data.remote.response.UserResponse
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
@@ -63,5 +68,53 @@ interface ApiService {
     suspend fun updateProfile(
         @Query("id") userId: String,
         @Body request: UpdateProfileRequest
+    ): Response<Unit>
+
+    // --- Team Endpoints ---
+
+    @GET("rest/v1/view_teams_with_member_count?select=*")
+    suspend fun getTeams(
+        @Query("order") order: String = "created_at.desc",
+        @Query("owner_id") ownerId: String? = null
+    ): List<TeamResponse>
+
+    @POST("rest/v1/teams")
+    suspend fun createTeam(
+        @Header("Prefer") prefer: String = "return=minimal",
+        @Body request: TeamRequest
+    ): Response<Unit>
+
+    @GET("rest/v1/team_members?select=*,users(*)")
+    suspend fun getTeamMembers(
+        @Query("team_id") teamId: String
+    ): List<TeamMemberResponse>
+
+    @GET("rest/v1/team_members?select=*,teams(*)")
+    suspend fun getUserApplications(
+        @Query("user_id") userId: String,
+        @Query("status") status: String
+    ): List<TeamMemberResponse>
+
+    // RPC: apply_to_team(p_team_id uuid)
+    @POST("rest/v1/rpc/apply_to_team")
+    suspend fun applyToTeam(
+        @Body request: Map<String, String> // payload: { "p_team_id": "UUID" }
+    ): Response<Unit>
+
+    // RPC: accept_applicant(p_application_id uuid)
+    @POST("rest/v1/rpc/accept_applicant")
+    suspend fun acceptApplicant(
+        @Body request: Map<String, String> // payload: { "p_application_id": "UUID" }
+    ): Response<Unit>
+
+    @PATCH("rest/v1/team_members")
+    suspend fun updateMemberStatus(
+        @Query("id") memberId: String,
+        @Body request: MemberActionRequest
+    ): Response<Unit>
+
+    @DELETE("rest/v1/team_members")
+    suspend fun cancelApplication(
+        @Query("id") memberId: String
     ): Response<Unit>
 }

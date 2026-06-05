@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_base">
@@ -64,162 +65,32 @@
             android:layout_width="match_parent"
             android:layout_height="24dp" />
 
-        <!-- Team 1: Active (Included) -->
-        <include
-            android:id="@+id/card_my_team_1"
-            layout="@layout/item_my_team_card" />
-
-        <!-- Team 2: Pending (Inline) -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_my_team_2"
+        <!-- RV for My Teams -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_my_teams"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="@color/bg_surface"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:contentPadding="16dp">
+            android:nestedScrollingEnabled="false"
+            tools:listitem="@layout/item_my_team_card"
+            tools:itemCount="1"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+        <!-- Empty State for My Teams -->
+        <TextView
+            android:id="@+id/tv_empty_my_teams"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="16dp"
+            android:gravity="center"
+            android:text="Anda belum memiliki tim yang dikelola."
+            android:textColor="@color/text_secondary"
+            android:visibility="gone" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-black"
-                        android:text="Cyber Knights"
-                        android:textColor="@color/white"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:background="@drawable/bg_status_badge"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="4dp"
-                        android:text="PENDING"
-                        android:textColor="@color/tertiary"
-                        android:textSize="12sp"
-                        android:fontFamily="sans-serif-black" />
-
-                </RelativeLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@drawable/ic_calendar"
-                        app:tint="@color/text_secondary" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:text="Global FinTech Sprint"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="13sp" />
-                </LinearLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="RECRUITMENT PROGRESS"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="10sp"
-                        android:fontFamily="sans-serif-black" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:fontFamily="sans-serif-black"
-                        android:text="3/5 SLOTS"
-                        android:textColor="@color/white"
-                        android:textSize="12sp" />
-                </RelativeLayout>
-
-                <ProgressBar
-                    style="@android:style/Widget.ProgressBar.Horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="6dp"
-                    android:layout_marginTop="8dp"
-                    android:progress="60"
-                    android:progressDrawable="@drawable/custom_progress_bar" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_tag"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="4dp"
-                        android:text="Figma"
-                        android:textColor="@color/white"
-                        android:textSize="11sp"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_tag"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="4dp"
-                        android:text="Node.js"
-                        android:textColor="@color/white"
-                        android:textSize="11sp"
-                        android:fontFamily="sans-serif-medium" />
-                </LinearLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_manage_2"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="16dp"
-                    android:backgroundTint="@color/primary"
-                    android:fontFamily="sans-serif-black"
-                    android:text="Manage"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    app:cornerRadius="12dp"
-                    app:icon="@drawable/ic_team"
-                    app:iconGravity="textStart"
-                    app:iconSize="20dp"
-                    app:iconTint="@color/white"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Create New Team Empty State -->
+        <!-- Create New Team Bottom Button -->
         <FrameLayout
             android:id="@+id/btn_create_team_bottom"
             android:layout_width="match_parent"
             android:layout_height="120dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="32dp"
             android:background="@drawable/bg_dashed_border"
             android:clickable="true"
@@ -249,7 +120,7 @@
             </LinearLayout>
         </FrameLayout>
 
-        <!-- SECTION BARU: Pending Applications (Card yang diminta) -->
+        <!-- Section: Pending Applications -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -267,112 +138,25 @@
             android:textColor="@color/text_secondary"
             android:textSize="13sp" />
 
-        <androidx.cardview.widget.CardView
+        <!-- RV for Pending Applications -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_pending_applications"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="@color/bg_surface"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:contentPadding="16dp">
+            android:nestedScrollingEnabled="false"
+            tools:listitem="@layout/item_pending_application_card"
+            tools:itemCount="1"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-black"
-                        android:text="Alpha Devs"
-                        android:textColor="@color/white"
-                        android:textSize="22sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:background="@drawable/bg_status_badge"
-                        android:backgroundTint="#262310"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="8dp"
-                        android:text="UNDER REVIEW"
-                        android:textColor="#FACC15"
-                        android:textSize="12sp"
-                        android:fontFamily="monospace"
-                        android:letterSpacing="0.1" />
-
-                </RelativeLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_calendar"
-                        app:tint="@color/text_secondary" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Global Tech Challenge"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_view_detail"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="56dp"
-                        android:layout_weight="1"
-                        android:text="View Detail"
-                        android:textAllCaps="false"
-                        android:textColor="@color/white"
-                        app:cornerRadius="12dp"
-                        app:strokeColor="@color/outline_variant"
-                        app:icon="@android:drawable/ic_menu_view"
-                        app:iconTint="@color/white"
-                        android:insetTop="0dp"
-                        android:insetBottom="0dp"/>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_cancel_apply"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="56dp"
-                        android:layout_marginStart="12dp"
-                        android:layout_weight="1"
-                        android:text="Cancel Apply"
-                        android:textAllCaps="false"
-                        android:textColor="#FF5252"
-                        app:cornerRadius="12dp"
-                        app:strokeColor="#40FF5252"
-                        app:icon="@android:drawable/ic_menu_close_clear_cancel"
-                        app:iconTint="#FF5252"
-                        android:insetTop="0dp"
-                        android:insetBottom="0dp"/>
-                </LinearLayout>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        <!-- Empty State for Pending Applications -->
+        <TextView
+            android:id="@+id/tv_empty_applications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="16dp"
+            android:gravity="center"
+            android:text="Tidak ada lamaran tertunda."
+            android:textColor="@color/text_secondary"
+            android:visibility="gone" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

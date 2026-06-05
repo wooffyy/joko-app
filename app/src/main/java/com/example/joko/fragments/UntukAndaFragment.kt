@@ -1,62 +1,95 @@
 package com.example.joko.fragments
 
-import android.app.Dialog
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.joko.R
 import com.example.joko.activities.TeamDetailActivity
+import com.example.joko.activities.TeamViewModel
+import com.example.joko.adapters.TeamAdapter
+import com.example.joko.utils.ViewModelFactory
 
 class UntukAndaFragment : Fragment() {
+
+    private val viewModel: TeamViewModel by viewModels {
+        ViewModelFactory(requireContext())
+    }
+
+    private lateinit var teamAdapter: TeamAdapter
+    private lateinit var swipeRefresh: SwipeRefreshLayout
+    private lateinit var progressBar: ProgressBar
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_untuk_anda, container, false)
-
-        val card1: View = view.findViewById(R.id.card_team_1)
-        val card2: View = view.findViewById(R.id.card_team_2)
-        val card3: View = view.findViewById(R.id.card_team_3)
-
-        // Set click listeners for the cards to go to detail
-        val intent = Intent(requireContext(), TeamDetailActivity::class.java)
-        card1.setOnClickListener { startActivity(intent) }
-        card2.setOnClickListener { startActivity(intent) }
-        card3.setOnClickListener { startActivity(intent) }
-
-        // Set click listeners for Apply buttons inside cards
-        card1.findViewById<Button>(R.id.btn_apply).setOnClickListener { showApplyDialog() }
-        card2.findViewById<Button>(R.id.btn_apply).setOnClickListener { showApplyDialog() }
-        card3.findViewById<Button>(R.id.btn_apply).setOnClickListener { showApplyDialog() }
-
-        return view
+        return inflater.inflate(R.layout.fragment_untuk_anda, container, false)
     }
 
-    private fun showApplyDialog() {
-        val dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.dialog_apply_confirmation)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val btnConfirm = dialog.findViewById<Button>(R.id.btn_confirm)
-        val btnCancel = dialog.findViewById<Button>(R.id.btn_cancel)
+        initViews(view)
+        setupRecyclerView(view)
+        observeViewModel()
 
-        btnConfirm.setOnClickListener {
-            dialog.dismiss()
+        viewModel.loadTeams()
+    }
+
+    private fun initViews(view: View) {
+        swipeRefresh = view.findViewById(R.id.swipe_refresh)
+        progressBar = view.findViewById(R.id.progress_bar)
+
+        swipeRefresh.setOnRefreshListener {
+            viewModel.loadTeams()
+        }
+    }
+
+    private fun setupRecyclerView(view: View) {
+        val rvTeams = view.findViewById<RecyclerView>(R.id.rv_teams)
+        teamAdapter = TeamAdapter(
+            onApplyClick = { team ->
+                val intent = Intent(requireContext(), TeamDetailActivity::class.java).apply {
+                    putExtra(TeamDetailActivity.EXTRA_TEAM_ID, team.id)
+                }
+                startActivity(intent)
+            },
+            onDetailClick = { team ->
+                val intent = Intent(requireContext(), TeamDetailActivity::class.java).apply {
+                    putExtra(TeamDetailActivity.EXTRA_TEAM_ID, team.id)
+                }
+                startActivity(intent)
+            }
+        )
+        rvTeams.adapter = teamAdapter
+    }
+
+    private fun observeViewModel() {
+        viewModel.teams.observe(viewLifecycleOwner) { teams ->
+            teamAdapter.submitList(teams)
+            swipeRefresh.isRefreshing = false
         }
 
-        btnCancel.setOnClickListener {
-            dialog.dismiss()
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (!swipeRefresh.isRefreshing) {
+                progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            }
         }
 
-        dialog.show()
+        viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
+            if (message != null) {
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                viewModel.clearErrorMessage()
+                swipeRefresh.isRefreshing = false
+            }
+        }
     }
 }

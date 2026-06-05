@@ -289,16 +289,16 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Project Type"
+                        android:text="Event Name"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
                     <EditText
-                        android:id="@+id/et_project_type"
+                        android:id="@+id/et_event_name"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/bg_input_field"
-                        android:hint="e.g. Web App"
+                        android:hint="e.g. Gemastik 2024"
                         android:paddingHorizontal="16dp"
                         android:textColor="@color/white"
                         android:textColorHint="@color/text_disabled"
