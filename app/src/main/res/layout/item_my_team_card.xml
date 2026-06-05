@@ -98,7 +98,7 @@
             android:progress="50"
             android:progressDrawable="@drawable/custom_progress_bar" />
 
-        <!-- Tags -->
+        <!-- Tags updated to match requested dark background and primary text style -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -109,11 +109,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_tag"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
+                android:backgroundTint="#1A1D26"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
                 android:text="Kotlin"
-                android:textColor="@color/white"
-                android:textSize="11sp"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
                 android:fontFamily="sans-serif-medium" />
 
             <TextView
@@ -121,11 +122,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/bg_tag"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
+                android:backgroundTint="#1A1D26"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
                 android:text="Firebase"
-                android:textColor="@color/white"
-                android:textSize="11sp"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
                 android:fontFamily="sans-serif-medium" />
 
             <TextView
@@ -133,11 +135,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/bg_tag"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
+                android:backgroundTint="#1A1D26"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
                 android:text="React"
-                android:textColor="@color/white"
-                android:textSize="11sp"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
                 android:fontFamily="sans-serif-medium" />
 
         </LinearLayout>
@@ -152,14 +155,14 @@
             android:fontFamily="sans-serif-black"
             android:text="Manage"
             android:textAllCaps="false"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="16sp"
             app:cornerRadius="12dp"
             app:icon="@drawable/ic_team"
             app:iconGravity="textStart"
             app:iconPadding="8dp"
             app:iconSize="20dp"
-            app:iconTint="@color/white"
+            app:iconTint="@color/black"
             android:insetTop="0dp"
             android:insetBottom="0dp"/>
 

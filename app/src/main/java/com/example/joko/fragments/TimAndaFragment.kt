@@ -5,12 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.joko.R
 import com.example.joko.activities.CreateTeamActivity
 import com.example.joko.activities.ManageApplicantsActivity
@@ -18,9 +17,13 @@ import com.example.joko.activities.TeamDetailActivity
 import com.example.joko.activities.TeamViewModel
 import com.example.joko.adapters.MyTeamAdapter
 import com.example.joko.adapters.PendingApplicationAdapter
+import com.example.joko.databinding.FragmentTimAndaBinding
 import com.example.joko.utils.ViewModelFactory
 
 class TimAndaFragment : Fragment() {
+
+    private var _binding: FragmentTimAndaBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: TeamViewModel by viewModels {
         ViewModelFactory(requireContext())
@@ -28,50 +31,52 @@ class TimAndaFragment : Fragment() {
 
     private lateinit var myTeamAdapter: MyTeamAdapter
     private lateinit var pendingAdapter: PendingApplicationAdapter
-    
-    private lateinit var tvEmptyMyTeams: TextView
-    private lateinit var tvEmptyApplications: TextView
+    private var currentFilter = "created"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_tim_anda, container, false)
+    ): View {
+        _binding = FragmentTimAndaBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initViews(view)
-        setupRecyclerViews(view)
+        // setupRecyclerView must be called BEFORE initViews because initViews calls refreshList()
+        // which uses the adapters initialized in setupRecyclerView.
+        setupRecyclerView()
+        initViews()
         observeViewModel()
 
         loadData()
     }
 
     private fun loadData() {
+        binding.swipeRefresh.isRefreshing = true
         viewModel.loadMyTeams()
         viewModel.loadMyApplications()
     }
 
-    private fun initViews(view: View) {
-        tvEmptyMyTeams = view.findViewById(R.id.tv_empty_my_teams)
-        tvEmptyApplications = view.findViewById(R.id.tv_empty_applications)
-
-        // Tombol Buat Tim di Header
-        view.findViewById<View>(R.id.btn_create_team_header).setOnClickListener {
-            startActivity(Intent(requireContext(), CreateTeamActivity::class.java))
+    private fun initViews() {
+        binding.swipeRefresh.setOnRefreshListener {
+            loadData()
         }
 
-        // Card Create New Team di bagian bawah
-        view.findViewById<View>(R.id.btn_create_team_bottom).setOnClickListener {
+        binding.btnFilterCreated.setOnClickListener { updateFilter("created") }
+        binding.btnFilterJoined.setOnClickListener { updateFilter("joined") }
+        binding.btnFilterPending.setOnClickListener { updateFilter("pending") }
+
+        binding.fabCreateTeam.setOnClickListener {
             startActivity(Intent(requireContext(), CreateTeamActivity::class.java))
         }
+        
+        // Initialize default filter state
+        updateFilter("created")
     }
 
-    private fun setupRecyclerViews(view: View) {
-        // My Teams RV
-        val rvMyTeams = view.findViewById<RecyclerView>(R.id.rv_my_teams)
+    private fun setupRecyclerView() {
         myTeamAdapter = MyTeamAdapter(
             onManageClick = { team ->
                 val intent = Intent(requireContext(), ManageApplicantsActivity::class.java).apply {
@@ -80,13 +85,7 @@ class TimAndaFragment : Fragment() {
                 startActivity(intent)
             }
         )
-        rvMyTeams.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = myTeamAdapter
-        }
 
-        // Pending Applications RV
-        val rvPending = view.findViewById<RecyclerView>(R.id.rv_pending_applications)
         pendingAdapter = PendingApplicationAdapter(
             onViewDetailClick = { application ->
                 val intent = Intent(requireContext(), TeamDetailActivity::class.java).apply {
@@ -98,28 +97,54 @@ class TimAndaFragment : Fragment() {
                 viewModel.cancelApplication(application.id)
             }
         )
-        rvPending.apply {
+
+        binding.rvTeamsAnda.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = pendingAdapter
+            adapter = myTeamAdapter
         }
     }
 
-    private fun observeViewModel() {
-        viewModel.myTeams.observe(viewLifecycleOwner) { teams ->
-            myTeamAdapter.submitList(teams)
-            tvEmptyMyTeams.visibility = if (teams.isEmpty()) View.VISIBLE else View.GONE
+    private fun updateFilter(filter: String) {
+        currentFilter = filter
+        
+        // UI updates for filter buttons
+        val activeBg = ContextCompat.getDrawable(requireContext(), R.drawable.bg_tag)
+        val inactiveBg = ContextCompat.getDrawable(requireContext(), R.color.transparent)
+        val activeColor = ContextCompat.getColor(requireContext(), R.color.black)
+        val inactiveColor = ContextCompat.getColor(requireContext(), R.color.white)
+
+        binding.btnFilterCreated.apply {
+            background = if (filter == "created") activeBg else inactiveBg
+            setTextColor(if (filter == "created") activeColor else inactiveColor)
+        }
+        binding.btnFilterJoined.apply {
+            background = if (filter == "joined") activeBg else inactiveBg
+            setTextColor(if (filter == "joined") activeColor else inactiveColor)
+        }
+        binding.btnFilterPending.apply {
+            background = if (filter == "pending") activeBg else inactiveBg
+            setTextColor(if (filter == "pending") activeColor else inactiveColor)
         }
 
-        viewModel.myApplications.observe(viewLifecycleOwner) { applications ->
-            pendingAdapter.submitList(applications)
-            tvEmptyApplications.visibility = if (applications.isEmpty()) View.VISIBLE else View.GONE
+        refreshList()
+    }
+
+    private fun observeViewModel() {
+        viewModel.myTeams.observe(viewLifecycleOwner) {
+            binding.swipeRefresh.isRefreshing = false
+            if (currentFilter != "pending") refreshList()
+        }
+
+        viewModel.myApplications.observe(viewLifecycleOwner) {
+            binding.swipeRefresh.isRefreshing = false
+            if (currentFilter == "pending") refreshList()
         }
 
         viewModel.actionSuccess.observe(viewLifecycleOwner) { success ->
             if (success) {
                 Toast.makeText(requireContext(), "Aksi berhasil!", Toast.LENGTH_SHORT).show()
                 viewModel.resetActionSuccess()
-                loadData() // Refresh both sections
+                loadData()
             }
         }
 
@@ -127,7 +152,30 @@ class TimAndaFragment : Fragment() {
             if (message != null) {
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                 viewModel.clearErrorMessage()
+                binding.swipeRefresh.isRefreshing = false
             }
         }
+    }
+
+    private fun refreshList() {
+        when (currentFilter) {
+            "created", "joined" -> {
+                binding.rvTeamsAnda.adapter = myTeamAdapter
+                val teams = viewModel.myTeams.value ?: emptyList()
+                myTeamAdapter.submitList(teams)
+                binding.tvEmptyState.visibility = if (teams.isEmpty()) View.VISIBLE else View.GONE
+            }
+            "pending" -> {
+                binding.rvTeamsAnda.adapter = pendingAdapter
+                val applications = viewModel.myApplications.value ?: emptyList()
+                pendingAdapter.submitList(applications)
+                binding.tvEmptyState.visibility = if (applications.isEmpty()) View.VISIBLE else View.GONE
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

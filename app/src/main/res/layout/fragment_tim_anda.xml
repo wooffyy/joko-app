@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,155 +8,97 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="100dp"
-        android:paddingTop="24dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <!-- Section: Teams You Manage -->
-        <RelativeLayout
+        <!-- Categories / Tabs - Centered -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp">
 
             <TextView
+                android:id="@+id/btn_filter_created"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-black"
-                android:text="My Active Squads"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"/>
+                android:background="@drawable/bg_tag"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="8dp"
+                android:text="Created"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-black" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_create_team_header"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:backgroundTint="@color/primary"
-                android:fontFamily="sans-serif-black"
-                android:text="Buat Tim"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:cornerRadius="8dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingHorizontal="12dp"
-                android:minHeight="0dp"
-                android:minWidth="0dp"
-                app:icon="@android:drawable/ic_input_add"
-                app:iconSize="14dp"
-                app:iconTint="@color/white"
-                app:iconPadding="4dp"/>
-        </RelativeLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Manage your recruitments and team compositions."
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="24dp" />
-
-        <!-- RV for My Teams -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_my_teams"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            tools:listitem="@layout/item_my_team_card"
-            tools:itemCount="1"/>
-
-        <!-- Empty State for My Teams -->
-        <TextView
-            android:id="@+id/tv_empty_my_teams"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="16dp"
-            android:gravity="center"
-            android:text="Anda belum memiliki tim yang dikelola."
-            android:textColor="@color/text_secondary"
-            android:visibility="gone" />
-
-        <!-- Create New Team Bottom Button -->
-        <FrameLayout
-            android:id="@+id/btn_create_team_bottom"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="32dp"
-            android:background="@drawable/bg_dashed_border"
-            android:clickable="true"
-            android:focusable="true">
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/btn_filter_joined"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:layout_marginStart="12dp"
+                android:background="@android:color/transparent"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="8dp"
+                android:text="Joined"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-black" />
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/ic_input_add"
-                    app:tint="@color/primary" />
+            <TextView
+                android:id="@+id/btn_filter_pending"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:background="@android:color/transparent"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="8dp"
+                android:text="Pending"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-black" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="sans-serif-black"
-                    android:text="Create New Team"
-                    android:textColor="@color/white"
-                    android:textSize="14sp" />
-            </LinearLayout>
-        </FrameLayout>
+        </LinearLayout>
 
-        <!-- Section: Pending Applications -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-black"
-            android:text="Pending Applications"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="16dp"
-            android:text="Track teams you've applied to join."
-            android:textColor="@color/text_secondary"
-            android:textSize="13sp" />
-
-        <!-- RV for Pending Applications -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_pending_applications"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            tools:listitem="@layout/item_pending_application_card"
-            tools:itemCount="1"/>
+            android:layout_height="match_parent">
 
-        <!-- Empty State for Pending Applications -->
-        <TextView
-            android:id="@+id/tv_empty_applications"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="16dp"
-            android:gravity="center"
-            android:text="Tidak ada lamaran tertunda."
-            android:textColor="@color/text_secondary"
-            android:visibility="gone" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_teams_anda"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="100dp"
+                tools:listitem="@layout/item_my_team_card" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+
+    <!-- Floating Action Button for Create Team -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_create_team"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/primary"
+        app:tint="@color/black"
+        app:elevation="4dp"
+        app:fabSize="normal" />
+
+    <!-- Empty State -->
+    <TextView
+        android:id="@+id/tv_empty_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Belum ada data."
+        android:textColor="@color/text_secondary"
+        android:visibility="gone" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

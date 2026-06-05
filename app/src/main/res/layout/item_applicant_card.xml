@@ -80,7 +80,7 @@
                 android:backgroundTint="@color/primary"
                 android:text="accept"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 app:cornerRadius="12dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"/>

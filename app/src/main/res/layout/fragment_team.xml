@@ -6,12 +6,11 @@
     android:background="@color/bg_base"
     android:orientation="vertical">
 
-    <!-- Header Navigation dengan jarak atas -->
+    <!-- Header Navigation dengan jarak atas menggunakan marginTop agar centering sejajar -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="56dp"
-        android:paddingTop="40dp"
+        android:layout_marginTop="40dp"
         android:paddingHorizontal="16dp">
 
         <LinearLayout

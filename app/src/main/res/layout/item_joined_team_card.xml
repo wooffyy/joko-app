@@ -34,11 +34,11 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/bg_status_badge"
-                android:backgroundTint="#262310"
+                android:backgroundTint="#1B4332"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
-                android:text="UNDER REVIEW"
-                android:textColor="#FACC15"
+                android:text="JOINED"
+                android:textColor="@color/secondary"
                 android:textSize="12sp"
                 android:fontFamily="monospace"
                 android:letterSpacing="0.1" />
@@ -91,13 +91,13 @@
                 android:insetBottom="0dp"/>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_cancel_apply"
+                android:id="@+id/btn_leave_team"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="56dp"
                 android:layout_marginStart="12dp"
                 android:layout_weight="1"
-                android:text="Cancel Apply"
+                android:text="Leave Team"
                 android:textAllCaps="false"
                 android:textColor="#FF5252"
                 app:cornerRadius="12dp"
