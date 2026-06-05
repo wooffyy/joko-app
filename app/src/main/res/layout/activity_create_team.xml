@@ -36,12 +36,6 @@
             android:textColor="@color/primary"
             android:textSize="20sp" />
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_more"
-            app:tint="@color/primary"
-            android:rotation="90"/>
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
