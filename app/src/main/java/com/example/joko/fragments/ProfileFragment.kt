@@ -145,6 +145,11 @@ class ProfileFragment : Fragment() {
         val cgSkills = view.findViewById<ChipGroup>(R.id.cgSkills)
         val ivVerifiedBadge = view.findViewById<ImageView>(R.id.ivVerifiedBadge)
 
+        // Contact Sections
+        val portfolioSection = view.findViewById<LinearLayout>(R.id.PortfolioSection)
+        val emailSection = view.findViewById<LinearLayout>(R.id.EmailSection)
+        val linkedinSection = view.findViewById<LinearLayout>(R.id.LinkedinSection)
+
         // Profile Details
         tvUsername.text = profile.name
         tvUniversity.text = profile.university ?: "Mahasiswa"
@@ -164,6 +169,36 @@ class ProfileFragment : Fragment() {
         view.findViewById<TextView>(R.id.tvPortfolioLink).text = profile.portfolioLink ?: "Belum diatur"
         view.findViewById<TextView>(R.id.tvEmailLink).text = profile.email ?: "Belum diatur"
         view.findViewById<TextView>(R.id.tvLinkedinLink).text = profile.linkedin ?: "Belum diatur"
+
+        // Setup Contact Click Listeners
+        portfolioSection.setOnClickListener {
+            val ptLink = profile.portfolioLink
+            ptLink?.let { link ->
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse(if (link.startsWith("http")) link else "https://$link")
+                }
+                startActivity(intent)
+            } ?: Toast.makeText(requireContext(), "Portfolio belum diatur", Toast.LENGTH_SHORT).show()
+        }
+
+        emailSection.setOnClickListener {
+            profile.email?.let { email ->
+                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("mailto:$email")
+                }
+                startActivity(Intent.createChooser(intent, "Kirim Email"))
+            } ?: Toast.makeText(requireContext(), "Email belum diatur", Toast.LENGTH_SHORT).show()
+        }
+
+        linkedinSection.setOnClickListener {
+            val liLink = profile.linkedin
+            liLink?.let { link ->
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse(if (link.startsWith("http")) link else "https://$link")
+                }
+                startActivity(intent)
+            } ?: Toast.makeText(requireContext(), "LinkedIn belum diatur", Toast.LENGTH_SHORT).show()
+        }
 
         // Skills (Dynamic Chips)
         cgSkills.removeAllViews()
