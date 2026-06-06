@@ -126,7 +126,7 @@ class ProfileFragment : Fragment() {
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             if (isLoading) {
-                scrollView.visibility = View.INVISIBLE
+                scrollView.visibility = View.GONE
             }
         }
 

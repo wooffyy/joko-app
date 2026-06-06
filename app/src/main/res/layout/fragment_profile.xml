@@ -32,8 +32,11 @@
             android:paddingTop="32dp">
 
             <RelativeLayout
+                android:id="@+id/layoutPublicHeader"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <ImageView
                     android:id="@+id/btnBack"
@@ -42,8 +45,18 @@
                     android:background="@drawable/bg_input_field"
                     android:padding="8dp"
                     android:src="@drawable/abc_ic_ab_back_material"
-                    android:visibility="gone"
                     app:tint="@color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="16dp"
+                    android:layout_toEndOf="@id/btnBack"
+                    android:text="Profil Pengguna"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
             </RelativeLayout>
 
             <com.google.android.material.imageview.ShapeableImageView

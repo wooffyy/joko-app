@@ -33,6 +33,8 @@ class ManageApplicantsActivity : AppCompatActivity() {
     private lateinit var rvTeamMembers: RecyclerView
     private lateinit var tvEmptyState: TextView
     private lateinit var tvTeamNameHeader: TextView
+    private lateinit var pbManage: android.widget.ProgressBar
+    private lateinit var svManageApplicants: androidx.core.widget.NestedScrollView
 
     private var currentTeamId: String? = null
     private var isShowingApplicants = true
@@ -69,7 +71,7 @@ class ManageApplicantsActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        findViewById<ImageView>(R.id.btn_back).setOnClickListener { finish() }
+        findViewById<ImageView>(R.id.btnBack).setOnClickListener { finish() }
 
         tabApplicants = findViewById(R.id.tab_applicants)
         tabMembers = findViewById(R.id.tab_members)
@@ -80,6 +82,8 @@ class ManageApplicantsActivity : AppCompatActivity() {
         rvTeamMembers = findViewById(R.id.rv_team_members)
         tvEmptyState = findViewById(R.id.tv_empty_state)
         tvTeamNameHeader = findViewById(R.id.tv_team_name_header)
+        pbManage = findViewById(R.id.pbManage)
+        svManageApplicants = findViewById(R.id.svManageApplicants)
     }
 
     private fun setupRecyclerView() {
@@ -112,7 +116,13 @@ class ManageApplicantsActivity : AppCompatActivity() {
             updateList()
         }
 
-        viewModel.isLoading.observe(this) {
+        viewModel.isLoading.observe(this) { isLoading ->
+            pbManage.visibility = if (isLoading) View.VISIBLE else View.GONE
+            if (!isLoading) {
+                svManageApplicants.visibility = View.VISIBLE
+            } else {
+                svManageApplicants.visibility = View.INVISIBLE
+            }
             updateList() // Refresh list to update button states (enabled/disabled)
         }
 

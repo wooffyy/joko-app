@@ -15,33 +15,58 @@
         android:paddingHorizontal="16dp">
 
         <ImageView
-            android:id="@+id/btn_back"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:id="@+id/btnBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_input_field"
+            android:padding="8dp"
             android:src="@drawable/abc_ic_ab_back_material"
             app:tint="@color/white" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="17dp"
-            android:layout_toEndOf="@id/btn_back"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/btnBack"
             android:fontFamily="sans-serif-black"
             android:text="Manage Tim Kamu"
             android:textColor="@color/white"
             android:textSize="20sp" />
     </RelativeLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ProgressBar
+            android:id="@+id/pbManage"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/svManageApplicants"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="invisible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tv_team_name_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif-black"
+                android:text="Nama Tim"
+                android:textColor="@color/white"
+                android:textSize="32sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -54,16 +79,6 @@
                 android:textColor="@color/primary"
                 android:textSize="10sp"
                 android:fontFamily="sans-serif-black" />
-
-            <TextView
-                android:id="@+id/tv_team_name_header"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:fontFamily="sans-serif-black"
-                android:text="Nama Tim"
-                android:textColor="@color/white"
-                android:textSize="32sp" />
 
             <!-- Tabs -->
             <LinearLayout
@@ -158,4 +173,5 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    </FrameLayout>
 </LinearLayout>

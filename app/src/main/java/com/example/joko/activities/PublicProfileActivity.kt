@@ -61,10 +61,9 @@ class PublicProfileActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        // Show Back Button
-        val btnBack = findViewById<ImageView>(R.id.btnBack)
-        btnBack.visibility = View.VISIBLE
-        btnBack.setOnClickListener { finish() }
+        // Show Public Header (Back Button + Title)
+        findViewById<View>(R.id.layoutPublicHeader).visibility = View.VISIBLE
+        findViewById<ImageView>(R.id.btnBack).setOnClickListener { finish() }
 
         // Hide Self-Action Buttons
         findViewById<View>(R.id.btnEditProfile).visibility = View.GONE
@@ -106,15 +105,18 @@ class PublicProfileActivity : AppCompatActivity() {
         val scrollView = findViewById<ScrollView>(R.id.svProfile)
 
         viewModel.otherUserProfile.observe(this) { profile ->
-            profile?.let { 
+            profile?.let {
                 updateUI(it)
+                progressBar.visibility = View.GONE
                 scrollView.visibility = View.VISIBLE
             }
         }
 
         viewModel.isLoading.observe(this) { isLoading ->
-            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-            if (isLoading) scrollView.visibility = View.INVISIBLE
+            if (isLoading) {
+                progressBar.visibility = View.VISIBLE
+                scrollView.visibility = View.GONE
+            }
         }
 
         viewModel.errorMessage.observe(this) { message ->
