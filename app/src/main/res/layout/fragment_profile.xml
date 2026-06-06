@@ -29,7 +29,22 @@
             android:orientation="vertical"
             android:paddingHorizontal="24dp"
             android:paddingBottom="24dp"
-            android:paddingTop="40dp">
+            android:paddingTop="32dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_input_field"
+                    android:padding="8dp"
+                    android:src="@drawable/abc_ic_ab_back_material"
+                    android:visibility="gone"
+                    app:tint="@color/white" />
+            </RelativeLayout>
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivProfilePicture"

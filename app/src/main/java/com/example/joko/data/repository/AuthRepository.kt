@@ -125,6 +125,10 @@ class AuthRepository(
 
     suspend fun getUserProfile(): ProfileResponse? {
         val userId = getUserId() ?: return null
+        return getUserProfileById(userId)
+    }
+
+    suspend fun getUserProfileById(userId: String): ProfileResponse? {
         val response = apiService.getUserProfile("eq.$userId")
         return response.firstOrNull()
     }

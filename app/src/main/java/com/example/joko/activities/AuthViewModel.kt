@@ -32,6 +32,9 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
     private val _userProfile = MutableLiveData<ProfileResponse?>()
     val userProfile: LiveData<ProfileResponse?> = _userProfile
 
+    private val _otherUserProfile = MutableLiveData<ProfileResponse?>()
+    val otherUserProfile: LiveData<ProfileResponse?> = _otherUserProfile
+
     private val _updateSuccess = MutableLiveData<Boolean>()
     val updateSuccess: LiveData<Boolean> = _updateSuccess
 
@@ -160,6 +163,22 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
             try {
                 val profile = repository.getUserProfile()
                 _userProfile.value = profile
+            } catch (e: Exception) {
+                _errorMessage.value = "Gagal memuat profil: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun getUserProfileById(userId: String) {
+        _isLoading.value = true
+        _errorMessage.value = null
+        viewModelScope.launch {
+            try {
+                // repository.getUserProfileById handles the "eq.ID" query
+                val profile = repository.getUserProfileById(userId)
+                _otherUserProfile.value = profile
             } catch (e: Exception) {
                 _errorMessage.value = "Gagal memuat profil: ${e.message}"
             } finally {

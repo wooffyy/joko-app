@@ -17,6 +17,7 @@ class TeamMemberAdapter(
     private val isApplicant: Boolean,
     private val onAcceptClick: ((String) -> Unit)? = null,
     private val onRejectClick: ((String) -> Unit)? = null,
+    private val onProfileClick: ((String) -> Unit)? = null,
     private val isProcessing: Boolean = false
 ) : ListAdapter<TeamMemberResponse, TeamMemberAdapter.ViewHolder>(DiffCallback) {
 
@@ -36,6 +37,10 @@ class TeamMemberAdapter(
 
         fun bind(member: TeamMemberResponse) {
             tvName.text = member.userDetails?.name ?: "Anonymous"
+
+            itemView.setOnClickListener {
+                member.userId?.let { id -> onProfileClick?.invoke(id) }
+            }
             
             val pfpUrl = member.userDetails?.pfpUrl
             Glide.with(itemView.context)

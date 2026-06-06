@@ -1,5 +1,6 @@
 package com.example.joko.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -168,6 +169,12 @@ class ManageApplicantsActivity : AppCompatActivity() {
             isApplicant = isShowingApplicants,
             onAcceptClick = { id -> viewModel.updateMemberStatus(id, "APPROVED") },
             onRejectClick = { id -> viewModel.updateMemberStatus(id, "REJECTED") },
+            onProfileClick = { userId ->
+                val intent = Intent(this, PublicProfileActivity::class.java).apply {
+                    putExtra("USER_ID", userId)
+                }
+                startActivity(intent)
+            },
             isProcessing = viewModel.isLoading.value ?: false
         )
         rvTeamMembers.adapter = adapter
