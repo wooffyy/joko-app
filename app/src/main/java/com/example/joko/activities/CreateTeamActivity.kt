@@ -10,6 +10,8 @@ import com.example.joko.R
 import com.example.joko.fragments.ChipInputFragment
 import com.example.joko.utils.ViewModelFactory
 import com.google.android.material.button.MaterialButton
+import com.example.joko.utils.InputFieldValidator
+import com.example.joko.utils.InputFieldValidator.Companion.validateRequiredField
 
 class CreateTeamActivity : AppCompatActivity() {
 
@@ -30,7 +32,17 @@ class CreateTeamActivity : AppCompatActivity() {
 
         initViews()
         setupListeners()
+        setupValidation()
         observeViewModel()
+    }
+
+    private fun setupValidation() {
+        InputFieldValidator.setupLiveValidation(etTeamName, "Nama tim wajib diisi")
+        InputFieldValidator.setupLiveValidation(etEventName, "Nama event wajib diisi")
+        InputFieldValidator.setupLiveValidation(etSlots, "Minimal 2 slot (termasuk Anda)") { input ->
+            val slots = input.toIntOrNull()
+            slots != null && slots >= 2
+        }
     }
 
     private fun initViews() {
@@ -75,35 +87,22 @@ class CreateTeamActivity : AppCompatActivity() {
         val eventName = etEventName.text.toString().trim()
         val slotsStr = etSlots.text.toString().trim()
 
-        if (teamName.isEmpty()) {
-            etTeamName.error = "Nama tim wajib diisi"
-            etTeamName.requestFocus()
-            return false
-        }
-        if (eventName.isEmpty()) {
-            etEventName.error = "Nama event wajib diisi"
-            etEventName.requestFocus()
-            return false
-        }
-        if (slotsStr.isEmpty()) {
-            etSlots.error = "Jumlah slot wajib diisi"
-            etSlots.requestFocus()
-            return false
+        val isTeamNameValid = validateRequiredField(teamName, etTeamName, "Nama tim wajib diisi")
+        val isEventNameValid = validateRequiredField(eventName, etEventName, "Nama event wajib diisi")
+        val isSlotsStrValid = validateRequiredField(slotsStr, etSlots, "Jumlah slot wajib diisi")
+
+        var isSlotsValid = false
+        if (isSlotsStrValid) {
+            val slots = slotsStr.toIntOrNull()
+            val error = when {
+                slots == null -> "Format angka tidak valid"
+                slots < 2 -> "Minimal 2 slot (termasuk Anda)"
+                else -> null
+            }
+            isSlotsValid = InputFieldValidator.validateField(error != null, etSlots, error ?: "")
         }
 
-        val slots = slotsStr.toIntOrNull()
-        if (slots == null) {
-            etSlots.error = "Format angka tidak valid"
-            etSlots.requestFocus()
-            return false
-        }
-        if (slots < 2) {
-            etSlots.error = "Minimal 2 slot (termasuk Anda)"
-            etSlots.requestFocus()
-            return false
-        }
-
-        return true
+        return isTeamNameValid && isEventNameValid && isSlotsStrValid && isSlotsValid
     }
 
     private fun observeViewModel() {

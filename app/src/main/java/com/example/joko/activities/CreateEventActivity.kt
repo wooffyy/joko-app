@@ -84,7 +84,18 @@ class CreateEventActivity : AppCompatActivity() {
 
         initViews()
         setupListeners()
+        setupValidation()
         observeViewModel()
+    }
+
+    private fun setupValidation() {
+        InputFieldValidator.setupLiveValidation(etJudulEvent, "Judul event tidak boleh kosong")
+        InputFieldValidator.setupLiveValidation(etPenyelenggara, "Nama penyelenggara harus diisi")
+        InputFieldValidator.setupLiveValidation(etLokasi, "Lokasi event tidak boleh kosong")
+        InputFieldValidator.setupLiveValidation(etDeskripsiEvent, "Deskripsi event wajib diisi")
+        InputFieldValidator.setupLiveValidation(etLinkPendaftaran, "Format link tidak valid (gunakan http/https)") { input ->
+            input.isNotEmpty() && android.util.Patterns.WEB_URL.matcher(input).matches()
+        }
     }
 
     private fun initViews() {
@@ -131,6 +142,13 @@ class CreateEventActivity : AppCompatActivity() {
             showDatePicker { date ->
                 tvStartDate.text = date
                 tvStartDate.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+                validateRequiredField(date, layoutStartDate, "Pilih tanggal mulai", isDate = true)
+
+                // Re-validate end date if already picked
+                val currentEndDate = tvEndDate.text.toString()
+                if (currentEndDate.isNotEmpty() && currentEndDate != "mm/dd/yyyy") {
+                    validateEndDate(currentEndDate)
+                }
             }
         }
 
@@ -138,6 +156,7 @@ class CreateEventActivity : AppCompatActivity() {
             showDatePicker { date ->
                 tvEndDate.text = date
                 tvEndDate.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+                validateEndDate(date)
             }
         }
 
@@ -213,16 +232,8 @@ class CreateEventActivity : AppCompatActivity() {
         val isOrganizerValid = validateRequiredField(organizer, etPenyelenggara, "Nama penyelenggara harus diisi")
         val isLocationValid = validateRequiredField(location, etLokasi, "Lokasi event tidak boleh kosong")
 
-        val startDateValue = try { LocalDate.parse(startDate, formatter) } catch (e: Exception) { null }
-        val endDateValue = try { LocalDate.parse(endDate, formatter) } catch (e: Exception) { null }
-
-        val endDateError = when {
-            endDate.isEmpty() || endDate == "mm/dd/yyyy" -> "Pilih tanggal selesai"
-            endDateValue != null && endDateValue.isBefore(LocalDate.now()) -> "Tanggal selesai invalid"
-            startDateValue != null && endDateValue != null && endDateValue.isBefore(startDateValue) -> "Tanggal invalid"
-            else -> null
-        }
-        val isEndDateValid = InputFieldValidator.validateField(endDateError != null, layoutEndDate, endDateError ?: "")
+        val isStartDateValid = validateRequiredField(startDate, layoutStartDate, "Pilih tanggal mulai", isDate = true)
+        val isEndDateValid = validateEndDate(endDate)
 
         val regUrlError = when {
             regUrl.isEmpty() -> "Link pendaftaran wajib diisi"
@@ -232,7 +243,7 @@ class CreateEventActivity : AppCompatActivity() {
         val isRegUrlValid = InputFieldValidator.validateField(regUrlError != null, etLinkPendaftaran, regUrlError ?: "")
 
         // Cek hasil akhir validasi, kalo lolos validasi kirim ke viewModel
-        if (isTitleValid && isDescValid && isOrganizerValid && isLocationValid && isEndDateValid && isRegUrlValid) {
+        if (isTitleValid && isDescValid && isOrganizerValid && isLocationValid && isStartDateValid && isEndDateValid && isRegUrlValid) {
             viewModel.publishEvent(
                 title = title,
                 category = category,
@@ -248,6 +259,21 @@ class CreateEventActivity : AppCompatActivity() {
         } else {
             Toast.makeText(this, "Mohon lengkapi data wajib", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun validateEndDate(endDate: String): Boolean {
+        val layoutEndDate = findViewById<View>(R.id.layoutEndDateContainer)
+        val startDate = tvStartDate.text.toString()
+        val startDateValue = try { LocalDate.parse(startDate, formatter) } catch (e: Exception) { null }
+        val endDateValue = try { LocalDate.parse(endDate, formatter) } catch (e: Exception) { null }
+
+        val endDateError = when {
+            endDate.isEmpty() || endDate == "mm/dd/yyyy" -> "Pilih tanggal selesai"
+            endDateValue != null && endDateValue.isBefore(LocalDate.now()) -> "Tanggal selesai invalid"
+            startDateValue != null && endDateValue != null && endDateValue.isBefore(startDateValue) -> "Tanggal invalid"
+            else -> null
+        }
+        return InputFieldValidator.validateField(endDateError != null, layoutEndDate, endDateError ?: "")
     }
 
     private fun addRequirementItem(text: String) {

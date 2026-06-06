@@ -56,6 +56,41 @@ class InputFieldValidator {
             return !isInvalid
         }
 
+        fun setupLiveValidation(
+            inputView: android.widget.EditText,
+            errorMessage: String,
+            isDate: Boolean = false,
+            errorView: TextView? = null,
+            tintView: View? = null,
+            validationLogic: ((String) -> Boolean)? = null
+        ) {
+            val targetTintView = tintView ?: inputView
+            inputView.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    val value = s?.toString() ?: ""
+                    if (validationLogic != null) {
+                        if (validationLogic(value)) validateField(false, targetTintView, "", errorView)
+                    } else {
+                        val isInvalid = if (isDate) value.isEmpty() || value == "mm/dd/yyyy" else value.trim().isEmpty()
+                        if (!isInvalid) validateField(false, targetTintView, "", errorView)
+                    }
+                }
+            })
+
+            inputView.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    val value = inputView.text.toString()
+                    if (validationLogic != null) {
+                        validateField(!validationLogic(value), targetTintView, errorMessage, errorView)
+                    } else {
+                        validateRequiredField(value, targetTintView, errorMessage, isDate, errorView)
+                    }
+                }
+            }
+        }
+
         fun validateRequiredField(
             value: String,
             inputView: View,

@@ -28,6 +28,14 @@ class RegisterActivity : AppCompatActivity() {
         ViewModelFactory(this)
     }
 
+    private lateinit var etEmail: EditText
+    private lateinit var etPassword: EditText
+    private lateinit var etName: EditText
+    private lateinit var layoutPassword: android.widget.LinearLayout
+    private lateinit var tvErrorNama: TextView
+    private lateinit var tvErrorEmail: TextView
+    private lateinit var tvErrorPassword: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -40,9 +48,9 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         val btnBack = findViewById<ImageView>(R.id.btnBack)
-        val etEmail = findViewById<EditText>(R.id.etEmail)
-        val etPassword = findViewById<EditText>(R.id.etPassword)
-        val etName = findViewById<EditText>(R.id.etNama)
+        etEmail = findViewById(R.id.etEmail)
+        etPassword = findViewById(R.id.etPassword)
+        etName = findViewById(R.id.etNama)
         val etUniversity = findViewById<EditText>(R.id.etPilihUniv)
         val etPortfolio = findViewById<EditText>(R.id.etPortfolio)
         val cgInterest = findViewById<ChipGroup>(R.id.cgInterest)
@@ -50,10 +58,12 @@ class RegisterActivity : AppCompatActivity() {
         val btnDaftar = findViewById<Button>(R.id.btnDaftar)
         val tvMasuk = findViewById<TextView>(R.id.tvMasuk)
         
-        val tvErrorNama = findViewById<TextView>(R.id.tvErrorNama)
-        val tvErrorEmail = findViewById<TextView>(R.id.tvErrorEmail)
-        val tvErrorPassword = findViewById<TextView>(R.id.tvErrorPassword)
-        val layoutPassword = findViewById<android.widget.LinearLayout>(R.id.layoutPassword)
+        tvErrorNama = findViewById(R.id.tvErrorNama)
+        tvErrorEmail = findViewById(R.id.tvErrorEmail)
+        tvErrorPassword = findViewById(R.id.tvErrorPassword)
+        layoutPassword = findViewById(R.id.layoutPassword)
+
+        setupValidation()
 
         // Tombol Back
         btnBack.setOnClickListener {
@@ -124,6 +134,14 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         observeViewModel()
+    }
+
+    private fun setupValidation() {
+        InputFieldValidator.setupLiveValidation(etName, "Nama tidak boleh kosong", errorView = tvErrorNama)
+        InputFieldValidator.setupLiveValidation(etEmail, "Email tidak boleh kosong", errorView = tvErrorEmail)
+        InputFieldValidator.setupLiveValidation(etPassword, "Password minimal 8 karakter", errorView = tvErrorPassword, tintView = layoutPassword) { input ->
+            input.isNotEmpty() && input.length >= 8
+        }
     }
 
     private fun observeViewModel() {
