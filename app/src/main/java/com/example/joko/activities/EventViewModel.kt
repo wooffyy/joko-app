@@ -142,7 +142,6 @@ class EventViewModel(
             try {
                 val result = withContext(Dispatchers.IO) {
                     validateFileMetadata(context, uri)
-                    validateAspectRatio(context, uri)
                     compressImage(context, uri)
                 }
                 _imageByteArray.value = result
@@ -176,41 +175,50 @@ class EventViewModel(
         }
     }
 
-    private fun validateAspectRatio(context: Context, uri: Uri) {
-        val options = BitmapFactory.Options().apply {
-            inJustDecodeBounds = true 
-        }
-        context.contentResolver.openInputStream(uri)?.use { 
-            BitmapFactory.decodeStream(it, null, options) 
-        }
-
-        val width = options.outWidth
-        val height = options.outHeight
-        if (width <= 0 || height <= 0) throw Exception("Gambar rusak atau tidak valid")
-
-        val actualRatio = width.toDouble() / height.toDouble()
-        val targetRatio = 16.0 / 9.0
-        if (abs(actualRatio - targetRatio) > 0.1) {
-            throw Exception("Rasio gambar harus 16:9")
-        }
-    }
-
     private suspend fun compressImage(context: Context, uri: Uri): ByteArray {
         return withContext(Dispatchers.IO) {
             val inputStream: InputStream = context.contentResolver.openInputStream(uri) 
                 ?: throw Exception("Tidak bisa membaca file")
             
-            val options = BitmapFactory.Options().apply {
-                inSampleSize = 2 
-            }
-            val bitmap = BitmapFactory.decodeStream(inputStream, null, options)
+            val originalBitmap = BitmapFactory.decodeStream(inputStream)
                 ?: throw Exception("Gagal mendekode gambar")
 
+            val width = originalBitmap.width
+            val height = originalBitmap.height
+            
+            // Calculate 16:9 Center Crop
+            val targetRatio = 16.0 / 9.0
+            val currentRatio = width.toDouble() / height.toDouble()
+            
+            val cropWidth: Int
+            val cropHeight: Int
+            if (currentRatio > targetRatio) {
+                // Image is wider than 16:9, crop width
+                cropHeight = height
+                cropWidth = (height * targetRatio).toInt()
+            } else {
+                // Image is taller than 16:9, crop height
+                cropWidth = width
+                cropHeight = (width / targetRatio).toInt()
+            }
+            
+            val xOffset = (width - cropWidth) / 2
+            val yOffset = (height - cropHeight) / 2
+            
+            val croppedBitmap = Bitmap.createBitmap(originalBitmap, xOffset, yOffset, cropWidth, cropHeight)
+            
+            // Resize to standard HD (1280x720) for efficiency and memory safety
+            val scaledBitmap = Bitmap.createScaledBitmap(croppedBitmap, 1280, 720, true)
+
             val outputStream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
             
             val result = outputStream.toByteArray()
-            bitmap.recycle()
+            
+            // Cleanup
+            originalBitmap.recycle()
+            if (croppedBitmap != originalBitmap) croppedBitmap.recycle()
+            scaledBitmap.recycle()
             
             if (result.size > MAX_IMAGE_SIZE_BYTES) {
                 throw Exception("Gagal mengompres gambar di bawah 2MB")

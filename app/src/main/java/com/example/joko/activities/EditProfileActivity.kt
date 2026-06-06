@@ -18,11 +18,12 @@ import com.example.joko.R
 import com.example.joko.data.remote.request.UpdateProfileRequest
 import com.example.joko.fragments.ChipInputFragment
 import com.example.joko.utils.ViewModelFactory
+import com.google.android.material.imageview.ShapeableImageView
 
 class EditProfileActivity : AppCompatActivity() {
     private lateinit var btnBack: ImageView
     private lateinit var btnUploadPfp: RelativeLayout
-    private lateinit var ivPfpPreview: ImageView
+    private lateinit var ivPfpPreview: ShapeableImageView
     private lateinit var btnRemoveImage: ImageView
     private lateinit var layoutUploadPlaceholder: View
     private lateinit var etEditUsername: EditText

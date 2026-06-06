@@ -80,17 +80,31 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
             val inputStream: InputStream = context.contentResolver.openInputStream(uri) 
                 ?: throw Exception("Tidak bisa membaca file")
             
-            val options = BitmapFactory.Options().apply {
-                inSampleSize = 2 
-            }
-            val bitmap = BitmapFactory.decodeStream(inputStream, null, options)
+            // Decode full bitmap to allow cropping
+            val originalBitmap = BitmapFactory.decodeStream(inputStream)
                 ?: throw Exception("Gagal mendekode gambar")
 
+            // 1. Calculate center crop to make it a Square (1:1)
+            val width = originalBitmap.width
+            val height = originalBitmap.height
+            val newSize = if (width > height) height else width
+            val xOffset = (width - newSize) / 2
+            val yOffset = (height - newSize) / 2
+
+            val croppedBitmap = Bitmap.createBitmap(originalBitmap, xOffset, yOffset, newSize, newSize)
+            
+            // 2. Resize to 512x512 (Standard PFP resolution) for efficiency
+            val scaledBitmap = Bitmap.createScaledBitmap(croppedBitmap, 512, 512, true)
+
             val outputStream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)
             
             val result = outputStream.toByteArray()
-            bitmap.recycle()
+            
+            // Cleanup memory
+            originalBitmap.recycle()
+            if (croppedBitmap != originalBitmap) croppedBitmap.recycle()
+            scaledBitmap.recycle()
             
             result
         }

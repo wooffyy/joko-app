@@ -64,20 +64,23 @@
 
             <RelativeLayout
                 android:id="@+id/btnUploadPfp"
-                android:layout_width="match_parent"
+                android:layout_width="180dp"
                 android:layout_height="180dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_dashed_border"
                 android:clickable="true"
                 android:focusable="true">
 
                 <!-- Preview Image -->
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/ivPfpPreview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    android:padding="8dp"
+                    app:shapeAppearanceOverlay="@style/CircleImage" />
 
                 <!-- Remove Button (Matching Reference) -->
                 <ImageView
