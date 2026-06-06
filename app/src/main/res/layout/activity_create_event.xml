@@ -307,7 +307,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@android:drawable/ic_dialog_map"
-                    app:tint="@color/text_secondary" />
+                    app:tint="@color/primary" />
 
                 <EditText
                     android:id="@+id/etLokasi"
@@ -360,7 +360,7 @@
                             android:layout_height="24dp"
                             android:layout_marginEnd="8dp"
                             android:src="@android:drawable/ic_menu_my_calendar"
-                            app:tint="@color/text_secondary" />
+                            app:tint="@color/primary" />
 
                         <TextView
                             android:id="@+id/tvStartDate"
@@ -404,7 +404,7 @@
                             android:layout_height="24dp"
                             android:layout_marginEnd="8dp"
                             android:src="@android:drawable/ic_menu_my_calendar"
-                            app:tint="@color/text_secondary" />
+                            app:tint="@color/primary" />
 
                         <TextView
                             android:id="@+id/tvEndDate"
@@ -444,7 +444,7 @@
                     android:layout_height="20dp"
                     android:src="@android:drawable/ic_menu_share"
                     android:rotation="180"
-                    app:tint="@color/text_secondary" />
+                    app:tint="@color/primary" />
 
                 <EditText
                     android:id="@+id/etLinkPendaftaran"
