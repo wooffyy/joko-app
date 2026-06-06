@@ -3,6 +3,7 @@ package com.example.joko.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -20,6 +21,9 @@ class TeamAdapter(
         val tvTeamName: TextView = view.findViewById(R.id.tv_team_name)
         val tvEventName: TextView = view.findViewById(R.id.tv_event_name)
         val tvSlots: TextView = view.findViewById(R.id.tv_slots)
+        val tvProgressPercent: TextView = view.findViewById(R.id.tv_progress_percent)
+        val pbRecruitment: ProgressBar = view.findViewById(R.id.pb_recruitment)
+        val layoutRoles: ViewGroup = view.findViewById(R.id.layout_roles)
         val btnApply: MaterialButton = view.findViewById(R.id.btn_apply)
     }
 
@@ -32,8 +36,22 @@ class TeamAdapter(
         val team = getItem(position)
         holder.tvTeamName.text = team.teamName
         holder.tvEventName.text = team.eventName
-        // Dummy slots display logic for now: 1 member (owner) / max capacity
-        holder.tvSlots.text = "1/${team.maxCapacity} SLOTS"
+        
+        val current = team.currentMembersCount
+        val max = team.maxCapacity
+        holder.tvSlots.text = "$current/$max SLOTS"
+        
+        val progress = if (max > 0) (current.toFloat() / max.toFloat() * 100).toInt() else 0
+        holder.pbRecruitment.progress = progress
+        holder.tvProgressPercent.text = "$progress%"
+
+        // Handle roles dynamically using layout_tag_display for consistent look
+        holder.layoutRoles.removeAllViews()
+        team.roleNeed?.forEach { role ->
+            val roleView = LayoutInflater.from(holder.itemView.context).inflate(R.layout.layout_tag_display, holder.layoutRoles, false) as TextView
+            roleView.text = role
+            holder.layoutRoles.addView(roleView)
+        }
         
         holder.btnApply.setOnClickListener { onApplyClick(team) }
         holder.itemView.setOnClickListener { onDetailClick(team) }

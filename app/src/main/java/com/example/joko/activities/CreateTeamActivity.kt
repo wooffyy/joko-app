@@ -59,8 +59,13 @@ class CreateTeamActivity : AppCompatActivity() {
         btnAddStack.setOnClickListener {
             val tech = etAddStack.text.toString().trim()
             if (tech.isNotEmpty()) {
-                addChipToGroup(tech)
-                etAddStack.text.clear()
+                if (isDuplicateRole(tech)) {
+                    etAddStack.error = "Role sudah ada di daftar"
+                } else {
+                    addChipToGroup(tech)
+                    etAddStack.text.clear()
+                    etAddStack.error = null
+                }
             }
         }
 
@@ -68,7 +73,7 @@ class CreateTeamActivity : AppCompatActivity() {
             if (validateInput()) {
                 val teamName = etTeamName.text.toString().trim()
                 val eventName = etEventName.text.toString().trim()
-                val slots = etSlots.text.toString().toIntOrNull() ?: 1
+                val slots = etSlots.text.toString().trim().toInt()
                 val mission = etMission.text.toString().trim()
                 val contact = etContact.text.toString().trim()
                 
@@ -82,30 +87,76 @@ class CreateTeamActivity : AppCompatActivity() {
                     name = teamName,
                     eventName = eventName,
                     maxCapacity = slots,
-                    description = mission,
-                    roleNeed = roles,
-                    ownerContact = contact
+                    description = mission.ifBlank { null },
+                    roleNeed = if (roles.isEmpty()) null else roles,
+                    ownerContact = contact.ifBlank { null }
                 )
             }
         }
     }
 
+    private fun isDuplicateRole(role: String): Boolean {
+        for (i in 0 until chipGroupStack.childCount) {
+            val chip = chipGroupStack.getChildAt(i) as Chip
+            if (chip.text.toString().equals(role, ignoreCase = true)) {
+                return true
+            }
+        }
+        return false
+    }
+
     private fun validateInput(): Boolean {
-        if (etTeamName.text.isBlank()) {
+        val teamName = etTeamName.text.toString().trim()
+        val eventName = etEventName.text.toString().trim()
+        val slotsStr = etSlots.text.toString().trim()
+        val mission = etMission.text.toString().trim()
+        val contact = etContact.text.toString().trim()
+
+        if (teamName.isEmpty()) {
             etTeamName.error = "Nama tim wajib diisi"
             etTeamName.requestFocus()
             return false
         }
-        if (etEventName.text.isBlank()) {
+        if (eventName.isEmpty()) {
             etEventName.error = "Nama event wajib diisi"
             etEventName.requestFocus()
             return false
         }
-        if (etSlots.text.isBlank()) {
+        if (slotsStr.isEmpty()) {
             etSlots.error = "Jumlah slot wajib diisi"
             etSlots.requestFocus()
             return false
         }
+
+        val slots = slotsStr.toIntOrNull()
+        if (slots == null) {
+            etSlots.error = "Format angka tidak valid"
+            etSlots.requestFocus()
+            return false
+        }
+        if (slots < 2) {
+            etSlots.error = "Minimal 2 slot (termasuk Anda)"
+            etSlots.requestFocus()
+            return false
+        }
+        if (slots > 50) {
+            etSlots.error = "Maksimal 50 slot"
+            etSlots.requestFocus()
+            return false
+        }
+
+        if (mission.isNotEmpty() && mission.length < 10) {
+            etMission.error = "Misi minimal 10 karakter untuk kejelasan"
+            etMission.requestFocus()
+            return false
+        }
+
+        if (contact.isNotEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(contact).matches() && contact.length < 5) {
+            etContact.error = "Kontak tidak valid (gunakan email atau link)"
+            etContact.requestFocus()
+            return false
+        }
+
         return true
     }
 

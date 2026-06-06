@@ -87,51 +87,13 @@
             android:progress="50"
             android:progressDrawable="@drawable/custom_progress_bar" />
 
+        <!-- Dynamic Roles Container -->
         <LinearLayout
+            android:id="@+id/layout_roles"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_tag"
-                android:backgroundTint="#1A1D26"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp"
-                android:text="Kotlin"
-                android:textColor="@color/primary"
-                android:textSize="12sp"
-                android:fontFamily="sans-serif-medium" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_tag"
-                android:backgroundTint="#1A1D26"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp"
-                android:text="Firebase"
-                android:textColor="@color/primary"
-                android:textSize="12sp"
-                android:fontFamily="sans-serif-medium" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_tag"
-                android:backgroundTint="#1A1D26"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp"
-                android:text="React"
-                android:textColor="@color/primary"
-                android:textSize="12sp"
-                android:fontFamily="sans-serif-medium" />
-
-        </LinearLayout>
+            android:orientation="horizontal" />
 
         <LinearLayout
             android:layout_width="match_parent"

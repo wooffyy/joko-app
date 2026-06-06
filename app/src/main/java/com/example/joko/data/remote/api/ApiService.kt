@@ -89,7 +89,8 @@ interface ApiService {
         @Query("team_id") teamId: String
     ): List<TeamMemberResponse>
 
-    @GET("rest/v1/team_members?select=*,teams(*)")
+    // Menggunakan view_teams_with_member_count agar current_members_count tersedia
+    @GET("rest/v1/team_members?select=*,teams:view_teams_with_member_count(*)")
     suspend fun getUserApplications(
         @Query("user_id") userId: String,
         @Query("status") status: String

@@ -18,6 +18,7 @@ import com.example.joko.activities.TeamViewModel
 import com.example.joko.adapters.MyTeamAdapter
 import com.example.joko.adapters.PendingApplicationAdapter
 import com.example.joko.databinding.FragmentTimAndaBinding
+import com.example.joko.utils.SessionManager
 import com.example.joko.utils.ViewModelFactory
 
 class TimAndaFragment : Fragment() {
@@ -30,6 +31,7 @@ class TimAndaFragment : Fragment() {
     }
 
     private lateinit var myTeamAdapter: MyTeamAdapter
+    private lateinit var joinedTeamAdapter: MyTeamAdapter
     private lateinit var pendingAdapter: PendingApplicationAdapter
     private var currentFilter = "created"
 
@@ -44,8 +46,6 @@ class TimAndaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // setupRecyclerView must be called BEFORE initViews because initViews calls refreshList()
-        // which uses the adapters initialized in setupRecyclerView.
         setupRecyclerView()
         initViews()
         observeViewModel()
@@ -56,6 +56,7 @@ class TimAndaFragment : Fragment() {
     private fun loadData() {
         binding.swipeRefresh.isRefreshing = true
         viewModel.loadMyTeams()
+        viewModel.loadJoinedTeams()
         viewModel.loadMyApplications()
     }
 
@@ -72,15 +73,29 @@ class TimAndaFragment : Fragment() {
             startActivity(Intent(requireContext(), CreateTeamActivity::class.java))
         }
         
-        // Initialize default filter state
         updateFilter("created")
     }
 
     private fun setupRecyclerView() {
+        // Tab Created: Use MyTeamAdapter with "Manage" button
         myTeamAdapter = MyTeamAdapter(
-            onManageClick = { team ->
+            buttonText = "Manage",
+            buttonIconRes = R.drawable.ic_team,
+            onActionClick = { team ->
                 val intent = Intent(requireContext(), ManageApplicantsActivity::class.java).apply {
                     putExtra(ManageApplicantsActivity.EXTRA_TEAM_ID, team.id)
+                }
+                startActivity(intent)
+            }
+        )
+
+        // Tab Joined: Use MyTeamAdapter with "Detail" button
+        joinedTeamAdapter = MyTeamAdapter(
+            buttonText = "Detail",
+            buttonIconRes = android.R.drawable.ic_menu_view,
+            onActionClick = { team ->
+                val intent = Intent(requireContext(), TeamDetailActivity::class.java).apply {
+                    putExtra(TeamDetailActivity.EXTRA_TEAM_ID, team.id)
                 }
                 startActivity(intent)
             }
@@ -107,7 +122,6 @@ class TimAndaFragment : Fragment() {
     private fun updateFilter(filter: String) {
         currentFilter = filter
         
-        // UI updates for filter buttons
         val activeBg = ContextCompat.getDrawable(requireContext(), R.drawable.bg_tag)
         val inactiveBg = ContextCompat.getDrawable(requireContext(), R.drawable.bg_tag_inactive)
         val textColor = ContextCompat.getColor(requireContext(), R.color.white)
@@ -131,7 +145,12 @@ class TimAndaFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.myTeams.observe(viewLifecycleOwner) {
             binding.swipeRefresh.isRefreshing = false
-            if (currentFilter != "pending") refreshList()
+            if (currentFilter == "created") refreshList()
+        }
+
+        viewModel.joinedTeams.observe(viewLifecycleOwner) {
+            binding.swipeRefresh.isRefreshing = false
+            if (currentFilter == "joined") refreshList()
         }
 
         viewModel.myApplications.observe(viewLifecycleOwner) {
@@ -157,11 +176,24 @@ class TimAndaFragment : Fragment() {
     }
 
     private fun refreshList() {
+        val currentUserId = SessionManager(requireContext()).getUserId()
+        
         when (currentFilter) {
-            "created", "joined" -> {
+            "created" -> {
                 binding.rvTeamsAnda.adapter = myTeamAdapter
                 val teams = viewModel.myTeams.value ?: emptyList()
                 myTeamAdapter.submitList(teams)
+                binding.tvEmptyState.visibility = if (teams.isEmpty()) View.VISIBLE else View.GONE
+            }
+            "joined" -> {
+                binding.rvTeamsAnda.adapter = joinedTeamAdapter
+                // FILTER: Only show teams where user is member (APPROVED) AND NOT the owner.
+                // Note: owner is automatically added as APPROVED member by DB trigger.
+                val teams = viewModel.joinedTeams.value
+                    ?.mapNotNull { it.teamDetails }
+                    ?.filter { it.ownerId != currentUserId } ?: emptyList()
+
+                joinedTeamAdapter.submitList(teams)
                 binding.tvEmptyState.visibility = if (teams.isEmpty()) View.VISIBLE else View.GONE
             }
             "pending" -> {

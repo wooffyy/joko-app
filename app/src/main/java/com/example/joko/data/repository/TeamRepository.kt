@@ -134,6 +134,23 @@ class TeamRepository(
         }
     }
 
+    suspend fun getJoinedTeams(): List<TeamMemberResponse> {
+        val userId = sessionManager.getUserId() ?: throw Exception("User not logged in")
+        return try {
+            // Fetch teams where user status is APPROVED
+            apiService.getUserApplications(userId = "eq.$userId", status = "eq.APPROVED")
+        } catch (e: HttpException) {
+            val response = e.response()
+            Log.e(TAG, "URL request: ${response?.raw()?.request?.url}")
+            Log.e(TAG, "HTTP code: ${e.code()}")
+            Log.e(TAG, "Error body: ${response?.errorBody()?.string()}")
+            throw e
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching joined teams: ${e.message}")
+            throw e
+        }
+    }
+
     /**
      * Refactored untuk mendukung accept flow melalui RPC accept_applicant.
      */

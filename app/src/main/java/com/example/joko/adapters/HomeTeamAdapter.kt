@@ -40,14 +40,11 @@ class HomeTeamAdapter(
         val progress = if (max > 0) (current.toFloat() / max.toFloat() * 100).toInt() else 0
         holder.pbRecruitment.progress = progress
 
-        // Handle roles (simplified for home)
+        // Handle roles (simplified for home) - Updated to match TeamAdapter display style
         holder.layoutRoles.removeAllViews()
         team.roleNeed?.take(2)?.forEach { role ->
-            val roleView = LayoutInflater.from(holder.itemView.context).inflate(R.layout.layout_chip_entry, holder.layoutRoles, false) as TextView
+            val roleView = LayoutInflater.from(holder.itemView.context).inflate(R.layout.layout_tag_display, holder.layoutRoles, false) as TextView
             roleView.text = role
-            // Remove close icon if the layout used for creation is reused
-            // Or better use a simple textview background for display
-            roleView.setCompoundDrawables(null, null, null, null) 
             holder.layoutRoles.addView(roleView)
         }
 

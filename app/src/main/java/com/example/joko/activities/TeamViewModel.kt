@@ -34,6 +34,9 @@ class TeamViewModel(private val teamRepository: TeamRepository) : ViewModel() {
     private val _myApplications = MutableLiveData<List<TeamMemberResponse>>()
     val myApplications: LiveData<List<TeamMemberResponse>> = _myApplications
 
+    private val _joinedTeams = MutableLiveData<List<TeamMemberResponse>>()
+    val joinedTeams: LiveData<List<TeamMemberResponse>> = _joinedTeams
+
     private val _teamMembers = MutableLiveData<List<TeamMemberResponse>>()
     val teamMembers: LiveData<List<TeamMemberResponse>> = _teamMembers
 
@@ -143,6 +146,20 @@ class TeamViewModel(private val teamRepository: TeamRepository) : ViewModel() {
             try {
                 val result = teamRepository.getUserApplications()
                 _myApplications.postValue(result)
+            } catch (e: Exception) {
+                _errorMessage.postValue(e.message)
+            } finally {
+                _isLoading.postValue(false)
+            }
+        }
+    }
+
+    fun loadJoinedTeams() {
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                val result = teamRepository.getJoinedTeams()
+                _joinedTeams.postValue(result)
             } catch (e: Exception) {
                 _errorMessage.postValue(e.message)
             } finally {
