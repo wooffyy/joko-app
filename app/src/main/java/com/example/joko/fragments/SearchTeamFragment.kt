@@ -1,15 +1,13 @@
 package com.example.joko.fragments
 
-import android.app.Dialog
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -32,6 +30,7 @@ class SearchTeamFragment : Fragment() {
     private lateinit var rvTeams: RecyclerView
     private lateinit var pbLoading: ProgressBar
     private lateinit var tvError: TextView
+    private lateinit var etSearch: EditText
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +42,7 @@ class SearchTeamFragment : Fragment() {
         rvTeams = view.findViewById(R.id.rv_teams)
         pbLoading = view.findViewById(R.id.pb_loading)
         tvError = view.findViewById(R.id.tv_error)
+        etSearch = view.findViewById(R.id.et_search)
         val btnBack: ImageView = view.findViewById(R.id.btn_back)
 
         btnBack.setOnClickListener {
@@ -50,6 +50,7 @@ class SearchTeamFragment : Fragment() {
         }
 
         setupRecyclerView()
+        setupSearchListener()
         observeViewModel()
 
         viewModel.loadTeams()
@@ -60,21 +61,35 @@ class SearchTeamFragment : Fragment() {
     private fun setupRecyclerView() {
         teamAdapter = TeamAdapter(
             onApplyClick = { team ->
-                showApplyDialog()
+                val intent = Intent(requireContext(), TeamDetailActivity::class.java).apply {
+                    putExtra(TeamDetailActivity.EXTRA_TEAM_ID, team.id)
+                }
+                startActivity(intent)
             },
             onDetailClick = { team ->
-                val intent = Intent(requireContext(), TeamDetailActivity::class.java)
-                // In a real scenario, we would pass team.id
+                val intent = Intent(requireContext(), TeamDetailActivity::class.java).apply {
+                    putExtra(TeamDetailActivity.EXTRA_TEAM_ID, team.id)
+                }
                 startActivity(intent)
             }
         )
         rvTeams.adapter = teamAdapter
     }
 
+    private fun setupSearchListener() {
+        etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.searchTeams(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
     private fun observeViewModel() {
-        viewModel.teams.observe(viewLifecycleOwner) { teams ->
+        viewModel.filteredTeams.observe(viewLifecycleOwner) { teams ->
             teamAdapter.submitList(teams)
-            tvError.visibility = if (teams.isEmpty()) View.VISIBLE else View.GONE
+            tvError.visibility = if (teams.isEmpty() && !etSearch.text.isNullOrBlank()) View.VISIBLE else View.GONE
             if (teams.isEmpty()) tvError.text = "Tidak ada tim ditemukan"
         }
 
@@ -90,27 +105,5 @@ class SearchTeamFragment : Fragment() {
                 viewModel.clearErrorMessage()
             }
         }
-    }
-
-    private fun showApplyDialog() {
-        val dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.dialog_apply_confirmation)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        val btnConfirm = dialog.findViewById<Button>(R.id.btn_confirm)
-        val btnCancel = dialog.findViewById<Button>(R.id.btn_cancel)
-
-        btnConfirm.setOnClickListener {
-            // Logic for apply will be implemented in next step
-            dialog.dismiss()
-        }
-
-        btnCancel.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
     }
 }

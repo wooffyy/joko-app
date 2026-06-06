@@ -25,6 +25,9 @@ class TeamViewModel(private val teamRepository: TeamRepository) : ViewModel() {
     private val _teams = MutableLiveData<List<TeamResponse>>()
     val teams: LiveData<List<TeamResponse>> = _teams
 
+    private val _filteredTeams = MutableLiveData<List<TeamResponse>>()
+    val filteredTeams: LiveData<List<TeamResponse>> = _filteredTeams
+
     private val _teamDetail = MutableLiveData<TeamResponse?>()
     val teamDetail: LiveData<TeamResponse?> = _teamDetail
 
@@ -104,12 +107,31 @@ class TeamViewModel(private val teamRepository: TeamRepository) : ViewModel() {
             try {
                 val result = teamRepository.getTeams()
                 _teams.postValue(result)
+                _filteredTeams.postValue(result)
             } catch (e: Exception) {
                 _errorMessage.postValue(e.message)
             } finally {
                 _isLoading.postValue(false)
             }
         }
+    }
+
+    fun searchTeams(query: String) {
+        val originalList = _teams.value ?: return
+        if (query.isBlank()) {
+            _filteredTeams.value = originalList
+            return
+        }
+
+        val filtered = originalList.filter { team ->
+            val matchName = team.teamName.contains(query, ignoreCase = true)
+            val matchEvent = team.eventName.contains(query, ignoreCase = true)
+            val matchRole = team.roleNeed?.any { it.contains(query, ignoreCase = true) } ?: false
+            val matchDesc = team.description?.contains(query, ignoreCase = true) ?: false
+
+            matchName || matchEvent || matchRole || matchDesc
+        }
+        _filteredTeams.value = filtered
     }
 
     fun loadTeamById(id: String) {
