@@ -27,7 +27,7 @@
             android:layout_marginStart="17dp"
             android:layout_toEndOf="@id/btn_back"
             android:fontFamily="sans-serif-black"
-            android:text="Edit Tim"
+            android:text="Manage Tim Kamu"
             android:textColor="@color/white"
             android:textSize="20sp" />
     </RelativeLayout>
