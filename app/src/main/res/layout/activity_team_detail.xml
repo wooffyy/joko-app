@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/bg_base">
 
-    <!-- Header -->
+    <!-- Header (Tetap, tidak berubah) -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -208,16 +208,17 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Bottom Bar -->
+    <!-- Bottom Bar with Enhanced Safe Area -->
     <LinearLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/bg_base"
-        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="16dp">
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="48dp"> <!-- Extra padding for Android/iOS gesture indicators -->
 
         <ImageButton
             android:id="@+id/btn_contact"
@@ -244,7 +245,9 @@
             app:icon="@drawable/handshake"
             app:iconGravity="textEnd"
             app:iconSize="20dp"
-            app:iconTint="@color/black" />
+            app:iconTint="@color/black"
+            android:insetTop="0dp"
+            android:insetBottom="0dp" /> <!-- Remove inset to maintain precise safe area control -->
     </LinearLayout>
 
 </RelativeLayout>

@@ -1,12 +1,14 @@
 package com.example.joko.activities
 
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -41,9 +43,39 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.registerRoot)) { v, insets ->
+        val registerRoot = findViewById<ScrollView>(R.id.registerRoot)
+        
+        // Keyboard-aware scrolling logic using WindowInsets
+        ViewCompat.setOnApplyWindowInsetsListener(registerRoot) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            
+            // Adjust padding to accommodate system bars and keyboard
+            v.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                if (isImeVisible) ime.bottom else systemBars.bottom
+            )
+            
+            // Scroll to focused view when keyboard opens
+            if (isImeVisible) {
+                currentFocus?.let { focused ->
+                    v.post {
+                        val rect = Rect()
+                        focused.getGlobalVisibleRect(rect)
+                        val screenHeight = v.rootView.height
+                        val visibleBottom = screenHeight - ime.bottom
+                        
+                        // If focused input is covered by keyboard, scroll up
+                        if (rect.bottom > visibleBottom) {
+                            val scrollAmount = rect.bottom - visibleBottom + 100
+                            registerRoot.smoothScrollBy(0, scrollAmount)
+                        }
+                    }
+                }
+            }
             insets
         }
 
@@ -64,6 +96,27 @@ class RegisterActivity : AppCompatActivity() {
         layoutPassword = findViewById(R.id.layoutPassword)
 
         setupValidation()
+
+        // Additional focus listeners for bottom fields to ensure visibility
+        val bottomFields = listOf(etUniversity, etPortfolio)
+        bottomFields.forEach { et ->
+            et.setOnFocusChangeListener { v, hasFocus ->
+                if (hasFocus) {
+                    registerRoot.postDelayed({
+                        val imeInsets = ViewCompat.getRootWindowInsets(registerRoot)?.getInsets(WindowInsetsCompat.Type.ime())
+                        if (imeInsets != null && imeInsets.bottom > 0) {
+                            val rect = Rect()
+                            v.getGlobalVisibleRect(rect)
+                            val screenHeight = registerRoot.rootView.height
+                            val visibleBottom = screenHeight - imeInsets.bottom
+                            if (rect.bottom > visibleBottom) {
+                                registerRoot.smoothScrollBy(0, rect.bottom - visibleBottom + 100)
+                            }
+                        }
+                    }, 200)
+                }
+            }
+        }
 
         // Tombol Back
         btnBack.setOnClickListener {
