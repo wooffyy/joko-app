@@ -37,7 +37,7 @@
                 android:backgroundTint="#262310"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
-                android:text="UNDER REVIEW"
+                android:text="PENDING"
                 android:textColor="#FACC15"
                 android:textSize="12sp"
                 android:fontFamily="monospace"
@@ -84,15 +84,18 @@
                 android:text="View Detail"
                 android:textAllCaps="false"
                 android:textColor="@color/primary"
+                android:textSize="13sp"
+                android:paddingHorizontal="4dp"
                 app:cornerRadius="12dp"
                 app:strokeColor="@color/outline_variant"
                 app:icon="@android:drawable/ic_menu_view"
                 app:iconGravity="textStart"
-                app:iconPadding="8dp"
-                app:iconSize="20dp"
+                app:iconPadding="6dp"
+                app:iconSize="18dp"
                 app:iconTint="@color/primary"
                 android:insetTop="0dp"
-                android:insetBottom="0dp"/>
+                android:insetBottom="0dp"
+                android:maxLines="1"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_cancel_apply"
@@ -105,15 +108,18 @@
                 android:text="Cancel Apply"
                 android:textAllCaps="false"
                 android:textColor="#FF5252"
+                android:textSize="13sp"
+                android:paddingHorizontal="4dp"
                 app:cornerRadius="12dp"
                 app:strokeColor="#40FF5252"
                 app:icon="@android:drawable/ic_menu_close_clear_cancel"
                 app:iconGravity="textStart"
-                app:iconPadding="8dp"
-                app:iconSize="20dp"
+                app:iconPadding="6dp"
+                app:iconSize="18dp"
                 app:iconTint="#FF5252"
                 android:insetTop="0dp"
-                android:insetBottom="0dp"/>
+                android:insetBottom="0dp"
+                android:maxLines="1"/>
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
