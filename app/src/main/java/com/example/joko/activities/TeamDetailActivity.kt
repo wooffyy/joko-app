@@ -29,6 +29,7 @@ class TeamDetailActivity : AppCompatActivity() {
     private lateinit var pbRecruitment: ProgressBar
     private lateinit var badgeVerified: View
     private lateinit var btnApplyNow: MaterialButton
+    private lateinit var btnContact: View
 
     private var currentTeamId: String? = null
 
@@ -60,8 +61,35 @@ class TeamDetailActivity : AppCompatActivity() {
         pbRecruitment = findViewById(R.id.pb_recruitment)
         badgeVerified = findViewById(R.id.badge_verified)
         btnApplyNow = findViewById(R.id.btn_apply_now)
+        btnContact = findViewById(R.id.btn_contact)
 
         findViewById<ImageView>(R.id.btn_back).setOnClickListener { finish() }
+
+        btnContact.setOnClickListener {
+            val contact = viewModel.teamDetail.value?.ownerContact
+            if (contact.isNullOrEmpty()) {
+                Toast.makeText(this, "Kontak tidak tersedia", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val intent = if (contact.startsWith("http")) {
+                Intent(Intent.ACTION_VIEW, android.net.Uri.parse(contact))
+            } else if (android.util.Patterns.EMAIL_ADDRESS.matcher(contact).matches()) {
+                Intent(Intent.ACTION_SENDTO, android.net.Uri.parse("mailto:$contact"))
+            } else {
+                null
+            }
+
+            if (intent != null) {
+                try {
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Tidak ada aplikasi untuk menangani aksi ini", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Format kontak tidak dikenali", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         btnApplyNow.setOnClickListener {
             val status = viewModel.userRoleStatus.value ?: UserRoleStatus.NONE
