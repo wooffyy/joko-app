@@ -66,9 +66,7 @@ class TeamDetailActivity : AppCompatActivity() {
         btnApplyNow.setOnClickListener {
             val status = viewModel.userRoleStatus.value ?: UserRoleStatus.NONE
             if (status == UserRoleStatus.NONE) {
-                currentTeamId?.let { id ->
-                    viewModel.applyToTeam(id)
-                }
+                showApplyConfirmationDialog()
             } else if (status == UserRoleStatus.OWNER) {
                 currentTeamId?.let { id ->
                     val intent = Intent(this, ManageApplicantsActivity::class.java).apply {
@@ -78,6 +76,28 @@ class TeamDetailActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun showApplyConfirmationDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_apply_confirmation, null)
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<MaterialButton>(R.id.btnConfirm).setOnClickListener {
+            currentTeamId?.let { id ->
+                viewModel.applyToTeam(id)
+            }
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<MaterialButton>(R.id.btnCancel).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun observeViewModel() {

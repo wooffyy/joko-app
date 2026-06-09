@@ -2,7 +2,7 @@
 <resources>
     <color name="primary">#5B8FF9</color>
     <color name="secondary">#4ADE80</color>
-    <color name="tertiary">#D87F08</color>
+    <color name="tertiary">#FFD200</color>
     <color name="neutral">#75777F</color>
 
     <color name="bg_base">#0D0F14</color>
