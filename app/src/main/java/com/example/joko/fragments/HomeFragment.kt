@@ -68,7 +68,7 @@ class HomeFragment : Fragment() {
         val btnExploreBanner = view.findViewById<Button>(R.id.btnExploreBanner)
         val btnCreateEvent = view.findViewById<Button>(R.id.btnCreateEvent)
 
-        // Set Dynamic Greeting
+        // Set Initial Greeting from Session (Fallback)
         val name = viewModel.userName ?: "User"
         tvUserName.text = "Halo, $name"
 
@@ -139,6 +139,7 @@ class HomeFragment : Fragment() {
     private fun observeViewModel(view: View) {
         val btnCreateEvent = view.findViewById<Button>(R.id.btnCreateEvent)
         val ivProfile = view.findViewById<ImageView>(R.id.ivProfile)
+        val tvUserName = view.findViewById<TextView>(R.id.tvUserName)
         
         // Observe Data Events
         viewModel.latestEvents.observe(viewLifecycleOwner) { events ->
@@ -162,6 +163,13 @@ class HomeFragment : Fragment() {
                 .error(R.drawable.default_avatar)
                 .circleCrop()
                 .into(ivProfile)
+        }
+
+        // Observe Display Name from API (Source of Truth)
+        viewModel.displayName.observe(viewLifecycleOwner) { name ->
+            if (!name.isNullOrEmpty()) {
+                tvUserName.text = "Halo, $name"
+            }
         }
     }
 }

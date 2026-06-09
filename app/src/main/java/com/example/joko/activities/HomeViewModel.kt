@@ -22,7 +22,10 @@ class HomeViewModel(
     private val _pfpUrl = MutableLiveData<String?>()
     val pfpUrl: LiveData<String?> = _pfpUrl
 
-    // Mengambil nama user dari session
+    private val _displayName = MutableLiveData<String?>()
+    val displayName: LiveData<String?> = _displayName
+
+    // Mengambil nama user dari session sebagai fallback awal
     val userName: String? get() = authRepository.getUserName()
 
     // Mengambil 3 event terbaru saja untuk ditampilkan di Home
@@ -36,9 +39,11 @@ class HomeViewModel(
                 val profile = authRepository.getUserProfile()
                 _isVerified.postValue(profile?.isVerified ?: false)
                 _pfpUrl.postValue(profile?.pfpUrl)
+                _displayName.postValue(profile?.name)
             } catch (e: Exception) {
                 _isVerified.postValue(false)
                 _pfpUrl.postValue(null)
+                _displayName.postValue(null)
             }
         }
     }
