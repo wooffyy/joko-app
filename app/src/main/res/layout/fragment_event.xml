@@ -33,14 +33,6 @@
             android:layout_marginTop="20dp"
             android:src="@drawable/ic_logo_joko" />
 
-        <ImageView
-            android:id="@+id/btnNotification"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="24dp"
-            android:src="@android:drawable/ic_popup_reminder"
-            app:tint="@color/primary" />
     </RelativeLayout>
 
     <!-- Search and Filters -->
