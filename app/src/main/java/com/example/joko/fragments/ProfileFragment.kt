@@ -18,6 +18,7 @@ import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.joko.R
 import com.example.joko.activities.AuthViewModel
+import com.example.joko.activities.BookmarkActivity
 import com.example.joko.activities.EditProfileActivity
 import com.example.joko.activities.LoginActivity
 import com.example.joko.data.remote.response.ProfileResponse
@@ -102,7 +103,8 @@ class ProfileFragment : Fragment() {
         }
 
         btnMyBookmark.setOnClickListener {
-            Toast.makeText(requireContext(), "Membuka Bookmark...", Toast.LENGTH_SHORT).show()
+            val intent = Intent(requireContext(), BookmarkActivity::class.java)
+            startActivity(intent)
         }
 
         btnAskVerification.setOnClickListener {

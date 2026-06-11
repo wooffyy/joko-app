@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/bg_base">
 
-    <!-- Top Toolbar dengan jarak atas -->
+    <!-- Top Toolbar dengan tombol Back dan Bookmark -->
     <RelativeLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -26,11 +26,16 @@
             android:src="@drawable/abc_ic_ab_back_material"
             app:tint="@color/white" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btnBookmark"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_alignParentEnd="true"
-            android:orientation="horizontal"/>
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_bookmark"
+            app:tint="@color/bookmark_tint_selector"
+            android:clickable="true"
+            android:focusable="true" />
     </RelativeLayout>
 
     <ScrollView
@@ -52,6 +57,10 @@
                 android:layout_height="200dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="0dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" /> <!-- Fixed: 'parent' to 'match_parent' -->
 
                 <RelativeLayout
                     android:layout_width="match_parent"

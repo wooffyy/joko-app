@@ -65,6 +65,15 @@ class TeamDetailActivity : AppCompatActivity() {
 
         findViewById<ImageView>(R.id.btn_back).setOnClickListener { finish() }
 
+        findViewById<ImageView>(R.id.btn_bookmark_top).setOnClickListener {
+            it.isSelected = !it.isSelected
+            if (it.isSelected) {
+                Toast.makeText(this, "Tim di-bookmark", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Bookmark dihapus", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         btnContact.setOnClickListener {
             val contact = viewModel.teamDetail.value?.ownerContact
             if (contact.isNullOrEmpty()) {

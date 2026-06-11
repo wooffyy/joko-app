@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +26,7 @@ class TeamAdapter(
         val pbRecruitment: ProgressBar = view.findViewById(R.id.pb_recruitment)
         val layoutRoles: ViewGroup = view.findViewById(R.id.layout_roles)
         val btnApply: MaterialButton = view.findViewById(R.id.btn_apply)
+        val btnBookmark: View = view.findViewById(R.id.btn_bookmark)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeamViewHolder {
@@ -55,6 +57,16 @@ class TeamAdapter(
         
         holder.btnApply.setOnClickListener { onApplyClick(team) }
         holder.itemView.setOnClickListener { onDetailClick(team) }
+
+        // Tambahkan logika toggle bookmark
+        holder.btnBookmark.setOnClickListener {
+            it.isSelected = !it.isSelected
+            if (it.isSelected) {
+                Toast.makeText(holder.itemView.context, "Tim di-bookmark", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(holder.itemView.context, "Bookmark dihapus", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     companion object DiffCallback : DiffUtil.ItemCallback<TeamResponse>() {

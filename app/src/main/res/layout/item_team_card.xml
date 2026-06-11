@@ -134,13 +134,15 @@
                 app:cardElevation="0dp"
                 app:strokeWidth="0dp">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_bookmark"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="16dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_bookmark"
-                    app:tint="@color/white" />
+                    app:tint="@color/bookmark_tint_selector"
+                    android:duplicateParentState="true" />
 
             </com.google.android.material.card.MaterialCardView>
 

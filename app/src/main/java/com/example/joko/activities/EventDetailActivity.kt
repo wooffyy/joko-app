@@ -50,6 +50,16 @@ class EventDetailActivity : AppCompatActivity() {
         }
 
         binding.btnBack.setOnClickListener { finish() }
+
+        // Tambahkan logika toggle bookmark
+        binding.btnBookmark.setOnClickListener {
+            it.isSelected = !it.isSelected
+            if (it.isSelected) {
+                Toast.makeText(this, "Event di-bookmark", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Bookmark dihapus", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun setupUI(event: EventEntity) {
