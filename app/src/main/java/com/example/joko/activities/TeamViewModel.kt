@@ -5,11 +5,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.joko.data.local.entity.BookmarkTeamEntity
 import com.example.joko.data.remote.response.TeamMemberResponse
 import com.example.joko.data.remote.response.TeamResponse
 import com.example.joko.data.repository.TeamRepository
 import com.google.gson.JsonParser
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 enum class UserRoleStatus {
@@ -57,6 +60,11 @@ class TeamViewModel(private val teamRepository: TeamRepository) : ViewModel() {
 
     private val _actionSuccess = MutableLiveData<Boolean>()
     val actionSuccess: LiveData<Boolean> = _actionSuccess
+
+    // Bookmark IDs from Room
+    val bookmarkedTeamIds: LiveData<Set<String>> = teamRepository.allBookmarks
+        .map { bookmarks -> bookmarks.map { it.id }.toSet() }
+        .asLiveData()
 
     private fun calculateUserRoleStatus() {
         val currentUserId = teamRepository.getCurrentUserId()
@@ -300,6 +308,32 @@ class TeamViewModel(private val teamRepository: TeamRepository) : ViewModel() {
     fun isTeamFull(team: TeamResponse?): Boolean {
         if (team == null) return false
         return team.currentMembersCount >= team.maxCapacity
+    }
+
+    // Bookmark Logic
+    fun isBookmarked(id: String): LiveData<Boolean> {
+        return teamRepository.isBookmarked(id).asLiveData()
+    }
+
+    fun toggleBookmark(team: TeamResponse, isBookmarked: Boolean) {
+        viewModelScope.launch {
+            if (isBookmarked) {
+                val bookmark = BookmarkTeamEntity(
+                    id = team.id,
+                    teamName = team.teamName,
+                    eventName = team.eventName,
+                    ownerId = team.ownerId,
+                    maxCapacity = team.maxCapacity,
+                    currentMembersCount = team.currentMembersCount,
+                    description = team.description,
+                    roleNeed = team.roleNeed?.joinToString(","),
+                    ownerContact = team.ownerContact
+                )
+                teamRepository.removeBookmark(bookmark)
+            } else {
+                teamRepository.addBookmark(team)
+            }
+        }
     }
 
     private fun parseError(errorBody: String?): String {

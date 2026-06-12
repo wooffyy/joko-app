@@ -32,6 +32,8 @@ class TeamDetailActivity : AppCompatActivity() {
     private lateinit var btnContact: View
 
     private var currentTeamId: String? = null
+    private var currentTeam: TeamResponse? = null
+    private var isBookmarked: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +51,12 @@ class TeamDetailActivity : AppCompatActivity() {
 
         viewModel.loadTeamById(currentTeamId!!)
         viewModel.loadTeamMembers(currentTeamId!!)
+        
+        // Observe Bookmark Status from Room
+        viewModel.isBookmarked(currentTeamId!!).observe(this) { bookmarked ->
+            isBookmarked = bookmarked
+            findViewById<ImageView>(R.id.btn_bookmark_top).isSelected = bookmarked
+        }
     }
 
     private fun initViews() {
@@ -66,11 +74,13 @@ class TeamDetailActivity : AppCompatActivity() {
         findViewById<ImageView>(R.id.btn_back).setOnClickListener { finish() }
 
         findViewById<ImageView>(R.id.btn_bookmark_top).setOnClickListener {
-            it.isSelected = !it.isSelected
-            if (it.isSelected) {
-                Toast.makeText(this, "Tim di-bookmark", Toast.LENGTH_SHORT).show()
+            val team = currentTeam
+            if (team != null) {
+                viewModel.toggleBookmark(team, isBookmarked)
+                val message = if (!isBookmarked) "Tim di-bookmark" else "Bookmark dihapus"
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Bookmark dihapus", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Data tim belum siap", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -140,6 +150,7 @@ class TeamDetailActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.teamDetail.observe(this) { team ->
             team?.let {
+                currentTeam = it
                 tvTeamName.text = it.teamName
                 tvEventName.text = it.eventName
                 tvDescription.text = it.description ?: "No description available."

@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -71,6 +72,12 @@ class SearchTeamFragment : Fragment() {
                     putExtra(TeamDetailActivity.EXTRA_TEAM_ID, team.id)
                 }
                 startActivity(intent)
+            },
+            onBookmarkClick = { team ->
+                val isBookmarked = viewModel.bookmarkedTeamIds.value?.contains(team.id) == true
+                viewModel.toggleBookmark(team, isBookmarked)
+                val message = if (!isBookmarked) "Tim di-bookmark" else "Bookmark dihapus"
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
             }
         )
         rvTeams.adapter = teamAdapter
@@ -91,6 +98,10 @@ class SearchTeamFragment : Fragment() {
             teamAdapter.submitList(teams)
             tvError.visibility = if (teams.isEmpty() && !etSearch.text.isNullOrBlank()) View.VISIBLE else View.GONE
             if (teams.isEmpty()) tvError.text = "Tidak ada tim ditemukan"
+        }
+
+        viewModel.bookmarkedTeamIds.observe(viewLifecycleOwner) { ids ->
+            teamAdapter.setBookmarkedIds(ids)
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->

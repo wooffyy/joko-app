@@ -24,6 +24,8 @@ class EventDetailActivity : AppCompatActivity() {
     private val viewModel: EventViewModel by viewModels {
         ViewModelFactory(this)
     }
+    private var currentEvent: EventEntity? = null
+    private var isBookmarked: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -39,10 +41,18 @@ class EventDetailActivity : AppCompatActivity() {
 
         val eventId = intent.getStringExtra("EVENT_ID")
         if (eventId != null) {
+            // Observe Event Data
             viewModel.getEventById(eventId).observe(this) { event ->
                 event?.let {
+                    currentEvent = it
                     setupUI(it)
                 }
+            }
+
+            // Observe Bookmark Status
+            viewModel.isBookmarked(eventId).observe(this) { bookmarked ->
+                isBookmarked = bookmarked
+                binding.btnBookmark.isSelected = bookmarked
             }
         } else {
             Toast.makeText(this, "Event ID tidak ditemukan", Toast.LENGTH_SHORT).show()
@@ -51,13 +61,17 @@ class EventDetailActivity : AppCompatActivity() {
 
         binding.btnBack.setOnClickListener { finish() }
 
-        // Tambahkan logika toggle bookmark
         binding.btnBookmark.setOnClickListener {
-            it.isSelected = !it.isSelected
-            if (it.isSelected) {
-                Toast.makeText(this, "Event di-bookmark", Toast.LENGTH_SHORT).show()
+            val event = currentEvent
+            if (event != null) {
+                viewModel.toggleBookmark(event, isBookmarked)
+                if (!isBookmarked) {
+                    Toast.makeText(this, "Event di-bookmark", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Bookmark dihapus", Toast.LENGTH_SHORT).show()
+                }
             } else {
-                Toast.makeText(this, "Bookmark dihapus", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Data event belum siap", Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -1,18 +1,22 @@
 package com.example.joko.data.repository
 
 import android.util.Log
+import com.example.joko.data.local.dao.TeamDao
+import com.example.joko.data.local.entity.BookmarkTeamEntity
 import com.example.joko.data.remote.api.ApiService
 import com.example.joko.data.remote.request.MemberActionRequest
 import com.example.joko.data.remote.request.TeamRequest
 import com.example.joko.data.remote.response.TeamMemberResponse
 import com.example.joko.data.remote.response.TeamResponse
 import com.example.joko.utils.SessionManager
+import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
 import retrofit2.Response
 
 class TeamRepository(
     private val apiService: ApiService,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val teamDao: TeamDao
 ) {
     private val TAG = "TeamRepository"
 
@@ -20,7 +24,6 @@ class TeamRepository(
 
     suspend fun getTeams(): List<TeamResponse> {
         return try {
-            // Endpoint ini sekarang menggunakan view view_teams_with_member_count
             apiService.getTeams()
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching teams: ${e.message}")
@@ -30,7 +33,6 @@ class TeamRepository(
 
     suspend fun getTeamById(id: String): TeamResponse? {
         return try {
-            // Menggunakan view yang sama untuk mendapatkan current_members_count yang akurat
             apiService.getTeams().find { it.id == id }
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching team by id: ${e.message}")
@@ -119,7 +121,6 @@ class TeamRepository(
     suspend fun getUserApplications(): List<TeamMemberResponse> {
         val userId = sessionManager.getUserId() ?: throw Exception("User not logged in")
         return try {
-            // Sync with DB Contract: PENDING
             apiService.getUserApplications(userId = "eq.$userId", status = "eq.PENDING")
         } catch (e: HttpException) {
             val response = e.response()
@@ -137,7 +138,6 @@ class TeamRepository(
     suspend fun getJoinedTeams(): List<TeamMemberResponse> {
         val userId = sessionManager.getUserId() ?: throw Exception("User not logged in")
         return try {
-            // Fetch teams where user status is APPROVED
             apiService.getUserApplications(userId = "eq.$userId", status = "eq.APPROVED")
         } catch (e: HttpException) {
             val response = e.response()
@@ -151,12 +151,8 @@ class TeamRepository(
         }
     }
 
-    /**
-     * Refactored untuk mendukung accept flow melalui RPC accept_applicant.
-     */
     suspend fun updateMemberStatus(memberId: String, status: String): Response<Unit> {
         return try {
-            // Sync with DB Contract: APPROVED
             val response = if (status == "APPROVED") {
                 acceptApplicant(memberId)
             } else {
@@ -175,9 +171,6 @@ class TeamRepository(
         }
     }
 
-    /**
-     * Menggunakan RPC accept_applicant.
-     */
     suspend fun acceptApplicant(applicationId: String): Response<Unit> {
         val request = mapOf("p_member_id" to applicationId)
         return try {
@@ -205,5 +198,29 @@ class TeamRepository(
             Log.e(TAG, "Exception cancelling application: ${e.message}")
             throw e
         }
+    }
+
+    // Bookmark Logic
+    val allBookmarks: Flow<List<BookmarkTeamEntity>> = teamDao.getAllBookmarks()
+
+    fun isBookmarked(id: String): Flow<Boolean> = teamDao.isBookmarked(id)
+
+    suspend fun addBookmark(team: TeamResponse) {
+        val bookmark = BookmarkTeamEntity(
+            id = team.id,
+            teamName = team.teamName,
+            eventName = team.eventName,
+            ownerId = team.ownerId,
+            maxCapacity = team.maxCapacity,
+            currentMembersCount = team.currentMembersCount,
+            description = team.description,
+            roleNeed = team.roleNeed?.joinToString(","),
+            ownerContact = team.ownerContact
+        )
+        teamDao.insertBookmark(bookmark)
+    }
+
+    suspend fun removeBookmark(bookmark: BookmarkTeamEntity) {
+        teamDao.deleteBookmark(bookmark)
     }
 }

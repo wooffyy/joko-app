@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.lifecycle.*
+import com.example.joko.data.local.entity.BookmarkEventEntity
 import com.example.joko.data.local.entity.EventEntity
 import com.example.joko.data.remote.request.CreateEventRequest
 import com.example.joko.data.repository.AuthRepository
@@ -130,6 +131,37 @@ class EventViewModel(
             } catch (e: Exception) {
                 _isVerified.postValue(false)
                 _pfpUrl.postValue(null)
+            }
+        }
+    }
+
+    fun isBookmarked(id: String): LiveData<Boolean> {
+        return eventRepository.isBookmarked(id).asLiveData()
+    }
+
+    fun toggleBookmark(event: EventEntity, isBookmarked: Boolean) {
+        viewModelScope.launch {
+            if (isBookmarked) {
+                val bookmark = BookmarkEventEntity(
+                    id = event.id,
+                    title = event.title,
+                    organizer = event.organizer,
+                    category = event.category,
+                    location = event.location,
+                    startDate = event.startDate,
+                    endDate = event.endDate,
+                    description = event.description,
+                    imageUrl = event.imageUrl,
+                    registrationUrl = event.registrationUrl,
+                    tags = event.tags,
+                    requirements = event.requirements,
+                    ownerId = event.ownerId,
+                    isVerified = event.isVerified,
+                    trustScore = event.trustScore
+                )
+                eventRepository.removeBookmark(bookmark)
+            } else {
+                eventRepository.addBookmark(event)
             }
         }
     }

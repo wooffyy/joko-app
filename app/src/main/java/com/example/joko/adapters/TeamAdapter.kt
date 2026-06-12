@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +14,16 @@ import com.google.android.material.button.MaterialButton
 
 class TeamAdapter(
     private val onApplyClick: (TeamResponse) -> Unit,
-    private val onDetailClick: (TeamResponse) -> Unit
+    private val onDetailClick: (TeamResponse) -> Unit,
+    private val onBookmarkClick: (TeamResponse) -> Unit
 ) : ListAdapter<TeamResponse, TeamAdapter.TeamViewHolder>(DiffCallback) {
+
+    private var bookmarkedIds: Set<String> = emptySet()
+
+    fun setBookmarkedIds(ids: Set<String>) {
+        bookmarkedIds = ids
+        notifyDataSetChanged()
+    }
 
     class TeamViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvTeamName: TextView = view.findViewById(R.id.tv_team_name)
@@ -58,14 +65,11 @@ class TeamAdapter(
         holder.btnApply.setOnClickListener { onApplyClick(team) }
         holder.itemView.setOnClickListener { onDetailClick(team) }
 
-        // Tambahkan logika toggle bookmark
+        // Sinkronisasi status bookmark dari Room
+        holder.btnBookmark.isSelected = bookmarkedIds.contains(team.id)
+
         holder.btnBookmark.setOnClickListener {
-            it.isSelected = !it.isSelected
-            if (it.isSelected) {
-                Toast.makeText(holder.itemView.context, "Tim di-bookmark", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(holder.itemView.context, "Bookmark dihapus", Toast.LENGTH_SHORT).show()
-            }
+            onBookmarkClick(team)
         }
     }
 

@@ -22,8 +22,9 @@ object Injection {
     }
 
     fun provideTeamRepository(context: Context): TeamRepository {
+        val database = AppDatabase.getInstance(context)
         val apiService = RetrofitClient.getApiService(context)
         val sessionManager = SessionManager(context)
-        return TeamRepository(apiService, sessionManager)
+        return TeamRepository(apiService, sessionManager, database.teamDao())
     }
 }

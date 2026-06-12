@@ -67,6 +67,12 @@ class UntukAndaFragment : Fragment() {
                     putExtra(TeamDetailActivity.EXTRA_TEAM_ID, team.id)
                 }
                 startActivity(intent)
+            },
+            onBookmarkClick = { team ->
+                val isBookmarked = viewModel.bookmarkedTeamIds.value?.contains(team.id) == true
+                viewModel.toggleBookmark(team, isBookmarked)
+                val message = if (!isBookmarked) "Tim di-bookmark" else "Bookmark dihapus"
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
             }
         )
         rvTeams.adapter = teamAdapter
@@ -76,6 +82,10 @@ class UntukAndaFragment : Fragment() {
         viewModel.teams.observe(viewLifecycleOwner) { teams ->
             teamAdapter.submitList(teams)
             swipeRefresh.isRefreshing = false
+        }
+
+        viewModel.bookmarkedTeamIds.observe(viewLifecycleOwner) { ids ->
+            teamAdapter.setBookmarkedIds(ids)
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->

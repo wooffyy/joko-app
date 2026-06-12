@@ -5,16 +5,19 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.joko.data.local.dao.EventDao
+import com.example.joko.data.local.dao.TeamDao
 import com.example.joko.data.local.entity.BookmarkEventEntity
+import com.example.joko.data.local.entity.BookmarkTeamEntity
 import com.example.joko.data.local.entity.EventEntity
 
 @Database(
-    entities = [EventEntity::class, BookmarkEventEntity::class],
-    version = 9,
+    entities = [EventEntity::class, BookmarkEventEntity::class, BookmarkTeamEntity::class],
+    version = 10,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun eventDao(): EventDao
+    abstract fun teamDao(): TeamDao
 
     companion object {
         @Volatile
