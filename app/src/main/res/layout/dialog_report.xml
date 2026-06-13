@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    app:cardBackgroundColor="@color/bg_elevated"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="8dp"
+    app:strokeColor="@color/outline_variant"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Laporkan"
+            android:textColor="@color/text_alert"
+            android:textStyle="bold"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif"
+            android:text="Pilih kategori yang paling sesuai untuk mendeskripsikan masalah ini."
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+        <RadioGroup
+            android:id="@+id/rgReportCategories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rbSpam"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Spam atau Kegiatan Fiktif"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                app:buttonTint="@color/primary" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rbScam"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Penipuan"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                app:buttonTint="@color/primary" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rbHoax"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Informasi Palsu atau Hoaks"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                app:buttonTint="@color/primary" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rbInappropriate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Konten Tidak Layak (SARA, Pornografi, Mengandung Kekerasan)"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                app:buttonTint="@color/primary" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rbHarassment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pelecehan, Pemerasan, Perundungan, atau Rasisme"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                app:buttonTint="@color/primary" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rbIllegal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Aktivitas Ilegal (Perjudian, Narkoba, Terorisme, dll.)"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                app:buttonTint="@color/primary" />
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSubmitReport"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/text_alert"
+                android:text="Laporkan"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:cornerRadius="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Batal"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:cornerRadius="12dp"
+                app:strokeColor="@color/outline_variant"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
