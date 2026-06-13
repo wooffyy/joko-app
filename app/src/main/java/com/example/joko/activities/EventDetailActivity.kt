@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -15,8 +16,11 @@ import com.bumptech.glide.Glide
 import com.example.joko.R
 import com.example.joko.data.local.entity.EventEntity
 import com.example.joko.databinding.ActivityEventDetailBinding
+import com.example.joko.utils.ReportType
 import com.example.joko.utils.ViewModelFactory
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
+import com.google.android.material.radiobutton.MaterialRadioButton
 
 class EventDetailActivity : AppCompatActivity() {
 
@@ -26,6 +30,7 @@ class EventDetailActivity : AppCompatActivity() {
     }
     private var currentEvent: EventEntity? = null
     private var isBookmarked: Boolean = false
+    private var reportDialog: android.app.AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -74,6 +79,63 @@ class EventDetailActivity : AppCompatActivity() {
                 Toast.makeText(this, "Data event belum siap", Toast.LENGTH_SHORT).show()
             }
         }
+
+        binding.btnReport.setOnClickListener {
+            showReportDialog()
+            viewModel.reportSuccess.observe(this) { success ->
+                if (success) {
+                    Toast.makeText(this, "Laporan berhasil dikirim. Terima kasih!", Toast.LENGTH_LONG).show()
+                    reportDialog?.dismiss()
+                    reportDialog = null
+                }
+            }
+
+            viewModel.errorMessage.observe(this) { message ->
+                if (message != null) {
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun showReportDialog() {
+        val reportDialog = layoutInflater.inflate(R.layout.dialog_report, null)
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setView(reportDialog)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val rgCategories = reportDialog.findViewById<RadioGroup>(R.id.rgReportCategories)
+        val btnSubmit = reportDialog.findViewById<MaterialButton>(R.id.btnSubmitReport)
+        val btnCancel = reportDialog.findViewById<MaterialButton>(R.id.btnCancel)
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+
+        btnSubmit.setOnClickListener {
+            val selected =rgCategories.checkedRadioButtonId
+            if (selected == -1) {
+                Toast.makeText(this, "Silakan pilih kategori terlebih dahulu", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val category = when (selected) {
+                R.id.rbSpam -> ReportType.SPAM
+                R.id.rbScam -> ReportType.SCAM
+                R.id.rbHoax -> ReportType.HOAX
+                R.id.rbInappropriate -> ReportType.INAPPROPRIATE_CONTENT
+                R.id.rbHarassment -> ReportType.HARASSMENT
+                R.id.rbIllegal -> ReportType.ILLEGAL_ACTIVITY
+                else -> null
+            }
+
+            if (category != null && currentEvent != null) {
+                viewModel.sendReport(currentEvent!!, category)
+                this.reportDialog = dialog
+            }
+        }
+
+        dialog.show()
     }
 
     private fun setupUI(event: EventEntity) {

@@ -4,6 +4,8 @@ import com.example.joko.data.remote.request.AuthRequest
 import com.example.joko.data.remote.request.CreateEventRequest
 import com.example.joko.data.remote.request.CreateUserRequest
 import com.example.joko.data.remote.request.MemberActionRequest
+import com.example.joko.data.remote.request.ReportEventRequest
+import com.example.joko.data.remote.request.ReportTeamRequest
 import com.example.joko.data.remote.request.TeamRequest
 import com.example.joko.data.remote.request.UpdateProfileRequest
 import com.example.joko.data.remote.response.AuthResponse
@@ -24,9 +26,10 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
-    @GET("rest/v1/events?select=*&owner_id=not.is.null")
+    @GET("rest/v1/report_event?select=*&owner_id=not.is.null")
     suspend fun getEvents(
-        @Query("order") order: String = "start_date.desc"
+        @Query("order") order: String = "start_date.desc",
+        @Query("reporters_count") reportThreshold: String = "lt.5" // Filter threshold DEBUG: lt.1
     ): List<EventResponse>
 
     @POST("auth/v1/signup")
@@ -72,10 +75,11 @@ interface ApiService {
 
     // --- Team Endpoints ---
 
-    @GET("rest/v1/view_teams_with_member_count?select=*")
+    @GET("rest/v1/report_team?select=*")
     suspend fun getTeams(
         @Query("order") order: String = "created_at.desc",
-        @Query("owner_id") ownerId: String? = null
+        @Query("owner_id") ownerId: String? = null,
+        @Query("reporters_count") reportThreshold: String = "lt.5" // Filter threshold DEBUG: lt.1
     ): List<TeamResponse>
 
     @POST("rest/v1/teams")
@@ -117,5 +121,17 @@ interface ApiService {
     @DELETE("rest/v1/team_members")
     suspend fun cancelApplication(
         @Query("id") memberId: String
+    ): Response<Unit>
+
+    @POST("rest/v1/report_events")
+    suspend fun sendReportEvent(
+        @Header("Prefer") prefer: String = "return=minimal",
+        @Body request: ReportEventRequest
+    ): Response<Unit>
+
+    @POST("rest/v1/report_teams")
+    suspend fun sendReportTeams(
+        @Header("Prefer") prefer: String = "return=minimal",
+        @Body request: ReportTeamRequest
     ): Response<Unit>
 }

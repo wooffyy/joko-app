@@ -9,14 +9,15 @@ import androidx.lifecycle.*
 import com.example.joko.data.local.entity.BookmarkEventEntity
 import com.example.joko.data.local.entity.EventEntity
 import com.example.joko.data.remote.request.CreateEventRequest
+import com.example.joko.data.remote.request.ReportEventRequest
 import com.example.joko.data.repository.AuthRepository
 import com.example.joko.data.repository.EventRepository
+import com.example.joko.utils.ReportType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
-import kotlin.math.abs
 
 class EventViewModel(
     private val eventRepository: EventRepository,
@@ -40,6 +41,9 @@ class EventViewModel(
     private val _searchQuery = MutableLiveData<String>("")
     
     private val _allEventsFromDb = eventRepository.allEvents.asLiveData()
+
+    private val _reportSuccess = MutableLiveData<Boolean>()
+    val reportSuccess: LiveData<Boolean> = _reportSuccess
 
     val allEvents = MediatorLiveData<List<EventEntity>>().apply {
         addSource(_allEventsFromDb) { list ->
@@ -319,6 +323,35 @@ class EventViewModel(
                 }
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "Terjadi kesalahan saat memproses event"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun sendReport (event: EventEntity, category: ReportType) {
+        val event_id = event.id
+        val reporter_id = authRepository.getUserId()
+        if (reporter_id == null) {
+            _errorMessage.value = "Sesi berakhir. Silakan login kembali."
+            return
+        }
+
+        val request = ReportEventRequest(
+            event_id,
+            reporter_id,
+            category
+        )
+
+        _reportSuccess.value = false
+        _isLoading.value = true
+
+        viewModelScope.launch {
+            try {
+                val response = eventRepository.reportEvent(request)
+                _reportSuccess.value = true
+            } catch (e: Exception) {
+                _errorMessage.value = e.message ?: "Terjadi kesalahan saat melaporkan event"
             } finally {
                 _isLoading.value = false
             }

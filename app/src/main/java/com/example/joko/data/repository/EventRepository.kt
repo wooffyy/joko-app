@@ -7,7 +7,10 @@ import com.example.joko.data.local.entity.BookmarkEventEntity
 import com.example.joko.data.local.entity.EventEntity
 import com.example.joko.data.remote.api.ApiService
 import com.example.joko.data.remote.request.CreateEventRequest
+import com.example.joko.data.remote.request.ReportEventRequest
+import com.example.joko.data.remote.request.ReportTeamRequest
 import com.example.joko.data.remote.response.EventResponse
+import com.example.joko.utils.ReportType
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -131,5 +134,32 @@ class EventRepository(
             isVerified = isVerified ?: false,
             trustScore = trustScore ?: 0.0
         )
+    }
+
+    suspend fun reportEvent(request: ReportEventRequest): Response<Unit> {
+        return try {
+            val response = apiService.sendReportEvent(request = request)
+            if (!response.isSuccessful) {
+                val errorBody = response.errorBody()?.string()
+                val errorMessage = try {
+                    val json = org.json.JSONObject(errorBody ?: "")
+                    val code = json.optString("code")
+                    when (code) {
+                        "23505" -> "Kamu sudah mengirim laporan yang sama tentang event ini sebelumnya."
+                        else -> json.optString("message", "Gagal mengirim laporan")
+                    }
+                } catch (e: Exception) {
+                    "Terjadi kesalahan server (${response.code()})"
+                }
+                throw Exception(errorMessage)
+            }
+            response
+        } catch (e: Exception) {
+            // network error
+            if (e is java.io.IOException) {
+                throw Exception("Koneksi internet bermasalah")
+            }
+            throw e
+        }
     }
 }
