@@ -12,6 +12,9 @@ import com.example.joko.R
 import com.example.joko.data.remote.response.TeamResponse
 import com.example.joko.utils.ViewModelFactory
 import com.google.android.material.button.MaterialButton
+import com.example.joko.utils.ReportType
+import android.widget.RadioGroup
+import com.google.android.material.radiobutton.MaterialRadioButton
 import android.content.Intent
 
 class TeamDetailActivity : AppCompatActivity() {
@@ -34,6 +37,7 @@ class TeamDetailActivity : AppCompatActivity() {
     private var currentTeamId: String? = null
     private var currentTeam: TeamResponse? = null
     private var isBookmarked: Boolean = false
+    private var reportDialog: android.app.AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +60,10 @@ class TeamDetailActivity : AppCompatActivity() {
         viewModel.isBookmarked(currentTeamId!!).observe(this) { bookmarked ->
             isBookmarked = bookmarked
             findViewById<ImageView>(R.id.btn_bookmark_top).isSelected = bookmarked
+        }
+
+        findViewById<ImageView>(R.id.btn_report).setOnClickListener {
+            showReportDialog()
         }
     }
 
@@ -147,6 +155,46 @@ class TeamDetailActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    private fun showReportDialog() {
+        val reportView = layoutInflater.inflate(R.layout.dialog_report, null)
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setView(reportView)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val rgCategories = reportView.findViewById<RadioGroup>(R.id.rgReportCategories)
+        val btnSubmit = reportView.findViewById<MaterialButton>(R.id.btnSubmitReport)
+        val btnCancel = reportView.findViewById<MaterialButton>(R.id.btnCancel)
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+
+        btnSubmit.setOnClickListener {
+            val selected = rgCategories.checkedRadioButtonId
+            if (selected == -1) {
+                Toast.makeText(this, "Silakan pilih kategori terlebih dahulu", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val category = when (selected) {
+                R.id.rbSpam -> ReportType.SPAM
+                R.id.rbScam -> ReportType.SCAM
+                R.id.rbHoax -> ReportType.HOAX
+                R.id.rbInappropriate -> ReportType.INAPPROPRIATE_CONTENT
+                R.id.rbHarassment -> ReportType.HARASSMENT
+                R.id.rbIllegal -> ReportType.ILLEGAL_ACTIVITY
+                else -> null
+            }
+
+            if (category != null && currentTeam != null) {
+                viewModel.sendReport(currentTeam!!, category)
+                this.reportDialog = dialog
+            }
+        }
+
+        dialog.show()
+    }
+
     private fun observeViewModel() {
         viewModel.teamDetail.observe(this) { team ->
             team?.let {
@@ -176,6 +224,14 @@ class TeamDetailActivity : AppCompatActivity() {
 
         viewModel.isLoading.observe(this) { isLoading ->
             updateButtonState(viewModel.userRoleStatus.value ?: UserRoleStatus.NONE, viewModel.teamDetail.value)
+        }
+
+        viewModel.reportSuccess.observe(this) { success ->
+            if (success) {
+                Toast.makeText(this, "Laporan berhasil dikirim. Terima kasih!", Toast.LENGTH_LONG).show()
+                reportDialog?.dismiss()
+                reportDialog = null
+            }
         }
 
         viewModel.actionSuccess.observe(this) { success ->

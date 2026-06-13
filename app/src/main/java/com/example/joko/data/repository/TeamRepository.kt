@@ -5,6 +5,8 @@ import com.example.joko.data.local.dao.TeamDao
 import com.example.joko.data.local.entity.BookmarkTeamEntity
 import com.example.joko.data.remote.api.ApiService
 import com.example.joko.data.remote.request.MemberActionRequest
+import com.example.joko.data.remote.request.ReportEventRequest
+import com.example.joko.data.remote.request.ReportTeamRequest
 import com.example.joko.data.remote.request.TeamRequest
 import com.example.joko.data.remote.response.TeamMemberResponse
 import com.example.joko.data.remote.response.TeamResponse
@@ -222,5 +224,32 @@ class TeamRepository(
 
     suspend fun removeBookmark(bookmark: BookmarkTeamEntity) {
         teamDao.deleteBookmark(bookmark)
+    }
+
+    suspend fun reportTeam(request: ReportTeamRequest): Response<Unit> {
+        return try {
+            val response = apiService.sendReportTeams(request = request)
+            if (!response.isSuccessful) {
+                val errorBody = response.errorBody()?.string()
+                val errorMessage = try {
+                    val json = org.json.JSONObject(errorBody ?: "")
+                    val code = json.optString("code")
+                    when (code) {
+                        "23505" -> "Kamu sudah mengirim laporan yang sama tentang tim ini sebelumnya."
+                        else -> json.optString("message", "Gagal mengirim laporan")
+                    }
+                } catch (e: Exception) {
+                    "Terjadi kesalahan server (${response.code()})"
+                }
+                throw Exception(errorMessage)
+            }
+            response
+        } catch (e: Exception) {
+            // network error
+            if (e is java.io.IOException) {
+                throw Exception("Koneksi internet bermasalah")
+            }
+            throw e
+        }
     }
 }

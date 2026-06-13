@@ -8,9 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.joko.data.local.entity.BookmarkTeamEntity
+import com.example.joko.data.remote.request.ReportTeamRequest
 import com.example.joko.data.remote.response.TeamMemberResponse
 import com.example.joko.data.remote.response.TeamResponse
 import com.example.joko.data.repository.TeamRepository
+import com.example.joko.utils.ReportType
 import com.google.gson.JsonParser
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -57,6 +59,9 @@ class TeamViewModel(private val teamRepository: TeamRepository) : ViewModel() {
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
+
+    private val _reportSuccess = MutableLiveData<Boolean>()
+    val reportSuccess: LiveData<Boolean> = _reportSuccess
 
     private val _actionSuccess = MutableLiveData<Boolean>()
     val actionSuccess: LiveData<Boolean> = _actionSuccess
@@ -354,6 +359,35 @@ class TeamViewModel(private val teamRepository: TeamRepository) : ViewModel() {
             }
         } catch (e: Exception) {
             errorBody
+        }
+    }
+
+    fun sendReport (team: TeamResponse, category: ReportType) {
+        val team_id = team.id
+        val reporter_id = teamRepository.getCurrentUserId()
+        if (reporter_id == null) {
+            _errorMessage.value = "Sesi berakhir. Silakan login kembali."
+            return
+        }
+
+        val request = ReportTeamRequest(
+            team_id,
+            reporter_id,
+            category
+        )
+
+        _reportSuccess.value = false
+        _isLoading.value = true
+
+        viewModelScope.launch {
+            try {
+                teamRepository.reportTeam(request)
+                _reportSuccess.value = true
+            } catch (e: Exception) {
+                _errorMessage.value = e.message ?: "Terjadi kesalahan saat melaporkan tim"
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
