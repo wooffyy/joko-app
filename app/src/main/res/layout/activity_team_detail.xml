@@ -18,13 +18,14 @@
 
         <ImageView
             android:id="@+id/btn_back"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="8dp"
             android:src="@drawable/abc_ic_ab_back_material"
             app:tint="@color/white"
             android:clickable="true"
             android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
+            android:background="@drawable/bg_input_field"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -52,14 +53,28 @@
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_report"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/bg_input_field"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_report"
+            app:tint="@color/bookmark_tint_selector" />
+
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btn_bookmark_top"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="8dp"
             android:src="@drawable/ic_bookmark"
             app:tint="@color/bookmark_tint_selector"
             android:clickable="true"
             android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
+            android:background="@drawable/bg_input_field"/>
+
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
