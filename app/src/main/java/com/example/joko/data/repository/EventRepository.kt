@@ -32,7 +32,8 @@ class EventRepository(
 
     suspend fun refreshEvents() {
         try {
-            val response = apiService.getEvents()
+            val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date())
+            val response = apiService.getEvents(endDateFilter = "gte.$today")
 
             // Konversi ke entity, data orphan/null ditangani di toEntity()
             val entities = response.map { it.toEntity() }

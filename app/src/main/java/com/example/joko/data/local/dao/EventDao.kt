@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface EventDao {
 
     // 1. Tambahkan filter aktif agar event tanpa owner atau yang sudah lewat tidak ditarik
-    @Query("SELECT * FROM events WHERE ownerId IS NOT NULL ORDER BY startDate DESC")
+    @Query("SELECT * FROM events WHERE ownerId IS NOT NULL ORDER BY startDate ASC")
     fun getAllActiveEvents(): Flow<List<EventEntity>>
 
     @Query("SELECT * FROM events WHERE id = :id")

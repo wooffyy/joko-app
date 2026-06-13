@@ -28,8 +28,9 @@ import retrofit2.http.Query
 interface ApiService {
     @GET("rest/v1/report_event?select=*&owner_id=not.is.null")
     suspend fun getEvents(
-        @Query("order") order: String = "start_date.desc",
-        @Query("reporters_count") reportThreshold: String = "lt.5" // Filter threshold DEBUG: lt.1
+        @Query("order") order: String = "start_date.asc",
+        @Query("reporters_count") reportThreshold: String = "lt.5",
+        @Query("end_date") endDateFilter: String? = null
     ): List<EventResponse>
 
     @POST("auth/v1/signup")
