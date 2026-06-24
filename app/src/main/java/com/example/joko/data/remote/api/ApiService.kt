@@ -76,11 +76,11 @@ interface ApiService {
 
     // --- Team Endpoints ---
 
-    @GET("rest/v1/report_team?select=*")
+    @GET("rest/v1/view_report_team?select=*")
     suspend fun getTeams(
         @Query("order") order: String = "created_at.desc",
         @Query("owner_id") ownerId: String? = null,
-        @Query("reporters_count") reportThreshold: String = "lt.5" // Filter threshold DEBUG: lt.1
+        @Query("reporters_count") reportThreshold: String = "lt.5"
     ): List<TeamResponse>
 
     @POST("rest/v1/teams")
@@ -94,8 +94,8 @@ interface ApiService {
         @Query("team_id") teamId: String
     ): List<TeamMemberResponse>
 
-    // Menggunakan view_teams_with_member_count agar current_members_count tersedia
-    @GET("rest/v1/team_members?select=*,teams:view_teams_with_member_count(*)")
+    // Menggunakan view_report_team agar current_members_count tersedia
+    @GET("rest/v1/team_members?select=*,teams:view_report_team(*)")
     suspend fun getUserApplications(
         @Query("user_id") userId: String,
         @Query("status") status: String
